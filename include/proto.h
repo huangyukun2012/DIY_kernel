@@ -47,6 +47,7 @@ PUBLIC void keyboard_handler(int irq);
 /* tty.c */
 PUBLIC void task_tty();
 PUBLIC void in_process();
+PUBLIC void syn_mouse();
 
 
 /************************************************************************/

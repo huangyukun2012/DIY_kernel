@@ -1,0 +1,30 @@
+#how umch memorty the emulated machine wil have
+megs: 32
+#filename of Rom images
+romimage: file=/usr/local/share/bochs/BIOS-bochs-latest
+vgaromimage: file=/usr/share/vgabios/VGABIOS-lgpl-latest.bin
+
+#wath disk images will be used
+#floppya: 1_44=freedos.img,status=inserted
+floppya: 1_44=hyk.img,status=inserted
+#floppyb: 1_44=hyk.img,status=inserted
+
+#choose the boot disk
+boot: a 
+
+#where do we send log messages
+#log: bochsout.txt
+
+#disable the mouse 
+mouse: enabled=0
+
+#enable key mapping ,using US layout as default
+keyboard_mapping :enabled=1,map=/usr/local/share/bochs/keymaps/x11-pc-us.map
+
+magic_break:enabled=1
+
+#gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0
+#config_interface: textconfig
+#display_library: x
+#memory: host=32, guest=32
+

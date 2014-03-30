@@ -84,6 +84,19 @@
 #define	AT_WINI_IRQ	14	/* at winchester */
 
 
+/*CRT controller*/
+#define CRTC_ADDR_REG	0x3D4
+#define CRTC_DATA_REG	0x3D5
+#define CURSOR_START_REG	0xA0
+#define CURSOR_END_REG	0xB0
+
+#define START_ADDR_H	0xC
+#define START_ADDR_L 	0xD
+#define CURSOR_H	0xE
+#define	CURSOR_L	0xF
+#define		V_MEM_BASE	0xB8000
+#define		V_MEM_SIZE	0x8000
+
 /* system call */
 #define	NR_SYS_CALL	1
 
