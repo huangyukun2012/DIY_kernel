@@ -62,6 +62,9 @@ PUBLIC int tinix_main()
 	init_clock();
 	init_keyboard();
 
+		for (i = 0; i < 256; ++i){
+			disp_color_str("t",i);
+		}
 	restart();
 
 	while(1){}
