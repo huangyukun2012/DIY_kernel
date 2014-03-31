@@ -2,7 +2,9 @@
 #define	CONSOLE_H
 
 #define NR_CONSOLE	3
-#define SCREEN_WITTH	80*25
+#define SCREEN_WIDETH	80
+#define SCREEN_SIZE		80*25
+
 #define SCROLL_UP	1
 #define	SCROLL_DOWN	-1
 

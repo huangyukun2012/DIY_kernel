@@ -18,13 +18,34 @@ void set_cursor_length();
 void out_char(CONSOLE * p_con,char ch)
 {
 	t_8	*vmem_p=(t_8 *)(V_MEM_BASE + p_con->cursor_location*2);
-	
-	*vmem_p = ch;
-	vmem_p++;
-	*vmem_p = COLOR;
-	vmem_p++;
+	switch(ch){
+		case '\n':
+			if(p_con->cursor_location + SCREEN_WIDETH < p_con->begin_adr+p_con->vmem_limit ){
+				int line=(p_con->cursor_location - p_con->begin_adr)/SCREEN_WIDETH+1;
+				p_con->cursor_location=line*SCREEN_WIDETH + p_con->begin_adr;
+			}
+			break;
+		case '\b':
+			if(p_con->cursor_location > p_con->begin_adr){
+				p_con->cursor_location--;
+				*(vmem_p-2)=' ';
+				*(vmem_p-1)=COLOR;
+			}
+			break;
+		default:
+			if(p_con->cursor_location < p_con->begin_adr+p_con->vmem_limit){
+				
+				*vmem_p = ch;
+				vmem_p++;
+				*vmem_p = COLOR;
+				vmem_p++;
+				p_con->cursor_location++;
+			}
+	}
+	while(p_con->cursor_location >= p_con->current_start_addr + SCREEN_SIZE){
+		scroll_screen(p_con,SCROLL_DOWN);
+	}
 
-	p_con->cursor_location++;
 
 	set_cursor(p_con->cursor_location);//display position
 
@@ -66,13 +87,13 @@ void switch_console(CONSOLE *console_p)
 void scroll_screen(CONSOLE *console_p, int direction)
 {
 	if(direction == SCROLL_UP ){
-		if(console_p->current_start_addr - SCREEN_WITTH >= console_p->begin_adr){
-			console_p->current_start_addr -= SCREEN_WITTH;
+		if(console_p->current_start_addr - SCREEN_WIDETH >= console_p->begin_adr){
+			console_p->current_start_addr -= SCREEN_WIDETH;
 		}
 	}
 	else if(direction == SCROLL_DOWN){
-		if(console_p->current_start_addr + SCREEN_WITTH <= console_p->begin_adr + console_p->vmem_limit){
-			console_p->current_start_addr +=SCREEN_WITTH;
+		if(console_p->current_start_addr + SCREEN_WIDETH <= console_p->begin_adr + console_p->vmem_limit){
+			console_p->current_start_addr +=SCREEN_WIDETH;
 		}
 	}
 	else

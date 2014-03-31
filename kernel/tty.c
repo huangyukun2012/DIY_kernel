@@ -84,11 +84,8 @@ void tty_write(TTY *tty_p)
 	}
 }
 
-
-PUBLIC void in_process(TTY * tty_p,t_32 key)
-{//got key into the tty buffer
-	TTY *temp_tty_p;
-	if(!(key&FLAG_EXT)){//if can be printed, put it to console buffer
+void put_key2tty(TTY *tty_p, t_32 key)
+{
 		if(tty_p->count < TTY_BUFFER_SIZE){
 			*(tty_p->head)=key;
 			tty_p->head++;
@@ -97,6 +94,13 @@ PUBLIC void in_process(TTY * tty_p,t_32 key)
 			}
 			tty_p->count++;
 		}
+	
+}
+PUBLIC void in_process(TTY * tty_p,t_32 key)
+{//got key into the tty buffer
+	TTY *temp_tty_p;
+	if(!(key&FLAG_EXT)){//if can be printed, put it to console buffer
+		put_key2tty(tty_p,key);
 	}
 	else{
 		int raw_code=key&MASK_RAW;
@@ -110,6 +114,12 @@ PUBLIC void in_process(TTY * tty_p,t_32 key)
 				if((key&FLAG_SHIFT_L)|| (key & FLAG_SHIFT_R)){
 					scroll_screen(current_tty->console_p,SCROLL_DOWN);
 				}
+				break;
+			case ENTER:
+				put_key2tty(tty_p,'\n');
+				break;
+			case BACKSPACE:
+				put_key2tty(tty_p,'\b');
 				break;
 			case F1:
 			case F2:
