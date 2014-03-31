@@ -10,7 +10,11 @@
 #undef	EXTERN
 #define	EXTERN
 #endif
-
+#include "tty.h"
+#include "console.h"
+#include "proc.h"
+#include "protect.h"
+#include "proto.h"
 EXTERN	int		ticks;
 
 EXTERN	int		disp_pos;
@@ -28,6 +32,8 @@ extern	PROCESS		proc_table[];
 extern	char		task_stack[];
 extern	TASK		task_table[];
 
+extern 	TTY			tty_table[];
+extern	CONSOLE		console_table[];
 extern	t_pf_irq_handler	irq_table[];
 
 extern	t_sys_call		sys_call_table[];

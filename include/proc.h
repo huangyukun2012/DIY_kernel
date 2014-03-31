@@ -1,11 +1,12 @@
-
+#ifndef _PROC_H_
+#define _PROC_H_
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                                proc.h
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                                                     Forrest Yu, 2005
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-
+#include "protect.h"
 typedef struct s_stackframe {	/* proc_ptr points here				¡ü Low			*/
 	t_32	gs;		/* ©·						©¦			*/
 	t_32	fs;		/* ©§						©¦			*/
@@ -61,4 +62,4 @@ typedef struct s_task {
 				STACK_SIZE_TESTA + \
 				STACK_SIZE_TESTB + \
 				STACK_SIZE_TESTC)
-
+#endif

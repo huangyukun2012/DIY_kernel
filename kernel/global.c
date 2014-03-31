@@ -13,7 +13,8 @@
 #include "proto.h"
 #include "proc.h"
 #include "global.h"
-
+#include "tty.h"
+#include "console.h"
 
 PUBLIC	PROCESS	proc_table[NR_TASKS];
 
@@ -27,3 +28,7 @@ PUBLIC	TASK	task_table[NR_TASKS] = {{task_tty, STACK_SIZE_TTY, "tty"},
 PUBLIC	t_pf_irq_handler	irq_table[NR_IRQ];
 
 PUBLIC	t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_get_ticks};
+
+TTY	tty_table[NR_TTY];
+
+CONSOLE		console_table[NR_CONSOLE];

@@ -14,6 +14,7 @@
 #include "global.h"
 #include "keyboard.h"
 #include "keymap.h"
+#include "tty.h"
 
 PRIVATE	KB_INPUT	kb_in;
 PRIVATE int code_with_E0=0;
@@ -63,8 +64,8 @@ PUBLIC void init_keyboard()
 /*======================================================================*
                            keyboard_read
 *======================================================================*/
-PUBLIC void keyboard_read()
-{//read the scan_code (generated my one interrupt, may be more than one Byte,)from buffer, and print on screen
+void keyboard_read(TTY * tty_p)
+{//read byte from keyboard buffer to tty buffer
 	t_8 scan_code;
 	t_bool  make;
 
@@ -168,7 +169,7 @@ PUBLIC void keyboard_read()
 				key |=(ctrl_r ? FLAG_CTRL_R:0);
 				key |=(alt_l ? FLAG_ALT_L:0);
 				key |=(alt_r ? FLAG_ALT_R:0);
-				in_process(key);
+				in_process(tty_p,key);
 			}
 		}
 	}

@@ -1,4 +1,5 @@
-
+#ifndef 	_PROTO_H
+#define		_PROTO_H
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                             proto.h
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -47,7 +48,7 @@ PUBLIC void keyboard_handler(int irq);
 /* tty.c */
 PUBLIC void task_tty();
 PUBLIC void in_process();
-PUBLIC void syn_mouse();
+PUBLIC void syn_cursor();
 
 
 /************************************************************************/
@@ -60,4 +61,4 @@ PUBLIC	int	sys_get_ticks();	/* t_sys_call */
 /* syscall.asm */
 PUBLIC	void	sys_call();		/* t_pf_int_handler */
 PUBLIC	int	get_ticks();
-
+#endif
