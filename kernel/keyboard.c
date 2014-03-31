@@ -16,7 +16,7 @@
 #include "keymap.h"
 #include "tty.h"
 
-PRIVATE	KB_INPUT	kb_in;
+KB_INPUT	kb_in;
 PRIVATE int code_with_E0=0;
 PRIVATE int shift_l;
 PRIVATE int shift_r;
@@ -65,7 +65,7 @@ PUBLIC void init_keyboard()
                            keyboard_read
 *======================================================================*/
 void keyboard_read(TTY * tty_p)
-{//read byte from keyboard buffer to tty buffer
+{//read all byte from keyboard buffer to tty buffer
 	t_8 scan_code;
 	t_bool  make;
 
@@ -182,6 +182,7 @@ PRIVATE t_8 get_byte_from_kbuf()
 	t_8 scan_code;
 	while(kb_in.count<=0)
 	{
+		
 	}
 	disable_int();
 	scan_code=*(kb_in.p_tail);

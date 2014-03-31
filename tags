@@ -25,6 +25,9 @@ CASCADE_IRQ	include/const.h	77;"	d
 CC	Makefile	/^CC		= gcc$/;"	m
 CFLAGS	Makefile	/^CFLAGS		= -m32 -I include\/ -c -fno-builtin$/;"	m
 CLOCK_IRQ	include/const.h	75;"	d
+COLOR	kernel/console.c	7;"	d	file:
+CONSOLE	include/console.h	/^}CONSOLE;$/;"	t	typeref:struct:s_console
+CONSOLE_H	include/console.h	2;"	d
 CRTC_ADDR_REG	include/const.h	88;"	d
 CRTC_DATA_REG	include/const.h	89;"	d
 CTRL_L	include/keyboard.h	46;"	d
@@ -199,10 +202,12 @@ Message2	boot/boot.asm	/^Message2		db	"No LOADER"; 9×Ö½Ú, ²»¹»ÔòÓÃ¿Õ¸ñ²¹Æë. ÐòºÅ
 Message2	boot/loader.asm	/^Message2		db	"No KERNEL"$/;"	d
 MessageLength	boot/boot.asm	/^MessageLength		equ	9$/;"	d
 MessageLength	boot/loader.asm	/^MessageLength		equ	9$/;"	d
+NR_CONSOLE	include/console.h	4;"	d
 NR_IRQ	include/const.h	74;"	d
 NR_SCAN_CODES	include/keyboard.h	17;"	d
 NR_SYS_CALL	include/const.h	101;"	d
-NR_TASKS	include/proc.h	52;"	d
+NR_TASKS	include/proc.h	53;"	d
+NR_TTY	include/tty.h	6;"	d
 NUM_LOCK	include/keyboard.h	53;"	d
 OBJS	Makefile	/^OBJS		= kernel\/kernel.o kernel\/syscall.o kernel\/start.o kernel\/main.o\\$/;"	m
 PAD_0	include/keyboard.h	96;"	d
@@ -261,7 +266,10 @@ SA_RPL_MASK	include/protect.h	114;"	d
 SA_TIG	include/protect.h	121;"	d
 SA_TIL	include/protect.h	122;"	d
 SA_TI_MASK	include/protect.h	120;"	d
+SCREEN_WITTH	include/console.h	5;"	d
+SCROLL_DOWN	include/console.h	7;"	d
 SCROLL_LOCK	include/keyboard.h	54;"	d
+SCROLL_UP	include/console.h	6;"	d
 SECONDARY_IRQ	include/const.h	79;"	d
 SELECTOR_DUMMY	include/protect.h	75;"	d
 SELECTOR_FLAT_C	include/protect.h	76;"	d
@@ -276,11 +284,11 @@ SHIFT_L	include/keyboard.h	44;"	d
 SHIFT_R	include/keyboard.h	45;"	d
 SLEEP	include/keyboard.h	86;"	d
 STACK_FRAME	include/proc.h	/^}STACK_FRAME;$/;"	t	typeref:struct:s_stackframe
-STACK_SIZE_TESTA	include/proc.h	56;"	d
-STACK_SIZE_TESTB	include/proc.h	57;"	d
-STACK_SIZE_TESTC	include/proc.h	58;"	d
-STACK_SIZE_TOTAL	include/proc.h	60;"	d
-STACK_SIZE_TTY	include/proc.h	55;"	d
+STACK_SIZE_TESTA	include/proc.h	57;"	d
+STACK_SIZE_TESTB	include/proc.h	58;"	d
+STACK_SIZE_TESTC	include/proc.h	59;"	d
+STACK_SIZE_TOTAL	include/proc.h	61;"	d
+STACK_SIZE_TTY	include/proc.h	56;"	d
 START_ADDR_H	include/const.h	93;"	d
 START_ADDR_L	include/const.h	94;"	d
 SelectorFlatC	boot/loader.asm	/^SelectorFlatC		equ	LABEL_DESC_FLAT_C	- LABEL_GDT$/;"	d
@@ -299,7 +307,8 @@ TINIXBOOT	Makefile	/^TINIXBOOT	= boot\/boot.bin boot\/loader.bin$/;"	m
 TINIXKERNEL	Makefile	/^TINIXKERNEL	= kernel.bin$/;"	m
 TRUE	include/const.h	20;"	d
 TSS	include/protect.h	/^}TSS;$/;"	t	typeref:struct:s_tss
-TTY_IN_BYTES	include/tty.h	1;"	d
+TTY	include/tty.h	/^}TTY;$/;"	t	typeref:struct:tty
+TTY_BUFFER_SIZE	include/tty.h	4;"	d
 TestA	kernel/main.c	/^void TestA()$/;"	f
 TestB	kernel/main.c	/^void TestB()$/;"	f
 TestC	kernel/main.c	/^void TestC()$/;"	f
@@ -313,11 +322,14 @@ XT_WINI_IRQ	include/const.h	81;"	d
 _ARDStruct	boot/loader.asm	/^_ARDStruct:			; Address Range Descriptor Structure$/;"	l
 _MemChkBuf	boot/loader.asm	/^_MemChkBuf:	times	256	db	0$/;"	l
 _NR_get_ticks	kernel/syscall.asm	/^_NR_get_ticks		equ	0	; Òª¸ú global.c ÖÐ sys_call_table µÄ¶¨ÒåÏà¶ÔÓ¦£¡$/;"	d
+_PROC_H_	include/proc.h	2;"	d
+_PROTO_H	include/proto.h	2;"	d
 _TINIX_CONST_H_	include/const.h	9;"	d
 _TINIX_KEYBOARD_H_	include/keyboard.h	9;"	d
 _TINIX_KEYMAP_H_	include/keymap.h	14;"	d
 _TINIX_PROTECT_H_	include/protect.h	9;"	d
 _TINIX_TYPE_H_	include/type.h	9;"	d
+_TTY_H_	include/tty.h	2;"	d
 _dwBaseAddrHigh	boot/loader.asm	/^	_dwBaseAddrHigh:	dd	0$/;"	d
 _dwBaseAddrLow	boot/loader.asm	/^	_dwBaseAddrLow:		dd	0$/;"	d
 _dwDispPos	boot/loader.asm	/^_dwDispPos:			dd	(80 * 6 + 0) * 2	; ÆÁÄ»µÚ 6 ÐÐ, µÚ 0 ÁÐ¡£$/;"	d
@@ -340,20 +352,25 @@ backlink	include/protect.h	/^	t_32	backlink;$/;"	m	struct:s_tss
 base_high	include/protect.h	/^	t_8	base_high;		\/* Base *\/$/;"	m	struct:s_descriptor
 base_low	include/protect.h	/^	t_16	base_low;		\/* Base *\/$/;"	m	struct:s_descriptor
 base_mid	include/protect.h	/^	t_8	base_mid;		\/* Base *\/$/;"	m	struct:s_descriptor
+begin_adr	include/console.h	/^	unsigned int begin_adr;$/;"	m	struct:s_console
 bits	kernel/kernel.asm	/^bits 32$/;"	l
 bits	kernel/syscall.asm	/^bits 32$/;"	l
 bounds_check	kernel/kernel.asm	/^bounds_check:$/;"	l
 breakpoint_exception	kernel/kernel.asm	/^breakpoint_exception:$/;"	l
 buf	include/keyboard.h	/^	char buf[KB_IN_BYTES];$/;"	m	struct:s_kb
+buffer	include/tty.h	/^	t_32	buffer[TTY_BUFFER_SIZE];$/;"	m	struct:tty
 caps_lock	kernel/keyboard.c	/^PRIVATE int caps_lock;$/;"	v
 clock_handler	kernel/clock.c	/^PUBLIC void clock_handler(int irq)$/;"	f
 clock_int_msg	kernel/kernel.asm	/^clock_int_msg		db	"^", 0$/;"	d
 code_with_E0	kernel/keyboard.c	/^PRIVATE int code_with_E0=0;$/;"	v
 column	kernel/keyboard.c	/^PRIVATE int column;$/;"	v
+console_p	include/tty.h	/^	struct s_console *console_p;$/;"	m	struct:tty	typeref:struct:tty::s_console
+console_table	kernel/global.c	/^CONSOLE		console_table[NR_CONSOLE];$/;"	v
 copr_error	kernel/kernel.asm	/^copr_error:$/;"	l
 copr_not_available	kernel/kernel.asm	/^copr_not_available:$/;"	l
 copr_seg_overrun	kernel/kernel.asm	/^copr_seg_overrun:$/;"	l
 count	include/keyboard.h	/^	int count;$/;"	m	struct:s_kb
+count	include/tty.h	/^	int 	count;$/;"	m	struct:tty
 cr3	include/protect.h	/^	t_32	cr3;$/;"	m	struct:s_tss
 cs	include/proc.h	/^	t_32	cs;		\/*  ©§						©¦			*\/$/;"	m	struct:s_stackframe
 cs	include/protect.h	/^	t_32	cs;$/;"	m	struct:s_tss
@@ -361,6 +378,9 @@ csinit	kernel/kernel.asm	/^csinit:		; ¡°Õâ¸öÌø×ªÖ¸ÁîÇ¿ÖÆÊ¹ÓÃ¸Õ¸Õ³õÊ¼»¯µÄ½á¹¹¡±¡ª
 cstart	kernel/start.c	/^PUBLIC void cstart()$/;"	f
 ctrl_l	kernel/keyboard.c	/^PRIVATE int ctrl_l;$/;"	v
 ctrl_r	kernel/keyboard.c	/^PRIVATE int ctrl_r;$/;"	v
+current_start_addr	include/console.h	/^	unsigned int current_start_addr;$/;"	m	struct:s_console
+current_tty	include/tty.h	/^TTY * current_tty;$/;"	v
+cursor_location	include/console.h	/^	unsigned int cursor_location;$/;"	m	struct:s_console
 dcount	include/protect.h	/^	t_8	dcount;		\/* ¸Ã×Ö¶ÎÖ»ÔÚµ÷ÓÃÃÅÃèÊö·ûÖÐÓÐÐ§¡£$/;"	m	struct:s_gate
 dec	boot/boot.asm	/^	dec	dx					; ©¿¾ÍÌøµ½ÏÂÒ»¸ö Sector$/;"	d
 dec	boot/boot.asm	/^dec	cx$/;"	l
@@ -492,6 +512,7 @@ global	lib/string.asm	/^global	memset$/;"	l
 global	lib/string.asm	/^global	strcpy$/;"	l
 gs	include/proc.h	/^	t_32	gs;		\/* ©·						©¦			*\/$/;"	m	struct:s_stackframe
 gs	include/protect.h	/^	t_32	gs;$/;"	m	struct:s_tss
+head	include/tty.h	/^	t_32	*head;$/;"	m	struct:tty
 hwint00	kernel/kernel.asm	/^hwint00:		; Interrupt routine for irq 0 (the clock).$/;"	l
 hwint01	kernel/kernel.asm	/^hwint01:		; Interrupt routine for irq 1 (keyboard)$/;"	l
 hwint02	kernel/kernel.asm	/^hwint02:		; Interrupt routine for irq 2 (cascade!)$/;"	l
@@ -511,15 +532,17 @@ hwint15	kernel/kernel.asm	/^hwint15:		; Interrupt routine for irq 15$/;"	l
 idt	include/global.h	/^EXTERN	GATE		idt[IDT_SIZE];$/;"	v
 idt_ptr	include/global.h	/^EXTERN	t_8		idt_ptr[6];	\/\/ 0~15:Limit  16~47:Base$/;"	v
 in_byte	lib/klib.asm	/^in_byte:$/;"	l
-in_process	kernel/tty.c	/^PUBLIC void in_process(t_32 key){$/;"	f
+in_process	kernel/tty.c	/^PUBLIC void in_process(TTY * tty_p,t_32 key)$/;"	f
 inc	boot/boot.asm	/^	inc	di$/;"	d
 inc	boot/loader.asm	/^	inc	di$/;"	d
 init_8259A	kernel/i8259.c	/^PUBLIC void init_8259A()$/;"	f
 init_clock	kernel/clock.c	/^PUBLIC void init_clock()$/;"	f
+init_console	kernel/console.c	/^void init_console(CONSOLE *console_p)$/;"	f
 init_descriptor	kernel/protect.c	/^PRIVATE void init_descriptor(DESCRIPTOR * p_desc, t_32 base, t_32 limit, t_16 attribute)$/;"	f
 init_idt_desc	kernel/protect.c	/^PUBLIC void init_idt_desc(unsigned char vector, t_8 desc_type, t_pf_int_handler handler, unsigned char privilege)$/;"	f
 init_keyboard	kernel/keyboard.c	/^PUBLIC void init_keyboard()$/;"	f
 init_prot	kernel/protect.c	/^PUBLIC void init_prot()$/;"	f
+init_tty	kernel/tty.c	/^void init_tty(TTY *tty_p)$/;"	f
 initial_eip	include/proc.h	/^	t_pf_task	initial_eip;$/;"	m	struct:s_task
 inval_opcode	kernel/kernel.asm	/^inval_opcode:$/;"	l
 inval_tss	kernel/kernel.asm	/^inval_tss:$/;"	l
@@ -530,7 +553,7 @@ k_reenter	include/global.h	/^EXTERN	t_32		k_reenter;$/;"	v
 kb_in	kernel/keyboard.c	/^PRIVATE	KB_INPUT	kb_in;$/;"	v
 kernel_esp	include/proc.h	/^	t_32	kernel_esp;	\/* <- 'popad' will ignore it			©¦			*\/$/;"	m	struct:s_stackframe
 keyboard_handler	kernel/keyboard.c	/^PUBLIC void keyboard_handler(int irq)$/;"	f
-keyboard_read	kernel/keyboard.c	/^PUBLIC void keyboard_read()$/;"	f
+keyboard_read	kernel/keyboard.c	/^void keyboard_read(TTY * tty_p)$/;"	f
 keymap	include/keymap.h	/^t_32 keymap[NR_SCAN_CODES * MAP_COLS] = {$/;"	v
 ldt	include/protect.h	/^	t_32	ldt;$/;"	m	struct:s_tss
 ldt_sel	include/proc.h	/^	t_16				ldt_sel;		\/* selector in gdt giving ldt base and limit*\/$/;"	m	struct:s_proc
@@ -550,6 +573,7 @@ offset_high	include/protect.h	/^	t_16	offset_high;	\/* Offset High *\/$/;"	m	str
 offset_low	include/protect.h	/^	t_16	offset_low;	\/* Offset Low *\/$/;"	m	struct:s_gate
 org	boot/loader.asm	/^org  0100h$/;"	l
 out_byte	lib/klib.asm	/^out_byte:$/;"	l
+out_char	kernel/console.c	/^void out_char(CONSOLE * p_con,char ch)$/;"	f
 overflow	kernel/kernel.asm	/^overflow:$/;"	l
 p_head	include/keyboard.h	/^	char * p_head;$/;"	m	struct:s_kb
 p_proc_ready	include/global.h	/^EXTERN	PROCESS*	p_proc_ready;$/;"	v
@@ -570,6 +594,7 @@ regs	include/proc.h	/^	STACK_FRAME			regs;			\/* process' registers saved in sta
 restart	kernel/kernel.asm	/^restart:$/;"	l
 restart_reenter	kernel/kernel.asm	/^restart_reenter:$/;"	l
 retaddr	include/proc.h	/^	t_32	retaddr;	\/* return address for assembly code save()	©¦			*\/$/;"	m	struct:s_stackframe
+s_console	include/console.h	/^typedef struct s_console{$/;"	s
 s_descriptor	include/protect.h	/^typedef struct s_descriptor		\/* ¹² 8 ¸ö×Ö½Ú *\/$/;"	s
 s_gate	include/protect.h	/^typedef struct s_gate$/;"	s
 s_kb	include/keyboard.h	/^typedef struct s_kb{$/;"	s
@@ -580,9 +605,14 @@ s_tss	include/protect.h	/^typedef struct s_tss {$/;"	s
 save	kernel/kernel.asm	/^save:$/;"	l
 schedule	kernel/proc.c	/^PUBLIC void schedule()$/;"	f
 scroll_lock	kernel/keyboard.c	/^PRIVATE int scroll_lock;$/;"	v
+scroll_screen	kernel/console.c	/^void scroll_screen(CONSOLE *console_p, int direction)$/;"	f
 seg2phys	kernel/protect.c	/^PUBLIC t_32 seg2phys(t_16 seg)$/;"	f
 segment_not_present	kernel/kernel.asm	/^segment_not_present:$/;"	l
 selector	include/protect.h	/^	t_16	selector;	\/* Selector *\/$/;"	m	struct:s_gate
+set_console_start_addr	kernel/console.c	/^void set_console_start_addr(t_32 addr)$/;"	f
+set_cursor	kernel/console.c	/^void set_cursor(t_32 addr)$/;"	f
+set_cursor_length	kernel/console.c	/^void set_cursor_length()$/;"	f
+set_cursor_location	kernel/console.c	/^void set_cursor_location(t_32 addr)$/;"	f
 shift_l	kernel/keyboard.c	/^PRIVATE int shift_l;$/;"	v
 shift_r	kernel/keyboard.c	/^PRIVATE int shift_r;$/;"	v
 single_step_exception	kernel/kernel.asm	/^single_step_exception:$/;"	l
@@ -595,7 +625,8 @@ ss2	include/protect.h	/^	t_32	ss2;$/;"	m	struct:s_tss
 stack_exception	kernel/kernel.asm	/^stack_exception:$/;"	l
 stacksize	include/proc.h	/^	int		stacksize;$/;"	m	struct:s_task
 strcpy	lib/string.asm	/^strcpy:$/;"	l
-syn_mouse	kernel/tty.c	/^PUBLIC void syn_mouse(){$/;"	f
+switch_console	kernel/console.c	/^void switch_console(CONSOLE *console_p)$/;"	f
+syn_cursor	kernel/tty.c	/^PUBLIC void syn_cursor()$/;"	f
 sys_call	kernel/kernel.asm	/^sys_call:$/;"	l
 sys_call_table	kernel/global.c	/^PUBLIC	t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_get_ticks};$/;"	v
 sys_get_ticks	kernel/proc.c	/^PUBLIC int sys_get_ticks()$/;"	f
@@ -611,6 +642,7 @@ t_pf_irq_handler	include/type.h	/^typedef	void	(*t_pf_irq_handler)	(int irq);$/;
 t_pf_task	include/type.h	/^typedef	void	(*t_pf_task)		();$/;"	t
 t_port	include/type.h	/^typedef	unsigned int		t_port;$/;"	t
 t_sys_call	include/type.h	/^typedef	void*	t_sys_call;$/;"	t
+tail	include/tty.h	/^	t_32	*tail;$/;"	m	struct:tty
 task_stack	kernel/global.c	/^PUBLIC	char	task_stack[STACK_SIZE_TOTAL];$/;"	v
 task_table	kernel/global.c	/^PUBLIC	TASK	task_table[NR_TASKS] = {{task_tty, STACK_SIZE_TTY, "tty"},$/;"	v
 task_tty	kernel/tty.c	/^PUBLIC void task_tty()$/;"	f
@@ -620,7 +652,12 @@ times	boot/boot.asm	/^times 	510-($-$$)	db	0	; Ìî³äÊ£ÏÂµÄ¿Õ¼ä£¬Ê¹Éú³ÉµÄ¶þ½øÖÆ´úÂ
 tinix_main	kernel/main.c	/^PUBLIC int tinix_main()$/;"	f
 trap	include/protect.h	/^	t_16	trap;$/;"	m	struct:s_tss
 tss	include/global.h	/^EXTERN	TSS		tss;$/;"	v
+tty	include/tty.h	/^typedef	struct tty{$/;"	s
+tty_read	kernel/tty.c	/^void tty_read(TTY *tty_p)$/;"	f
+tty_table	kernel/global.c	/^TTY	tty_table[NR_TTY];$/;"	v
+tty_write	kernel/tty.c	/^void tty_write(TTY *tty_p)$/;"	f
 vir2phys	include/protect.h	152;"	d
+vmem_limit	include/console.h	/^	unsigned int vmem_limit;$/;"	m	struct:s_console
 wRootDirSizeForLoop	boot/boot.asm	/^wRootDirSizeForLoop	dw	RootDirSectors	; Root Directory Õ¼ÓÃµÄÉÈÇøÊý, ÔÚÑ­»·ÖÐ»áµÝ¼õÖÁÁã.$/;"	d
 wRootDirSizeForLoop	boot/loader.asm	/^wRootDirSizeForLoop	dw	RootDirSectors	; Root Directory Õ¼ÓÃµÄÉÈÇøÊý$/;"	d
 wSectorNo	boot/boot.asm	/^wSectorNo		dw	0		; Òª¶ÁÈ¡µÄÉÈÇøºÅ$/;"	d
