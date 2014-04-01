@@ -50,8 +50,9 @@ typedef struct s_task {
 
 
 /* Number of tasks */
-#define NR_TASKS		4
-
+#define NR_TASKS	1
+#define NR_USER_PROCS	3
+#define NR_PROCS	(NR_USER_PROCS+NR_TASKS )
 /* stacks of tasks */
 #define STACK_SIZE_TTY		0x8000
 #define STACK_SIZE_TESTA	0x8000
