@@ -9,6 +9,12 @@
 #define	_TINIX_KEYBOARD_H_
 
 
+//some regs and xinhao
+#define	LED_CODE 0xED
+#define KB_ACK	0xFA
+#define PORT_8042_CONTROL 0x64
+#define PORT_8042_DATA 0x60
+
 /************************************************************************/
 /*                          Macros Declaration                          */
 /************************************************************************/

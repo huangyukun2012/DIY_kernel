@@ -28,7 +28,12 @@ PRIVATE int caps_lock;
 PRIVATE int num_lock;
 PRIVATE int scroll_lock;
 PRIVATE int column;
-
+static int caps_lock;
+static int num_lock;
+static int scroll_lock;
+static void kb_wait();
+static void kb_ack();
+static void set_leds();
 PRIVATE t_8 get_byte_from_kbuf();
 /*======================================================================*
                             keyboard_handler
@@ -54,6 +59,16 @@ PUBLIC void init_keyboard()
 {
 	kb_in.count=0;
 	kb_in.p_head=kb_in.p_tail=kb_in.buf;
+
+	shift_r=shift_l=0;
+	alt_r=alt_l=0;
+	ctrl_r=ctrl_l=0;
+
+	caps_lock=1;
+	num_lock=0;
+	scroll_lock=0;
+
+	set_leds();
 
 	put_irq_handler(KEYBOARD_IRQ,keyboard_handler);
 	enable_irq(KEYBOARD_IRQ);
@@ -123,7 +138,14 @@ void keyboard_read(TTY * tty_p)
 			keyrow=&keymap[(scan_code&0x7F)*MAP_COLS];
 			column=0;
 			
-			if(shift_r==1 || shift_l==1)
+			int caps=shift_l || shift_r;
+
+			if(caps_lock){
+				if((keyrow[0]>='a') && (keyrow[0]<='z')){
+					caps=!caps;
+				}
+			}
+			if(caps)
 				column=1;
 			if(code_with_E0==1){
 				code_with_E0=0;
@@ -158,11 +180,97 @@ void keyboard_read(TTY * tty_p)
 					alt_r=make;
 					key=0;//because this shift 
 					break;
+				case CAPS_LOCK:
+					if(make){
+						caps_lock=!caps_lock;
+						set_leds();
+					}
+					break;
+				case NUM_LOCK:
+					if(make){
+						num_lock=!num_lock;
+						set_leds();
+					}
+					break;
+				case SCROLL_LOCK:
+					if(make){
+						scroll_lock=!scroll_lock;
+						set_leds();
+					}
+					break;
 				default://normal and so on
 					break;
 								
 			}
+
 			if (make){
+				int pad=0;
+
+				if((key>= PAD_SLASH) && (key<=PAD_9) ){
+					pad=1;
+					switch(key){
+						case PAD_SLASH:
+							key='\\';
+							break;
+						case PAD_STAR:
+							key='*';
+							break;
+						case PAD_MINUS:
+							key='-';
+							break;
+						case PAD_PLUS:
+							key='+';
+							break;
+						case PAD_ENTER:
+							key=ENTER;
+							break;
+						default:
+							if(num_lock && (key>=PAD_0) && (key<=PAD_9)){
+								key=key-PAD_0+'0';
+							}
+							else if(num_lock && key==PAD_DOT){
+								key='.';
+							}
+							else{
+								switch(key){
+									case PAD_HOME:
+										key=HOME;
+										break;
+									case PAD_END:
+										key=END;
+										break;
+									case PAD_PAGEUP:
+										key=PAGEUP;
+										break;
+									case PAD_PAGEDOWN:
+										key=PAGEDOWN;
+										break;
+									case PAD_INS:
+										key=INSERT;
+										break;
+									case PAD_UP:
+										key=UP;
+										break;
+									case PAD_DOWN:
+										key=DOWN;
+										break;
+									case PAD_LEFT:
+										key=LEFT;
+										break;
+									case PAD_RIGHT:
+										key=RIGHT;
+										break;
+									case PAD_DOT:
+										key=DELETE;
+										break;
+									default:
+										break;
+								}
+							}
+							break;
+
+					}
+				}
 				key |=(shift_l ? FLAG_SHIFT_L:0);
 				key |=(shift_r ? FLAG_SHIFT_R:0);
 				key |=(ctrl_l ? FLAG_CTRL_L:0);
@@ -196,3 +304,32 @@ PRIVATE t_8 get_byte_from_kbuf()
 
 }
 
+static void set_leds()
+{
+	t_8 leds=(caps_lock << 2) | (num_lock << 1) | scroll_lock;
+
+	kb_wait();
+	out_byte(PORT_8042_DATA,LED_CODE);
+	kb_ack();
+
+	kb_wait();
+	out_byte(PORT_8042_DATA,leds);
+	kb_ack();
+}
+static void kb_wait()
+{
+	t_8 kb_state;
+	do{
+		kb_state=in_byte(PORT_8042_CONTROL);
+	}while(kb_state & 0x02);
+
+}
+static void kb_ack()
+{
+	t_8 kb_read;
+	do{
+		kb_read=in_byte(PORT_8042_DATA);
+
+	}while(kb_read != KB_ACK);
+
+}

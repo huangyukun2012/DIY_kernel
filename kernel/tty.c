@@ -24,6 +24,7 @@ void tty_read(TTY *tty_p);
 void tty_write(TTY *tty_p);
 void init_tty(TTY *tty_p);
 extern KB_INPUT kb_in;
+void put_key2tty(TTY *tty_p, t_32 key);
 /*======================================================================*
                            task_tty
  *======================================================================*/
