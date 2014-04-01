@@ -28,7 +28,7 @@ PUBLIC	TASK	user_proc_table[NR_USER_PROCS] = {
 
 PUBLIC	t_pf_irq_handler	irq_table[NR_IRQ];
 
-PUBLIC	t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_get_ticks};
+PUBLIC	t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_get_ticks,sys_write};
 
 TTY	tty_table[NR_TTY];
 

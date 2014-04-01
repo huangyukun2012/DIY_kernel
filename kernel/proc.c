@@ -23,8 +23,10 @@ PUBLIC void schedule()
 	int		greatest_priority = 0;
 	
 	p_proc_ready->ticks--;
-	if(p_proc_ready->ticks>0)
+
+	if(p_proc_ready->ticks>0){
 		return;
+	}
 
 	while (1==1) {
 		for (p=proc_table; p<proc_table+NR_PROCS; p++) {
@@ -41,8 +43,9 @@ PUBLIC void schedule()
 				p->ticks = p->priority;
 			}
 		}
-		else
+		else{
 			return;
+		}
 	}
 }
 

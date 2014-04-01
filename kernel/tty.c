@@ -25,6 +25,8 @@ void tty_write(TTY *tty_p);
 void init_tty(TTY *tty_p);
 extern KB_INPUT kb_in;
 void put_key2tty(TTY *tty_p, t_32 key);
+void write_tty(TTY * tty_p,char *buf,int len);
+int sys_write(char *buf,int len,PROCESS *p_proc);
 /*======================================================================*
                            task_tty
  *======================================================================*/
@@ -155,4 +157,19 @@ PUBLIC void syn_cursor()
 PRIVATE void page_switch()
 {
 	set_console_start_addr(80*15);
+}
+void write_tty(TTY * tty_p,char *buf,int len)
+{
+	char *p=buf;
+	int i=len;
+	while(i){
+		out_char(tty_p->console_p,*p);
+		p++;
+		i--;
+	}
+}
+int sys_write(char *buf,int len,PROCESS *p_proc)
+{
+	write_tty(&tty_table[p_proc->nr_tty],buf,len);
+	return 0;
 }

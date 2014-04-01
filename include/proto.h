@@ -5,7 +5,8 @@
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                                                     Forrest Yu, 2005
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
+#include "proc.h"
+#include "const.h"
 /* klib.asm */
 PUBLIC void	out_byte(t_port port, t_8 value);
 PUBLIC t_8	in_byte(t_port port);
@@ -61,4 +62,7 @@ PUBLIC	int	sys_get_ticks();	/* t_sys_call */
 /* syscall.asm */
 PUBLIC	void	sys_call();		/* t_pf_int_handler */
 PUBLIC	int	get_ticks();
+int sys_write(char *buf,int len,PROCESS *p_process);
+int write(char* buf,int len);
+
 #endif

@@ -21,6 +21,6 @@ typedef	void	(*t_pf_task)		();
 typedef	void	(*t_pf_irq_handler)	(int irq);
 
 typedef	void*	t_sys_call;
-
+typedef char* 	va_list;
 
 #endif /* _TINIX_TYPE_H_ */

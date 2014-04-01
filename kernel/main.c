@@ -12,7 +12,7 @@
 #include "string.h"
 #include "proc.h"
 #include "global.h"
-
+#include "nostdio.h"
 
 /*======================================================================*
                             tinix_main
@@ -25,6 +25,7 @@ PUBLIC int tinix_main()
 	PROCESS*	p_proc		= proc_table;
 	char*		p_task_stack	= task_stack + STACK_SIZE_TOTAL;
 	t_16		selector_ldt	= SELECTOR_LDT_FIRST;
+
 	int i;
 	t_8 privilege;
 	t_8 rpl;
@@ -50,7 +51,7 @@ PUBLIC int tinix_main()
 		memcpy(&p_proc->ldts[0], &gdt[SELECTOR_KERNEL_CS >> 3], sizeof(DESCRIPTOR));
 		p_proc->ldts[0].attr1 = DA_C | privilege << 5;	// change the DPL
 		memcpy(&p_proc->ldts[1], &gdt[SELECTOR_KERNEL_DS >> 3], sizeof(DESCRIPTOR));
-		p_proc->ldts[1].attr1 = DA_DRW | PRIVILEGE_TASK << 5;	// change the DPL
+		p_proc->ldts[1].attr1 = DA_DRW | privilege << 5;	// change the DPL
 		p_proc->regs.cs		= ((8 * 0) & SA_RPL_MASK & SA_TI_MASK) | SA_TIL | rpl;
 		p_proc->regs.ds		= ((8 * 1) & SA_RPL_MASK & SA_TI_MASK) | SA_TIL | rpl;
 		p_proc->regs.es		= ((8 * 1) & SA_RPL_MASK & SA_TI_MASK) | SA_TIL | rpl;
@@ -61,15 +62,23 @@ PUBLIC int tinix_main()
 		p_proc->regs.esp	= (t_32)p_task_stack;
 		p_proc->regs.eflags	= eflags ;	// IF=1, IOPL=1, bit 2 is always 1.
 
+		p_proc->nr_tty=0;
 		p_task_stack -= p_task->stacksize;
+		
 		p_proc++;
 		p_task++;
 		selector_ldt += 1 << 3;
-	}
-	proc_table[0].ticks = proc_table[0].priority = 15;
-	proc_table[1].ticks = proc_table[1].priority =  5;
-	proc_table[2].ticks = proc_table[2].priority =  3;
 
+	}
+	proc_table[0].ticks = proc_table[0].priority = 15;//tty
+	proc_table[1].ticks = proc_table[1].priority =  5;//A
+	proc_table[2].ticks = proc_table[2].priority =  5;//B
+	proc_table[3].ticks = proc_table[3].priority =  5;//A
+
+	proc_table[1].nr_tty=0;//A
+	proc_table[2].nr_tty=1;//B
+	proc_table[3].nr_tty=1;//C
+	
 	k_reenter	= 0;
 	ticks		= 0;
 
@@ -89,6 +98,7 @@ PUBLIC int tinix_main()
 void TestA()
 {
 	while(1){
+		printf("<Ticks:%x>",get_ticks());
 		milli_delay(10);
 	}
 }
@@ -101,6 +111,7 @@ void TestB()
 {
 	int i = 0;
 	while(1){
+		printf("B");
 		milli_delay(10);
 	}
 }
@@ -113,6 +124,7 @@ void TestC()
 {
 	int i = 0;
 	while(1){
+		printf("C");
 		milli_delay(10);
 	}
 }

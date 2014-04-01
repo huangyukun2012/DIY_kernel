@@ -29,7 +29,7 @@ TINIXBOOT	= boot/boot.bin boot/loader.bin
 TINIXKERNEL	= kernel.bin
 OBJS		= kernel/kernel.o kernel/syscall.o kernel/start.o kernel/main.o\
 			kernel/clock.o kernel/i8259.o kernel/global.o kernel/protect.o\
-			kernel/proc.o kernel/keyboard.o kernel/tty.o kernel/console.o\
+			kernel/proc.o kernel/keyboard.o kernel/tty.o kernel/console.o kernel/nostdio.o\
 			lib/klib.o lib/klibc.o lib/string.o
 DASMOUTPUT	= kernel.bin.asm
 
@@ -116,6 +116,12 @@ kernel/tty.o: kernel/tty.c include/type.h include/const.h include/protect.h incl
 kernel/console.o: kernel/console.c include/type.h include/const.h \
 	 include/proto.h
 	$(CC) $(CFLAGS) -o $@ $<
+
+nostdio.o: kernel/nostdio.c include/type.h include/proc.h \
+	 include/protect.h include/proto.h include/string.h include/const.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+
 
 lib/klibc.o: lib/klib.c include/type.h include/const.h include/protect.h include/string.h include/proc.h include/proto.h \
 			include/global.h
