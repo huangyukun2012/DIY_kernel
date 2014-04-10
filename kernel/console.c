@@ -17,6 +17,7 @@ void set_cursor_length();
 
 void out_char(CONSOLE * p_con,char ch)
 {
+	disp_pos=0;
 	t_8	*vmem_p=(t_8 *)(V_MEM_BASE + p_con->cursor_location*2);
 	switch(ch){
 		case '\n':
@@ -33,8 +34,9 @@ void out_char(CONSOLE * p_con,char ch)
 			}
 			break;
 		default:
+				disp_str("in outchar ");		
 			if(p_con->cursor_location < p_con->begin_adr+p_con->vmem_limit){
-				
+				disp_str("in if ");		
 				*vmem_p = ch;
 				vmem_p++;
 				*vmem_p = COLOR;
@@ -45,8 +47,6 @@ void out_char(CONSOLE * p_con,char ch)
 	while(p_con->cursor_location >= p_con->current_start_addr + SCREEN_SIZE){
 		scroll_screen(p_con,SCROLL_DOWN);
 	}
-
-
 	set_cursor(p_con->cursor_location);//display position
 
 }

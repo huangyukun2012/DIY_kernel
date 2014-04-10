@@ -7,9 +7,13 @@
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 #include "proc.h"
 #include "const.h"
+#include "msg.h"
+
 /* klib.asm */
 PUBLIC void	out_byte(t_port port, t_8 value);
 PUBLIC t_8	in_byte(t_port port);
+extern void port_read(t_16 port, void* buf, int n);
+extern void port_write(t_16 port, void* buf, int n);
 PUBLIC void	disable_int();
 PUBLIC void	enable_int();
 PUBLIC void	disp_str(char * info);
@@ -40,8 +44,6 @@ PUBLIC void spurious_irq(int irq);
 PUBLIC void clock_handler(int irq);
 PUBLIC void milli_delay(int milli_sec);
 
-/* proc.c */
-PUBLIC void schedule();
 
 /* keyboard.c */
 PUBLIC void keyboard_handler(int irq);
@@ -56,13 +58,8 @@ PUBLIC void syn_cursor();
 /*                        以下是系统调用相关                            */
 /************************************************************************/
 
-/* proc.c */
-PUBLIC	int	sys_get_ticks();	/* t_sys_call */
 
 /* syscall.asm */
 PUBLIC	void	sys_call();		/* t_pf_int_handler */
-PUBLIC	int	get_ticks();
-int sys_write(char *buf,int len,PROCESS *p_process);
-int write(char* buf,int len);
-
+int printx(char *s);
 #endif

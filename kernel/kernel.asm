@@ -166,6 +166,29 @@ csinit:		; “这个跳转指令强制使用刚刚初始化的结构”——<<OS:D&I 2nd>> P90.
 	ret
 %endmacro
 
+; ---------------------------------
+%macro	hwint_slave	1
+	call	save
+	in	al, INT_S_CTLMASK	; ┓
+	or	al, (1 << (%1 -8 ))		; ┣ 屏蔽当前中断
+	out	INT_S_CTLMASK, al	; ┛
+	
+	mov	al, EOI			; ┓置EOI位
+	out	INT_M_CTL, al		; ┛
+	nop
+	out	INT_S_CTL, al		; 注意，此处对主和从片都要EOI
+	
+	sti	; CPU在响应中断的过程中会自动关中断，这句之后就允许响应新的中断
+	push	%1			; ┓
+	call	[irq_table + 4 * %1]	; ┣ 中断处理程序
+	pop	ecx			; ┛
+	cli
+	
+	in	al, INT_S_CTLMASK	; ┓
+	and	al, ~(1 << (%1-8) )		; ┣ 恢复接受当前中断
+	out	INT_S_CTLMASK, al	; ┛
+	ret
+%endmacro
 
 
 ALIGN	16
@@ -202,12 +225,12 @@ hwint07:		; Interrupt routine for irq 7 (printer)
 
 
 ; ---------------------------------
-%macro	hwint_slave	1
-	push	%1
-	call	spurious_irq
-	add	esp, 4
-	hlt
-%endmacro
+;%macro	hwint_slave	1
+;	push	%1
+;	call	spurious_irq
+;	add	esp, 4
+;	hlt
+;%endmacro
 ; ---------------------------------
 
 ALIGN	16
@@ -318,9 +341,14 @@ save:
 	push	es	; ┣ 保存原寄存器值
 	push	fs	; ┃
 	push	gs	; ┛
+
+	mov	esi,edx; edx is used for syscall
+
 	mov	dx, ss
 	mov	ds, dx
 	mov	es, dx
+
+	mov	edx,esi
 
 	mov	esi, esp			; esi = 进程表起始地址
 
@@ -341,14 +369,19 @@ save:
 ; ====================================================================================
 sys_call:
 	call	save
-	push	dword [p_proc_ready]
 	sti
 
+	push	esi
+	push	dword [p_proc_ready]
+	
+	push 	edx
 	push	ecx
 	push	ebx
 	call	[sys_call_table + eax * 4]
-	add 	esp,4*3
-	mov	[esi + EAXREG - P_STACKBASE], eax
+	add 	esp,4*4
+	
+	pop 	esi
+	mov		[esi + EAXREG - P_STACKBASE], eax
 	
 	cli
 

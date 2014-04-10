@@ -30,7 +30,7 @@ TINIXKERNEL	= kernel.bin
 OBJS		= kernel/kernel.o kernel/syscall.o kernel/start.o kernel/main.o\
 			kernel/clock.o kernel/i8259.o kernel/global.o kernel/protect.o\
 			kernel/proc.o kernel/keyboard.o kernel/tty.o kernel/console.o kernel/nostdio.o\
-			lib/klib.o lib/klibc.o lib/string.o
+			kernel/systask.o lib/klib.o lib/klibc.o lib/string.o lib/err.o fs/main.o kernel/hd.o
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
@@ -90,7 +90,7 @@ kernel/i8259.o: kernel/i8259.c include/type.h include/const.h include/protect.h 
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/global.o: kernel/global.c include/type.h include/const.h include/protect.h include/proc.h \
-			include/global.h include/proto.h
+			include/global.h include/proto.h include/systask.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/protect.o: kernel/protect.c include/type.h include/const.h include/protect.h include/proc.h include/proto.h \
@@ -117,10 +117,21 @@ kernel/console.o: kernel/console.c include/type.h include/const.h \
 	 include/proto.h
 	$(CC) $(CFLAGS) -o $@ $<
 
-nostdio.o: kernel/nostdio.c include/type.h include/proc.h \
+kernel/nostdio.o: kernel/nostdio.c include/type.h include/proc.h \
 	 include/protect.h include/proto.h include/string.h include/const.h
 	$(CC) $(CFLAGS) -o $@ $<
 
+kernel/systask.o: kernel/systask.c include/msg.h include/proc.h \
+	 include/protect.h include/global.h include/tty.h include/console.h \
+	  include/proc.h include/proto.h include/const.h include/err.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+kernel/hd.o: kernel/hd.c include/type.h include/proc.h \
+	 include/protect.h include/msg.h include/hd.h include/fs.h include/err.h \
+
+fs/main.o: fs/main.c include/msg.h include/type.h include/proc.h \
+	 include/protect.h include/err.h include/nostdio.h
+	$(CC) $(CFLAGS) -o $@ $<
 
 
 lib/klibc.o: lib/klib.c include/type.h include/const.h include/protect.h include/string.h include/proc.h include/proto.h \
@@ -132,3 +143,7 @@ lib/klib.o : lib/klib.asm include/sconst.inc
 
 lib/string.o : lib/string.asm
 	$(ASM) $(ASMKFLAGS) -o $@ $<
+
+lib/err.o: lib/err.c include/const.h include/type.h include/tty.h \
+	 include/err.h
+

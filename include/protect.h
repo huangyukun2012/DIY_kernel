@@ -7,10 +7,10 @@
 
 #ifndef	_TINIX_PROTECT_H_
 #define	_TINIX_PROTECT_H_
-
+#include "type.h"
 
 /* 存储段描述符/系统段描述符 */
-typedef struct s_descriptor		/* 共 8 个字节 */
+typedef struct descriptor		/* 共 8 个字节 */
 {
 	t_16	limit_low;		/* Limit */
 	t_16	base_low;		/* Base */
@@ -85,7 +85,8 @@ typedef struct s_tss {
 
 /* 每个任务有一个单独的 LDT, 每个 LDT 中的描述符个数: */
 #define LDT_SIZE		2
-
+#define INDEX_LDT_C		0
+#define INDEX_LDT_RW    1
 /* 描述符类型值说明 */
 #define	DA_32			0x4000	/* 32 位段				*/
 #define	DA_LIMIT_4K		0x8000	/* 段界限粒度为 4K 字节			*/

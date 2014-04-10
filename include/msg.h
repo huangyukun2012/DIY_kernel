@@ -39,6 +39,11 @@ typedef struct mess{
 enum msgtype{
 	HARD_INT=1,
 	GET_TICKS,
+	DEV_OPEN=1001,
+	DEV_CLOSE,
+	DEV_READ,
+	DEV_WRITE,
+	DEV_IOCTL
 };
 #define RETVAL	u.m3.m3i1
 

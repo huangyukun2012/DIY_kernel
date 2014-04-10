@@ -13,7 +13,7 @@
 #include "proc.h"
 #include "global.h"
 #include "nostdio.h"
-
+#include "msg.h"
 /*======================================================================*
                             tinix_main
  *======================================================================*/
@@ -30,6 +30,7 @@ PUBLIC int tinix_main()
 	t_8 privilege;
 	t_8 rpl;
 	int eflags;
+	int prio;
 
 	for(i=0;i<NR_PROCS;i++){
 		if(i<NR_TASKS){
@@ -37,12 +38,14 @@ PUBLIC int tinix_main()
 			privilege=PRIVILEGE_TASK;
 			rpl=RPL_TASK;
 			eflags=0x1202;
+			prio=15;
 		}
 		else{
 			p_task=user_proc_table+i-NR_TASKS;
 			privilege=PRIVILEGE_USER;
 			rpl=RPL_USER;
 			eflags=0x0202;
+			prio=5;
 		}
 		strcpy(p_proc->name, p_task->name);	// name of the process
 		p_proc->pid	= i;			// pid
@@ -64,20 +67,26 @@ PUBLIC int tinix_main()
 
 		p_proc->nr_tty=0;
 		p_task_stack -= p_task->stacksize;
+	
+		p_proc->p_flags=0;
+		p_proc->p_msg=0;
+		p_proc->p_recvfrom=NO_TASK;
+		p_proc->p_sendto=NO_TASK;
+		p_proc->has_int_msg=0;
+		p_proc->q_sending=0;
+		p_proc->next_sending=0;
 		
+		p_proc->ticks=p_proc->priority=prio;
+
 		p_proc++;
 		p_task++;
 		selector_ldt += 1 << 3;
 
 	}
-	proc_table[0].ticks = proc_table[0].priority = 15;//tty
-	proc_table[1].ticks = proc_table[1].priority =  5;//A
-	proc_table[2].ticks = proc_table[2].priority =  5;//B
-	proc_table[3].ticks = proc_table[3].priority =  5;//A
 
-	proc_table[1].nr_tty=0;//A
-	proc_table[2].nr_tty=1;//B
-	proc_table[3].nr_tty=1;//C
+	proc_table[NR_TASKS+0].nr_tty=0;//A
+	proc_table[NR_TASKS+1].nr_tty=1;//B
+	proc_table[NR_TASKS+2].nr_tty=1;//C
 	
 	k_reenter	= 0;
 	ticks		= 0;
@@ -98,7 +107,8 @@ PUBLIC int tinix_main()
 void TestA()
 {
 	while(1){
-		printf("<Ticks:%x>",get_ticks());
+		printf("A");
+	//	printf("<Ticks:%x>",get_ticks());
 		milli_delay(10);
 	}
 }
@@ -129,3 +139,11 @@ void TestC()
 	}
 }
 
+int get_ticks()
+{
+	MESSAGE msg;
+	reset_msg(&msg);
+	msg.type=GET_TICKS;
+	send_recv(BOTH,TASK_SYS,&msg);
+	return msg.RETVAL;
+}

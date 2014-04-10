@@ -8,6 +8,10 @@
 #define SCROLL_UP	1
 #define	SCROLL_DOWN	-1
 
+#define DEFAULT_CHAR_COLOR  (MAKE_COLOR(BLACK, WHITE))
+#define GRAY_CHAR       (MAKE_COLOR(BLACK, BLACK) | BRIGHT)
+#define RED_CHAR        (MAKE_COLOR(BLUE, RED) | BRIGHT)
+
 typedef struct s_console{
 	//all are counted in double bytes!
 	unsigned int begin_adr;

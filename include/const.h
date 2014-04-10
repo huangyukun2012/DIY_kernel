@@ -33,7 +33,7 @@
 #define	BLUE	0x1	/* 0001 */
 #define	FLASH	0x80	/* 1000 0000 */
 #define	BRIGHT	0x08	/* 0000 1000 */
-#define	MAKE_COLOR(x,y)	(x | y)	/* MAKE_COLOR(Background,Foreground) */
+#define	MAKE_COLOR(x,y)	((x<<4) | y)	/* MAKE_COLOR(Background,Foreground) */
 
 /* GDT 和 IDT 中描述符的个数 */
 #define	GDT_SIZE	128
@@ -98,7 +98,10 @@
 #define		V_MEM_SIZE	0x8000
 
 /* system call */
-#define	NR_SYS_CALL	2
+#define	NR_SYS_CALL	3
+
+
+
 
 
 #endif /* _TINIX_CONST_H_ */

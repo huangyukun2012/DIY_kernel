@@ -7,6 +7,8 @@
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include "protect.h"
+#include "msg.h"
+#include "type.h"
 typedef struct s_stackframe {	/* proc_ptr points here				¡ü Low			*/
 	t_32	gs;		/* ©·						©¦			*/
 	t_32	fs;		/* ©§						©¦			*/
@@ -28,8 +30,13 @@ typedef struct s_stackframe {	/* proc_ptr points here				¡ü Low			*/
 	t_32	ss;		/*  ©¿						©ÛHigh			*/
 }STACK_FRAME;
 
+typedef struct s_task {
+	t_pf_task	initial_eip;
+	int		stacksize;
+	char		name[32];
+}TASK;
 
-typedef struct s_proc {
+typedef struct proc{
 	STACK_FRAME			regs;			/* process' registers saved in stack frame */
 
 	t_16				ldt_sel;		/* selector in gdt giving ldt base and limit*/
@@ -39,31 +46,65 @@ typedef struct s_proc {
 	int				priority;
 	t_32				pid;			/* process id passed in from MM */
 	char				name[16];		/* name of the process */
-
 	int 			nr_tty;
+
+	int 			p_flags;
+	MESSAGE			*p_msg;
+	int				p_recvfrom;
+	int 			p_sendto;
+	int				has_int_msg;
+	struct	proc	*q_sending;
+	struct 	proc	*next_sending;
 }PROCESS;
 
 
-typedef struct s_task {
-	t_pf_task	initial_eip;
-	int		stacksize;
-	char		name[32];
-}TASK;
 
+#define proc2pid(x)	(x-proc_table)
+void * va2la(int pid, void * va);
+int ldt_reg_linear(PROCESS  *p,int index);
+
+int	sys_printx(int _unused1, int _unused2, char * s, struct proc *p);	/* t_sys_call */
+int sys_sendrec(int function , int sec_dest , MESSAGE *m, struct proc * p);
+int send_recv(int function, int src_dest, MESSAGE *msg);
+
+void schedule();
+void dump_msg(const char *,MESSAGE *);
 
 /* Number of tasks */
-#define NR_TASKS	1
+#define NR_TASKS	4
 #define NR_USER_PROCS	3
 #define NR_PROCS	(NR_USER_PROCS+NR_TASKS )
 
+/*tasks */
+#define INVALID_DRIVER -20
+#define INTERRUPT -10
+#define TASK_TTY 0
+#define TASK_SYS 1
+#define	TASK_HD 2
+#define ANY	(NR_PROCS+10)
+#define NO_TASK (NR_PROCS + 20)
+
 /* stacks of tasks */
 #define STACK_SIZE_TTY		0x8000
+#define STACK_SIZE_SYS		0x8000
+#define STACK_SIZE_HD		0x8000
+#define STACK_SIZE_FS		0x8000
 #define STACK_SIZE_TESTA	0x8000
 #define STACK_SIZE_TESTB	0x8000
 #define STACK_SIZE_TESTC	0x8000
 
+
 #define STACK_SIZE_TOTAL	(STACK_SIZE_TTY + \
+				STACK_SIZE_SYS + \
+				STACK_SIZE_HD +\
+				STACK_SIZE_FS + \
 				STACK_SIZE_TESTA + \
 				STACK_SIZE_TESTB + \
 				STACK_SIZE_TESTC)
+
+
+
+#define SENDING   0x02  /* set when proc trying to send */
+#define RECEIVING 0x04  /* set when proc trying to recv */
+
 #endif

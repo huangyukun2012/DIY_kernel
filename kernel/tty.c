@@ -1,8 +1,5 @@
-
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                                tty.c
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                                                    Forrest Yu, 2005
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 #include "type.h"
@@ -15,6 +12,7 @@
 #include "keyboard.h"
 #include "tty.h"
 #include "console.h"
+#include "err.h"
 
 PRIVATE void page_switch();
 PUBLIC void task_tty();
@@ -42,13 +40,14 @@ PUBLIC void task_tty()
 	current_tty=tty_table;
 	switch_console(current_tty->console_p);
 
+	disp_str("to1\n");
 	while (1) {/* forever. yes, forever, there's something which is some kind of forever... */
 		for (tty_p  = tty_table; tty_p  < tty_table+NR_TTY; ++tty_p ){
 			tty_read(tty_p);
 			tty_write(tty_p);
 		}
-		
 	}
+		
 }
 
 void init_tty(TTY *tty_p)
@@ -168,8 +167,47 @@ void write_tty(TTY * tty_p,char *buf,int len)
 		i--;
 	}
 }
-int sys_write(char *buf,int len,PROCESS *p_proc)
+int sys_printx(int _unused1, int _unused2, char * s, struct proc *proc_p)
 {
-	write_tty(&tty_table[p_proc->nr_tty],buf,len);
-	return 0;
+	const char *p;
+	char ch;
+
+	char reenter_err[]="? k_reenter is incorect for unknow reason";
+
+	if(k_reenter ==0 )//called in ring0
+		p=va2la(proc2pid(proc_p),s);
+	else if(k_reenter > 0){//called in ring1~3
+		p=s;
+	}
+	else//never
+		p=reenter_err;
+	
+	if(*p==MAG_CH_PANIC ||
+			(*p==MAG_CH_ASSERT && p_proc_ready < &proc_table[NR_TASKS])){
+		disable_int();
+		char *v=(char *)V_MEM_BASE;
+		const char *q=p+1;
+
+		while(v< (char *)(V_MEM_BASE + V_MEM_SIZE)){
+			*v++=*q++;
+			*v++=RED_CHAR;
+			if(!*q){
+				while( ((int )v- V_MEM_BASE ) % (SCREEN_WIDETH *16)){
+					v++;
+					*v++=GRAY_CHAR;
+				}
+				q=p+1;
+			}
+		}
+		__asm__ __volatile__("hlt");
+	}
+
+	while( (ch=*p++) != 0){
+		if(ch == MAG_CH_PANIC || ch == MAG_CH_ASSERT )
+			continue;
+		int nr=proc_p->nr_tty;
+		out_char(tty_table[nr].console_p, ch);
+	}
 }
+
+

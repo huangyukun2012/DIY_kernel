@@ -1,4 +1,5 @@
 #!/bin/bash
 make all
+sudo umount /mnt/floppy
 sudo make buildimg
 bochs
