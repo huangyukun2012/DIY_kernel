@@ -5,8 +5,11 @@
 #include "nostdio.h"
 #include "type.h"
 #include "proto.h"
+#include "math.h"
+#include "string.h"
 
 #define SECTOR_SIZE 512
+#define SECTOR_SIZE_SHIFT 9
  t_8 hd_status;
  t_8 hdbuf[2*SECTOR_SIZE];
  static struct hd_info hds_info[1];
@@ -25,6 +28,9 @@ static void print_hdsinfo(struct hd_info *hdi);
 static void partition(int device, int style);
 static void get_part_table(int drive, int sector_nr, struct part_entry *entry);
 void hd_open(int device);
+static hd_close(int device_nr);
+static void hd_ioctl(MESSAGE *msgp);
+static hd_rw( MESSAGE *msgp);
 
 
 void task_hd()
@@ -39,6 +45,16 @@ void task_hd()
 		switch(msg.type){
 			case DEV_OPEN:
 					hd_open(msg.DEVICE);
+					break;
+			case DEV_CLOSE:
+					hd_close(msg.DEVICE);
+					break;
+			case DEV_READ:
+			case DEV_WRITE:
+					hd_rw(&msg);
+					break;
+			case DEV_IOCTL:
+					hd_ioctl(&msg);
 					break;
 			default:
 					dump_msg("HD driver: unknown msg",&msg);
@@ -268,4 +284,77 @@ static void print_hdsinfo(struct hd_info *hdi)
 				hdi->logical[i].size);
 	}
 
+}
+
+static hd_close(int device_nr)
+{
+	int drive_nr=DRV_OF_DEV(device_nr);
+	assert(drive_nr==0);
+	hds_info[drive_nr].open_cnt--;
+
+}
+
+
+static hd_rw( MESSAGE *msgp)
+{
+	int drive_nr=DRV_OF_DEV(msgp->DEVICE);
+	t_64 pos=msgp->POSITION;
+
+	assert( (pos >> SECTOR_SIZE_SHIFT) < (1<<31));
+	assert( (pos & 0x1ff) == 0);
+
+	t_32 start_sector = (t_32) (pos >> SECTOR_SIZE_SHIFT);
+	int logic_part_index=(msgp->DEVICE - MINOR_hd1a) % NR_SUB_PER_DRIVE;
+	start_sector += msgp->DEVICE < MAX_PRIM_INDEX ? hds_info[drive_nr].primary[msgp->DEVICE].base : hds_info[drive_nr].logical[logic_part_index].base;
+
+	void *lineraddress=(void *)va2la(msgp->PROC_NR,msgp->BUF);
+	int byte_left= msgp->CNT;
+
+	struct hd_cmd cmd;
+	cmd.features =0;
+	cmd.sector_count = (msgp->CNT + SECTOR_SIZE - 1)/SECTOR_SIZE;
+	cmd.lba_low = (start_sector & 0xff);
+	cmd.lba_mid = (start_sector >> 8) & 0xff;
+	cmd.lba_high = (start_sector >> 16 )& 0xff;
+	cmd.device = MAKE_DEVICE_REG(1,drive_nr,(start_sector >>24)& 0xf);
+	cmd.command = (msgp->type == DEV_READ)? ATA_READ : ATA_WRITE;
+	hd_cmd_out(&cmd);
+
+	while(byte_left){
+		int bytes=min(SECTOR_SIZE, byte_left);
+		if(msgp->type == DEV_READ){
+			interrupt_wait();
+			port_read(REG_DATA, hdbuf, SECTOR_SIZE);
+			phys_copy(lineraddress, (void *)va2la(TASK_HD, hdbuf), bytes);
+
+		}
+		else{
+			if(!waitfor(STATUS_DRQ, STATUS_DRQ, HD_TIMEOUT))
+				panic("hd writing error");
+			port_write(REG_DATA,lineraddress, bytes);
+			interrupt_wait();
+		}
+		byte_left -=SECTOR_SIZE;
+		lineraddress +=SECTOR_SIZE;
+	}
+}
+
+/*-----------------------hd_ioctl--------------------*/
+
+static void hd_ioctl(MESSAGE *msgp)
+{
+	int device_nr = msgp->DEVICE;
+	int drive_nr = DRV_OF_DEV(device_nr);
+	
+	struct hd_info * hdi = &hds_info[drive_nr];
+
+	if(msgp->REQUEST == DIOCTL_GET_GEO){
+		void *dst = va2la(msgp->PROC_NR,msgp->BUF);
+		void *src = va2la(TASK_HD, device_nr < MAX_PRIM_INDEX? &hdi->primary[device_nr] : 
+				&hdi->logical[(device_nr - MINOR_hd1a )%  NR_SUB_PER_DRIVE]);
+		phys_copy(dst,src, sizeof (struct part_info));
+	}
+	else{
+		assert(0);
+	}
 }

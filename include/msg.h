@@ -65,5 +65,5 @@ enum msgtype{
 #define RETVAL      u.m3.m3i1
 /* #define  STATUS      u.m3.m3i1 */
 
-
+#define DIOCTL_GET_GEO 1
 #endif

@@ -81,6 +81,7 @@ void dump_msg(const char *,MESSAGE *);
 #define TASK_TTY 0
 #define TASK_SYS 1
 #define	TASK_HD 2
+#define TASK_FS 3
 #define ANY	(NR_PROCS+10)
 #define NO_TASK (NR_PROCS + 20)
 

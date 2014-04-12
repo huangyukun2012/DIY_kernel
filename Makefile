@@ -127,7 +127,7 @@ kernel/systask.o: kernel/systask.c include/msg.h include/proc.h \
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/hd.o: kernel/hd.c include/type.h include/proc.h \
-	 include/protect.h include/msg.h include/hd.h include/fs.h include/err.h \
+	 include/protect.h include/msg.h include/hd.h include/fs.h include/err.h  include/string.h\
 
 fs/main.o: fs/main.c include/msg.h include/type.h include/proc.h \
 	 include/protect.h include/err.h include/nostdio.h include/drive.h include/config.h
