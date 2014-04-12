@@ -9,6 +9,10 @@
 #define SECTOR_SIZE 512
  t_8 hd_status;
  t_8 hdbuf[2*SECTOR_SIZE];
+ static struct hd_info hds_info[1];
+#define DRV_OF_DEV(dev) (dev<= MAX_PRIM_INDEX ? \
+							dev / NR_PRIM_PER_DRIVE: \
+							(dev- MINOR_hd1a)/ NR_SUB_PER_DRIVE)
 
 void	init_hd			();
 void	hd_cmd_out		(struct hd_cmd* cmd);
@@ -17,6 +21,12 @@ void	interrupt_wait		();
 void	hd_identify		(int drive);
 void	print_identify_info	(t_16* hd_info);
 void 	hd_handler();
+static void print_hdsinfo(struct hd_info *hdi);
+static void partition(int device, int style);
+static void get_part_table(int drive, int sector_nr, struct part_entry *entry);
+void hd_open(int device);
+
+
 void task_hd()
 {
 	MESSAGE msg;
@@ -28,7 +38,7 @@ void task_hd()
 
 		switch(msg.type){
 			case DEV_OPEN:
-					hd_identify(0);
+					hd_open(msg.DEVICE);
 					break;
 			default:
 					dump_msg("HD driver: unknown msg",&msg);
@@ -47,7 +57,17 @@ void init_hd()
 	put_irq_handler(AT_WINI_IRQ,hd_handler);
 	enable_irq(CASCADE_IRQ);
 	enable_irq(AT_WINI_IRQ);
+
+	int i;
+	int nr_drive=sizeof(hds_info) / sizeof(hds_info[0]);
+	for(i=0;i < nr_drive; i++)
+	{
+		memset(&hds_info[i],0, sizeof hds_info[0]);
+	}
+	hds_info[0].open_cnt = 0;
+
 }
+
 void hd_identify(int drive_no)
 {
 	struct hd_cmd cmd;
@@ -57,6 +77,12 @@ void hd_identify(int drive_no)
 	interrupt_wait();
 	port_read(REG_DATA,hdbuf,SECTOR_SIZE);
 	print_identify_info((t_16*)hdbuf);
+
+	t_16 * hdinfo = (t_16*)hdbuf;
+
+	hds_info[drive_no ].primary[0].base = 0;
+
+	hds_info[drive_no ].primary[0].size = (( int )hdinfo[61] <<16 ) + hdinfo[60];
 }
 
 void print_identify_info(t_16 *hd_info)
@@ -138,3 +164,108 @@ void hd_handler(int irq)
 	inform_int(TASK_HD);
 }
 
+void hd_open(int device)
+{
+	int drive = DRV_OF_DEV( device);
+	assert( drive == 0);
+	hd_identify(drive);
+	
+	if(hds_info[drive].open_cnt ++ == 0){
+		partition(drive * (NR_PART_PER_DRIVE +1), P_PRIMARY);
+		print_hdsinfo(&hds_info[drive]);
+	}
+
+}
+static void get_part_table(int drive, int sector_nr, struct part_entry *entry)
+{//get partition table of a drive not for a entended partion
+	struct hd_cmd cmd;
+	cmd.features = 0;
+	cmd.sector_count = 1;
+	cmd.lba_low = sector_nr & 0xff;
+	cmd.lba_mid = (sector_nr >>8) &0xff;
+	cmd.lba_high = (sector_nr >> 16)& 0xff;
+	cmd.device = MAKE_DEVICE_REG(1,drive, (sector_nr >>24) &0xf);
+	cmd.command = ATA_READ;
+	hd_cmd_out(&cmd);
+	interrupt_wait();
+	port_read( REG_DATA, hdbuf, SECTOR_SIZE);
+	memcpy( entry, hdbuf + PARTITION_TABLE_OFFSET, sizeof(struct part_entry) *NR_PART_PER_DRIVE);
+}
+static void partition(int device, int style)
+{//changed hds_info
+	int i;
+	int drive = DRV_OF_DEV(device);
+	struct hd_info *hdi = &hds_info[drive];
+	struct part_entry part_table[NR_SUB_PER_DRIVE];
+
+	if(style == P_PRIMARY){
+		get_part_table(drive, drive, part_table);
+
+		int nr_primary_parts=0;
+		for (i = 0; i < NR_PART_PER_DRIVE; ++i){
+			if (part_table[i].sys_id == NO_PART){
+				continue;
+			}
+			nr_primary_parts++;
+			int dev_nr=i+1;
+			hdi->primary[dev_nr].base = part_table[i].start_sect;
+			hdi->primary[dev_nr].size = part_table[i].nr_sects;
+
+			if(part_table[i].sys_id == EXT_PART){
+				partition(device + dev_nr, P_EXTENDED);
+			}
+		}
+		assert(nr_primary_parts != 0);
+	}
+	else if(style== P_EXTENDED){
+		printl("in ext mode\n");
+		int j= device%NR_PRIM_PER_DRIVE;
+		int ext_start_sect = hdi->primary[j].base;
+		int s=ext_start_sect;
+		int nr_1st_sub = (j-1) * NR_SUB_PER_PART ;
+
+		for (i = 0; i < NR_SUB_PER_PART; ++i){
+			int dev_nr = nr_1st_sub +i;
+			get_part_table(drive , s, part_table);
+			hdi->logical[dev_nr].base = s + part_table[0].start_sect;
+			hdi->logical[dev_nr].size = part_table[0].nr_sects;
+
+			s=ext_start_sect + part_table[1].start_sect;
+
+			if(part_table[1].sys_id == NO_PART)
+				break;
+			
+		}
+	}
+	else{
+		assert(0);
+	}
+}
+
+static void print_hdsinfo(struct hd_info *hdi)
+{
+	int i;
+	for (i = 0; i < NR_PART_PER_DRIVE+1; ++i){
+		printl("%sPART_%d: base %d(0x%x), size %d (0x%x) (in sector) \n", 
+				i==0? " ":"    ",
+				i,
+				hdi->primary[i].base,
+				hdi->primary[i].base,
+				hdi->primary[i].size,
+				hdi->primary[i].size);
+		
+	}
+	
+	for (i = 0; i < NR_SUB_PER_DRIVE; ++i){
+		if(hdi->logical[i].size == 0)
+			continue;
+		printl("%sPART_%d: base %d(0x%x), size %d (0x%x) (in sector) \n", 
+				i==0? " ":"    ",
+				i,
+				hdi->logical[i].base,
+				hdi->logical[i].base,
+				hdi->logical[i].size,
+				hdi->logical[i].size);
+	}
+
+}

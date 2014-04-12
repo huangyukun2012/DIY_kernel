@@ -130,7 +130,7 @@ kernel/hd.o: kernel/hd.c include/type.h include/proc.h \
 	 include/protect.h include/msg.h include/hd.h include/fs.h include/err.h \
 
 fs/main.o: fs/main.c include/msg.h include/type.h include/proc.h \
-	 include/protect.h include/err.h include/nostdio.h
+	 include/protect.h include/err.h include/nostdio.h include/drive.h include/config.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 

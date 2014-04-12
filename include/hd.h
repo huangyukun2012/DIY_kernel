@@ -19,7 +19,7 @@
  *   It is essentially a link list with many tricks. See
  *   http://en.wikipedia.org/wiki/Extended_boot_record for details.
  */
-struct part_ent {
+struct part_entry {
 	t_8 boot_ind;		/**
 				 * boot indicator
 				 *   Bit 7 is the active partition flag,
@@ -237,6 +237,9 @@ struct part_info {
 #define NR_SUB_PER_DRIVE    (NR_SUB_PER_PART * NR_PART_PER_DRIVE)
 #define NR_PRIM_PER_DRIVE   (NR_PART_PER_DRIVE + 1)
 
+#define MAX_PRIM_INDEX		(MAX_DRIVES * NR_PRIM_PER_DRIVE - 1)
+#define MAX_SUB_PARTITIONS	(NR_SUB_PER_DRIVE * MAX_DRIVES)
+
 /* main drive struct, one entry per drive */
 struct hd_info
 {
@@ -253,7 +256,7 @@ struct hd_info
 
 
 /***************/
-/* DEFINITIONS */
+/* DEFIITIONS */
 /***************/
 #define	HD_TIMEOUT		10000	/* in millisec */
 #define	PARTITION_TABLE_OFFSET	0x1BE
@@ -264,6 +267,17 @@ struct hd_info
 #define	MAKE_DEVICE_REG(lba,drv,lba_highest) (((lba) << 6) |		\
 					      ((drv) << 4) |		\
 					      (lba_highest & 0xF) | 0xA0)
+/* partition type*/
+#define P_PRIMARY	0
+#define P_EXTENDED	1
+#define NO_PART	00
+#define EXT_PART 05
+#define ORANGE_PART 99
+
+/* minor num*/
+#define	MINOR_hd1a		0x10
+#define	MINOR_hd2a		(MINOR_hd1a+NR_SUB_PER_PART)
+#define	ROOT_DEV		MAKE_DEV(DEV_HD, MINOR_BOOT)
 
 void task_hd();
 

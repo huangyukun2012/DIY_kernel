@@ -13,15 +13,16 @@ ASM	Makefile	/^ASM		= nasm$/;"	m
 ASMBFLAGS	Makefile	/^ASMBFLAGS	= -I boot\/include\/$/;"	m
 ASMKFLAGS	Makefile	/^ASMKFLAGS	= -I include\/ -f elf$/;"	m
 ASSERT	include/err.h	6;"	d
-ATA_IDENTIFY	include/hd.h	260;"	d
-ATA_READ	include/hd.h	261;"	d
-ATA_WRITE	include/hd.h	262;"	d
+ATA_IDENTIFY	include/hd.h	263;"	d
+ATA_READ	include/hd.h	264;"	d
+ATA_WRITE	include/hd.h	265;"	d
 AT_WINI_IRQ	include/const.h	84;"	d
 BACKSPACE	include/keyboard.h	43;"	d
 BLACK	include/const.h	29;"	d
 BLUE	include/const.h	33;"	d
 BOTH	include/msg.h	38;"	d
 BRIGHT	include/const.h	35;"	d
+BUF	include/msg.h	59;"	d
 BaseOfStack	boot/boot.asm	/^BaseOfStack		equ	0100h	; 调试状态下堆栈基地址(栈底, 从这个位置向低地址生长)$/;"	d
 BaseOfStack	boot/boot.asm	/^BaseOfStack		equ	07c00h	; Boot状态下堆栈基地址(栈底, 从这个位置向低地址生长)$/;"	d
 BaseOfStack	boot/loader.asm	/^BaseOfStack	equ	0100h$/;"	d
@@ -31,6 +32,7 @@ CASCADE_IRQ	include/const.h	77;"	d
 CC	Makefile	/^CC		= gcc$/;"	m
 CFLAGS	Makefile	/^CFLAGS		= -m32 -I include\/ -c -fno-builtin$/;"	m
 CLOCK_IRQ	include/const.h	75;"	d
+CNT	include/msg.h	54;"	d
 COLOR	kernel/console.c	7;"	d	file:
 CONSOLE	include/console.h	/^}CONSOLE;$/;"	t	typeref:struct:s_console
 CONSOLE_H	include/console.h	2;"	d
@@ -67,12 +69,19 @@ DA_TaskGate	include/protect.h	107;"	d
 DEFAULT_CHAR_COLOR	include/console.h	11;"	d
 DELETE	include/keyboard.h	80;"	d
 DESCRIPTOR	include/protect.h	/^}DESCRIPTOR;$/;"	t	typeref:struct:descriptor
+DEVICE	include/msg.h	57;"	d
+DEV_CDROM	include/drive.h	7;"	d
+DEV_CHAR_TTY	include/drive.h	9;"	d
 DEV_CLOSE	include/msg.h	/^	DEV_CLOSE,$/;"	e	enum:msgtype
+DEV_FLOPPY	include/drive.h	6;"	d
+DEV_HD	include/drive.h	8;"	d
 DEV_IOCTL	include/msg.h	/^	DEV_IOCTL$/;"	e	enum:msgtype
 DEV_OPEN	include/msg.h	/^	DEV_OPEN=1001,$/;"	e	enum:msgtype
 DEV_READ	include/msg.h	/^	DEV_READ,$/;"	e	enum:msgtype
+DEV_SCSI	include/drive.h	10;"	d
 DEV_WRITE	include/msg.h	/^	DEV_WRITE,$/;"	e	enum:msgtype
 DOWN	include/keyboard.h	86;"	d
+DRV_OF_DEV	kernel/hd.c	13;"	d	file:
 DispAL	boot/loader.asm	/^DispAL:$/;"	l
 DispInt	boot/loader.asm	/^DispInt:$/;"	l
 DispMemInfo	boot/loader.asm	/^DispMemInfo:$/;"	l
@@ -126,7 +135,7 @@ GdtPtr	boot/loader.asm	/^GdtPtr		dw	GdtLen - 1				; 段界限$/;"	d
 GetFATEntry	boot/boot.asm	/^GetFATEntry:$/;"	l
 GetFATEntry	boot/loader.asm	/^GetFATEntry:$/;"	l
 HARD_INT	include/msg.h	/^	HARD_INT=1,$/;"	e	enum:msgtype
-HD_TIMEOUT	include/hd.h	258;"	d
+HD_TIMEOUT	include/hd.h	261;"	d
 HOME	include/keyboard.h	81;"	d
 HZ	include/const.h	62;"	d
 IDT_SIZE	include/const.h	40;"	d
@@ -215,12 +224,21 @@ LoadMessage	boot/loader.asm	/^LoadMessage:		db	"Loading  "$/;"	d
 LoaderFileName	boot/boot.asm	/^LoaderFileName		db	"LOADER  BIN", 0	; LOADER.BIN 之文件名$/;"	d
 MAG_CH_ASSERT	include/err.h	17;"	d
 MAG_CH_PANIC	include/err.h	18;"	d
+MAJOR	include/drive.h	14;"	d
+MAJOR_SHIFT	include/drive.h	12;"	d
 MAKE_COLOR	include/const.h	36;"	d
-MAKE_DEVICE_REG	include/hd.h	264;"	d
+MAKE_DEV	include/drive.h	13;"	d
+MAKE_DEVICE_REG	include/hd.h	267;"	d
 MAP_COLS	include/keyboard.h	22;"	d
 MASK_RAW	include/keyboard.h	35;"	d
 MAX_DRIVES	include/hd.h	234;"	d
+MAX_PRIM_INDEX	include/hd.h	240;"	d
+MAX_SUB_PARTITIONS	include/hd.h	241;"	d
 MESSAGE	include/msg.h	/^}MESSAGE;$/;"	t	typeref:struct:mess
+MINOR	include/drive.h	15;"	d
+MINOR_BOOT	include/config.h	5;"	d
+MINOR_hd1a	include/hd.h	275;"	d
+MINOR_hd2a	include/hd.h	276;"	d
 MemChkBuf	boot/loader.asm	/^MemChkBuf		equ	BaseOfLoaderPhyAddr + _MemChkBuf$/;"	d
 MemCpy	boot/loader.asm	/^MemCpy:$/;"	l
 Message1	boot/boot.asm	/^Message1		db	"Ready.   "; 9字节, 不够则用空格补齐. 序号 1$/;"	d
@@ -229,6 +247,7 @@ Message2	boot/boot.asm	/^Message2		db	"No LOADER"; 9字节, 不够则用空格补齐. 序号
 Message2	boot/loader.asm	/^Message2		db	"No KERNEL"$/;"	d
 MessageLength	boot/boot.asm	/^MessageLength		equ	9$/;"	d
 MessageLength	boot/loader.asm	/^MessageLength		equ	9$/;"	d
+NO_DEV	include/drive.h	5;"	d
 NO_TASK	include/proc.h	85;"	d
 NR_CONSOLE	include/console.h	4;"	d
 NR_IRQ	include/const.h	74;"	d
@@ -274,10 +293,11 @@ PAD_UP	include/keyboard.h	112;"	d
 PAGEDOWN	include/keyboard.h	84;"	d
 PAGEUP	include/keyboard.h	83;"	d
 PARTITION_ENTRY	include/hd.h	/^} PARTITION_ENTRY;$/;"	v	typeref:struct:part_ent
-PARTITION_TABLE_OFFSET	include/hd.h	259;"	d
+PARTITION_TABLE_OFFSET	include/hd.h	262;"	d
 PAUSEBREAK	include/keyboard.h	78;"	d
 PORT_8042_CONTROL	include/keyboard.h	15;"	d
 PORT_8042_DATA	include/keyboard.h	16;"	d
+POSITION	include/msg.h	58;"	d
 POWER	include/keyboard.h	91;"	d
 PRINTER_IRQ	include/const.h	83;"	d
 PRINTSCREEN	include/keyboard.h	77;"	d
@@ -286,7 +306,10 @@ PRIVILEGE_KRNL	include/const.h	43;"	d
 PRIVILEGE_TASK	include/const.h	44;"	d
 PRIVILEGE_USER	include/const.h	45;"	d
 PROCESS	include/proc.h	/^}PROCESS;$/;"	t	typeref:struct:proc
+PROC_NR	include/msg.h	56;"	d
 PUBLIC	include/const.h	16;"	d
+P_EXTENDED	include/hd.h	272;"	d
+P_PRIMARY	include/hd.h	271;"	d
 RATE_GENERATOR	include/const.h	60;"	d
 RECEIVE	include/msg.h	37;"	d
 RECEIVING	include/proc.h	108;"	d
@@ -305,8 +328,10 @@ REG_LBA_LOW	include/hd.h	122;"	d
 REG_LBA_MID	include/hd.h	123;"	d
 REG_NSECTOR	include/hd.h	121;"	d
 REG_STATUS	include/hd.h	142;"	d
-RETVAL	include/msg.h	48;"	d
+REQUEST	include/msg.h	55;"	d
+RETVAL	include/msg.h	65;"	d
 RIGHT	include/keyboard.h	88;"	d
+ROOT_DEV	include/hd.h	277;"	d
 RPL_KRNL	include/const.h	47;"	d
 RPL_TASK	include/const.h	48;"	d
 RPL_USER	include/const.h	49;"	d
@@ -407,6 +432,8 @@ _TINIX_KEYMAP_H_	include/keymap.h	14;"	d
 _TINIX_PROTECT_H_	include/protect.h	9;"	d
 _TINIX_TYPE_H_	include/type.h	9;"	d
 _TTY_H_	include/tty.h	2;"	d
+__CONFIG_H__	include/config.h	2;"	d
+__DRIVE_H__	include/drive.h	4;"	d
 __ERR_H__	include/err.h	2;"	d
 __GLOBAL_H__	include/global.h	10;"	d
 __HD_H__	include/hd.h	2;"	d
@@ -471,12 +498,14 @@ current_start_addr	include/console.h	/^	unsigned int current_start_addr;$/;"	m	s
 current_tty	include/tty.h	/^TTY * current_tty;$/;"	v
 cursor_location	include/console.h	/^	unsigned int cursor_location;$/;"	m	struct:s_console
 dcount	include/protect.h	/^	t_8	dcount;		\/* 该字段只在调用门描述符中有效。$/;"	m	struct:s_gate
+dd_map	include/drive.h	/^struct dev_drv_map dd_map[]={$/;"	v	typeref:struct:dev_drv_map
 deadlock	kernel/proc.c	/^static deadlock(int src,int dest)$/;"	f	file:
 dec	boot/boot.asm	/^	dec	dx					; ┛就跳到下一个 Sector$/;"	d
 dec	boot/boot.asm	/^dec	cx$/;"	l
 dec	boot/loader.asm	/^	dec	dx					; ┛$/;"	d
 delay	lib/klib.c	/^PUBLIC void delay(int time)$/;"	f
 descriptor	include/protect.h	/^typedef struct descriptor		\/* 共 8 个字节 *\/$/;"	s
+dev_drv_map	include/drive.h	/^struct dev_drv_map{$/;"	s
 device	include/hd.h	/^	t_8	device;$/;"	m	struct:hd_cmd
 dis_already	lib/klib.asm	/^dis_already:$/;"	l
 disable_0	lib/klib.asm	/^disable_0:$/;"	l
@@ -489,6 +518,7 @@ disp_pos	include/global.h	/^EXTERN	int		disp_pos;$/;"	v
 disp_str	lib/klib.asm	/^disp_str:$/;"	l
 divide_error	kernel/kernel.asm	/^divide_error:$/;"	l
 double_fault	kernel/kernel.asm	/^double_fault:$/;"	l
+drive_nr	include/drive.h	/^	int drive_nr;$/;"	m	struct:dev_drv_map
 ds	include/proc.h	/^	t_32	ds;		\/* ┃						│			*\/$/;"	m	struct:s_stackframe
 ds	include/protect.h	/^	t_32	ds;$/;"	m	struct:s_tss
 dump_msg	kernel/proc.c	/^PUBLIC void dump_msg(const char * title, MESSAGE* m)$/;"	f
@@ -559,6 +589,7 @@ gdt	include/global.h	/^EXTERN	DESCRIPTOR	gdt[GDT_SIZE];$/;"	v
 gdt_ptr	include/global.h	/^EXTERN	t_8		gdt_ptr[6];	\/\/ 0~15:Limit  16~47:Base$/;"	v
 general_protection	kernel/kernel.asm	/^general_protection:$/;"	l
 get_byte_from_kbuf	kernel/keyboard.c	/^PRIVATE t_8 get_byte_from_kbuf()$/;"	f
+get_part_table	kernel/hd.c	/^static void get_part_table(int drive, int sector_nr, struct part_entry *entry)$/;"	f	file:
 get_ticks	kernel/main.c	/^int get_ticks()$/;"	f
 global	kernel/kernel.asm	/^global	bounds_check$/;"	l
 global	kernel/kernel.asm	/^global	breakpoint_exception$/;"	l
@@ -605,6 +636,8 @@ global	lib/klib.asm	/^global	enable_int$/;"	l
 global	lib/klib.asm	/^global	enable_irq$/;"	l
 global	lib/klib.asm	/^global	in_byte$/;"	l
 global	lib/klib.asm	/^global	out_byte$/;"	l
+global	lib/klib.asm	/^global  port_read$/;"	l
+global	lib/klib.asm	/^global  port_write$/;"	l
 global	lib/string.asm	/^global	memcpy$/;"	l
 global	lib/string.asm	/^global	memset$/;"	l
 global	lib/string.asm	/^global	strcpy$/;"	l
@@ -617,8 +650,10 @@ hd_cmd_out	kernel/hd.c	/^ void hd_cmd_out(struct hd_cmd *cmd)$/;"	f
 hd_handler	kernel/hd.c	/^void hd_handler(int irq)$/;"	f
 hd_identify	kernel/hd.c	/^void hd_identify(int drive_no)$/;"	f
 hd_info	include/hd.h	/^struct hd_info$/;"	s
+hd_open	kernel/hd.c	/^int void hd_open(int device)$/;"	f
 hd_status	kernel/hd.c	/^ t_8 hd_status;$/;"	v
 hdbuf	kernel/hd.c	/^ t_8 hdbuf[2*SECTOR_SIZE];$/;"	v
+hds_info	kernel/hd.c	/^ static struct hd_info hds_info[1];$/;"	v	typeref:struct:hd_info	file:
 head	include/tty.h	/^	t_32	*head;$/;"	m	struct:tty
 hwint00	kernel/kernel.asm	/^hwint00:		; Interrupt routine for irq 0 (the clock).$/;"	l
 hwint01	kernel/kernel.asm	/^hwint01:		; Interrupt routine for irq 1 (keyboard)$/;"	l
@@ -736,6 +771,7 @@ page_switch	kernel/tty.c	/^PRIVATE void page_switch()$/;"	f
 panic	lib/err.c	/^void panic(const char *fmt, ...)$/;"	f
 part_ent	include/hd.h	/^struct part_ent {$/;"	s
 part_info	include/hd.h	/^struct part_info {$/;"	s
+partition	kernel/hd.c	/^static void partition(int device, int style)$/;"	f	file:
 phys_copy	include/string.h	14;"	d
 phys_set	include/string.h	15;"	d
 pid	include/proc.h	/^	t_32				pid;			\/* process id passed in from MM *\/$/;"	m	struct:proc
@@ -745,7 +781,8 @@ pop	kernel/kernel.asm	/^	pop	ds$/;"	d
 port_read	lib/klib.asm	/^port_read:$/;"	l
 port_write	lib/klib.asm	/^port_write:$/;"	l
 primary	include/hd.h	/^	struct part_info	primary[NR_PRIM_PER_DRIVE];$/;"	m	struct:hd_info	typeref:struct:hd_info::part_info
-print_identify_info	kernel/hd.c	/^ void print_identify_info(t_16 *hd_info)$/;"	f
+print_hdsinfo	kernel/hd.c	/^static void print_hdsinfo(struct hd_info *hdi)$/;"	f	file:
+print_identify_info	kernel/hd.c	/^void print_identify_info(t_16 *hd_info)$/;"	f
 printf	kernel/nostdio.c	/^int printf(const char *fmt,...)$/;"	f
 printl	include/nostdio.h	4;"	d
 printx	kernel/syscall.asm	/^printx:$/;"	l
