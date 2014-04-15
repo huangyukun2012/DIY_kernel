@@ -30,7 +30,7 @@ static void get_part_table(int drive, int sector_nr, struct part_entry *entry);
 void hd_open(int device);
 static hd_close(int device_nr);
 static void hd_ioctl(MESSAGE *msgp);
-static hd_rw( MESSAGE *msgp);
+static void hd_rw( MESSAGE *msgp);
 
 
 void task_hd()
@@ -295,7 +295,7 @@ static hd_close(int device_nr)
 }
 
 
-static hd_rw( MESSAGE *msgp)
+static void hd_rw( MESSAGE *msgp)
 {
 	int drive_nr=DRV_OF_DEV(msgp->DEVICE);
 	t_64 pos=msgp->POSITION;

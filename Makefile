@@ -30,7 +30,8 @@ TINIXKERNEL	= kernel.bin
 OBJS		= kernel/kernel.o kernel/syscall.o kernel/start.o kernel/main.o\
 			kernel/clock.o kernel/i8259.o kernel/global.o kernel/protect.o\
 			kernel/proc.o kernel/keyboard.o kernel/tty.o kernel/console.o kernel/nostdio.o\
-			kernel/systask.o lib/klib.o lib/klibc.o lib/string.o lib/err.o fs/main.o kernel/hd.o
+			kernel/systask.o lib/klib.o lib/klibc.o lib/string.o lib/err.o fs/main.o kernel/hd.o lib/open.o \
+			lib/close.o fs/open.o fs/misc.o drive/driver.o
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
@@ -133,6 +134,16 @@ fs/main.o: fs/main.c include/msg.h include/type.h include/proc.h \
 	 include/protect.h include/err.h include/nostdio.h include/drive.h include/config.h
 	$(CC) $(CFLAGS) -o $@ $<
 
+fs/open.o: fs/open.c include/fs.h include/type.h include/err.h \
+	 include/string.h include/proc.h include/protect.h include/msg.h \
+	  include/fs.h include/msg.h include/global.h include/tty.h \
+	   include/console.h include/proto.h include/const.h include/hd.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+fs/misc.o: fs/misc.c include/fs.h include/type.h include/msg.h \
+	 include/string.h
+	$(CC) $(CFLAGS) -o $@ $<
+
 
 lib/klibc.o: lib/klib.c include/type.h include/const.h include/protect.h include/string.h include/proc.h include/proto.h \
 			include/global.h
@@ -146,4 +157,17 @@ lib/string.o : lib/string.asm
 
 lib/err.o: lib/err.c include/const.h include/type.h include/tty.h \
 	 include/err.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+lib/open.o: lib/open.c include/type.h include/proc.h \
+	 include/protect.h include/msg.h include/fs.h include/string.h \
+	  include/err.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+lib/close.o: lib/close.c include/msg.h include/type.h include/proc.h \
+	 include/protect.h include/msg.h include/fs.h
+	$(CC) $(CFLAGS) -o $@ $<
+	
+drive/driver.o: drive/driver.c include/drive.h include/proc.h include/protect.h \
+	 include/type.h include/msg.h include/fs.h include/proc.h
 

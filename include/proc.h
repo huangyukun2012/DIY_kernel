@@ -9,6 +9,7 @@
 #include "protect.h"
 #include "msg.h"
 #include "type.h"
+#include "fs.h"
 typedef struct s_stackframe {	/* proc_ptr points here				¡ü Low			*/
 	t_32	gs;		/* ©·						©¦			*/
 	t_32	fs;		/* ©§						©¦			*/
@@ -55,6 +56,9 @@ typedef struct proc{
 	int				has_int_msg;
 	struct	proc	*q_sending;
 	struct 	proc	*next_sending;
+
+	//sth with file operation
+	struct	file_desc * filp[NR_FILES];
 }PROCESS;
 
 

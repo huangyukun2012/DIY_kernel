@@ -14,6 +14,9 @@
 #include "global.h"
 #include "nostdio.h"
 #include "msg.h"
+#include "fs.h"
+
+
 /*======================================================================*
                             tinix_main
  *======================================================================*/
@@ -107,9 +110,13 @@ PUBLIC int tinix_main()
 void TestA()
 {
 	while(1){
-		printf("A");
-	//	printf("<Ticks:%x>",get_ticks());
-		milli_delay(10);
+#ifdef DEBUG
+		printf("testA\n");
+#endif
+		int fd=open("/test",O_CREAT);
+		printf("fd: %d\n",fd);
+		close(fd);
+		spin("TestA");
 	}
 }
 
