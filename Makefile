@@ -29,9 +29,10 @@ TINIXBOOT	= boot/boot.bin boot/loader.bin
 TINIXKERNEL	= kernel.bin
 OBJS		= kernel/kernel.o kernel/syscall.o kernel/start.o kernel/main.o\
 			kernel/clock.o kernel/i8259.o kernel/global.o kernel/protect.o\
-			kernel/proc.o kernel/keyboard.o kernel/tty.o kernel/console.o kernel/nostdio.o\
-			kernel/systask.o lib/klib.o lib/klibc.o lib/string.o lib/err.o fs/main.o kernel/hd.o lib/open.o \
-			lib/close.o fs/open.o fs/misc.o drive/driver.o
+			kernel/proc.o kernel/keyboard.o kernel/tty.o kernel/console.o kernel/systask.o \
+			lib/klib.o lib/klibc.o lib/string.o lib/memstring.o lib/err.o lib/stdio.o lib/unistd.o\
+			fs/main.o fs/opera.o fs/misc.o \
+			driver/driver.o driver/hd.o
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
@@ -83,7 +84,7 @@ kernel/start.o: kernel/start.c include/type.h include/const.h include/protect.h 
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/main.o: kernel/main.c include/type.h include/const.h include/protect.h include/string.h include/proc.h include/proto.h \
-			include/global.h
+			include/global.h include/fs.h include/unistd.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/i8259.o: kernel/i8259.c include/type.h include/const.h include/protect.h include/string.h include/proc.h \
@@ -118,26 +119,19 @@ kernel/console.o: kernel/console.c include/type.h include/const.h \
 	 include/proto.h
 	$(CC) $(CFLAGS) -o $@ $<
 
-kernel/nostdio.o: kernel/nostdio.c include/type.h include/proc.h \
-	 include/protect.h include/proto.h include/string.h include/const.h
-	$(CC) $(CFLAGS) -o $@ $<
-
 kernel/systask.o: kernel/systask.c include/msg.h include/proc.h \
 	 include/protect.h include/global.h include/tty.h include/console.h \
 	  include/proc.h include/proto.h include/const.h include/err.h
 	$(CC) $(CFLAGS) -o $@ $<
 
-kernel/hd.o: kernel/hd.c include/type.h include/proc.h \
-	 include/protect.h include/msg.h include/hd.h include/fs.h include/err.h  include/string.h\
-
 fs/main.o: fs/main.c include/msg.h include/type.h include/proc.h \
-	 include/protect.h include/err.h include/nostdio.h include/drive.h include/config.h
+	 include/protect.h include/err.h include/nostdio.h include/drive.h include/config.h include/debug.h
 	$(CC) $(CFLAGS) -o $@ $<
 
-fs/open.o: fs/open.c include/fs.h include/type.h include/err.h \
+fs/opera.o: fs/opera.c include/fs.h include/type.h include/err.h \
 	 include/string.h include/proc.h include/protect.h include/msg.h \
 	  include/fs.h include/msg.h include/global.h include/tty.h \
-	   include/console.h include/proto.h include/const.h include/hd.h
+	   include/console.h include/proto.h include/const.h include/hd.h include/math.h include/debug.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 fs/misc.o: fs/misc.c include/fs.h include/type.h include/msg.h \
@@ -159,15 +153,23 @@ lib/err.o: lib/err.c include/const.h include/type.h include/tty.h \
 	 include/err.h
 	$(CC) $(CFLAGS) -o $@ $<
 
-lib/open.o: lib/open.c include/type.h include/proc.h \
-	 include/protect.h include/msg.h include/fs.h include/string.h \
-	  include/err.h
+
+lib/stdio.o: lib/stdio.c include/type.h include/proc.h \
+	 include/protect.h include/proto.h include/string.h include/const.h
 	$(CC) $(CFLAGS) -o $@ $<
 
-lib/close.o: lib/close.c include/msg.h include/type.h include/proc.h \
-	 include/protect.h include/msg.h include/fs.h
+lib/unistd.o: lib/unistd.c include/msg.h include/type.h include/proc.h \
+	 include/protect.h include/fs.h include/string.h  include/err.h
 	$(CC) $(CFLAGS) -o $@ $<
-	
+
+lib/memstring.o: lib/memstring.c
+	$(CC) $(CFLAGS) -o $@ $<
+
 drive/driver.o: drive/driver.c include/drive.h include/proc.h include/protect.h \
 	 include/type.h include/msg.h include/fs.h include/proc.h
+	$(CC) $(CFLAGS) -o $@ $<
 
+driver/hd.o: driver/hd.c include/type.h include/proc.h \
+	 include/protect.h include/msg.h include/hd.h include/fs.h include/err.h  include/string.h\
+	
+	$(CC) $(CFLAGS) -o $@ $<

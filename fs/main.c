@@ -8,9 +8,10 @@
 #include "fs.h"
 #include "console.h"
 #include "global.h"
+#include "debug.h"
 
 t_8 *fsbuf = (t_8 *)0x600000;
-const int FSBUF_SZIE = 0x100000;
+const int FSBUF_SIZE = 0x100000;
 MESSAGE fs_msg;
 struct proc * pcaller=0;
 #define SECTOR_SIZE 512
@@ -41,6 +42,10 @@ void task_fs()
 		switch(fs_msg.type){
 			case OPEN:
 				fs_msg.FD=do_open();
+				break;
+			case READ:
+			case WRITE:
+				fs_msg.CNT = do_rw();
 				break;
 			case CLOSE:
 				fs_msg.RETVAL = do_close();
@@ -104,7 +109,7 @@ static void mkfs()
 	sb.magic = MAGIC_V1;
 	//sb.sb_dev = driver_msg.DEVICE;
 	sb.nr_inodes = bits_per_sect;
-	sb.nr_inode_sects = sb.nr_inodes * INODE_SIZE;
+	sb.nr_inode_sects = (sb.nr_inodes * INODE_SIZE)/SECTOR_SIZE;
 	sb.nr_sects = geo.size;
 	sb.nr_imap_sects = 1;
 	sb.nr_smap_sects = sb.nr_sects / bits_per_sect +1;
@@ -209,7 +214,8 @@ static void mkfs()
 
 void rw_sector( int device, t_64 pos, int proc_nr,  void *buf, int bytes, int io_type)
 {
-#ifdef DEBUG
+
+	#ifdef DEBUG
 	if(proc_nr !=3){
 	printf("device:%d ", device);
 	printf("pos:%x ", pos);
@@ -218,7 +224,8 @@ void rw_sector( int device, t_64 pos, int proc_nr,  void *buf, int bytes, int io
 	printf("bytes:%x ", bytes);
 	printf("io_type:%d\n", io_type);
 	}
-#endif
+	
+	#endif
 	MESSAGE msg;
 	msg.type=io_type;
 	msg.DEVICE=MINOR(device);
@@ -232,7 +239,14 @@ void rw_sector( int device, t_64 pos, int proc_nr,  void *buf, int bytes, int io
 	int major_nr_dev = MAJOR(device);
 	int driver = dd_map[major_nr_dev].driver_nr;
 	assert(driver != INVALID_DRIVER);
+#ifdef DEBUG_RW
+	#ifdef DEBUG
+	if(DEBUG_rw_sector ==1){
+		printf("rw_sector: sending msg to %d\n", driver );
+	}
 
+	#endif
+#endif
 	send_recv(BOTH, driver, &msg);
 
 }

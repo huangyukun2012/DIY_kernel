@@ -4,6 +4,9 @@
 #include "tty.h"
 #include "err.h"
 #include "nostdio.h"
+void panic(const char *fmt, ...);
+void spin(char *funcname);
+void assertion_failure(char *exp, char *file, char * base_file, int line);
 
 void assertion_failure(char *exp, char *file, char * base_file, int line)
 {	

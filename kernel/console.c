@@ -34,14 +34,21 @@ void out_char(CONSOLE * p_con,char ch)
 			}
 			break;
 		default:
-				disp_str("in outchar ");		
 			if(p_con->cursor_location < p_con->begin_adr+p_con->vmem_limit){
-				disp_str("in if ");		
 				*vmem_p = ch;
 				vmem_p++;
 				*vmem_p = COLOR;
 				vmem_p++;
 				p_con->cursor_location++;
+			}
+			else{
+				p_con->cursor_location=p_con->begin_adr;
+				vmem_p=(t_8 *)(V_MEM_BASE + p_con->cursor_location*2);
+				*vmem_p = ch;
+				vmem_p++;
+				*vmem_p = COLOR;
+				vmem_p++;
+				
 			}
 	}
 	while(p_con->cursor_location >= p_con->current_start_addr + SCREEN_SIZE){

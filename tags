@@ -67,10 +67,7 @@ DA_DRWA	include/protect.h	100;"	d
 DA_LDT	include/protect.h	106;"	d
 DA_LIMIT_4K	include/protect.h	92;"	d
 DA_TaskGate	include/protect.h	107;"	d
-DEBUG	fs/main.c	29;"	d	file:
-DEBUG	fs/open.c	20;"	d	file:
-DEBUG	include/debug.h	3;"	d
-DEBUG	lib/open.c	6;"	d	file:
+DEBUG_rw_sector	fs/opera.c	/^	int DEBUG_rw_sector = 0;$/;"	v
 DEFAULT_CHAR_COLOR	include/console.h	11;"	d
 DELETE	include/keyboard.h	80;"	d
 DESCRIPTOR	include/protect.h	/^}DESCRIPTOR;$/;"	t	typeref:struct:descriptor
@@ -132,7 +129,7 @@ FLAG_SHIFT_L	include/keyboard.h	27;"	d
 FLAG_SHIFT_R	include/keyboard.h	28;"	d
 FLASH	include/const.h	34;"	d
 FLOPPY_IRQ	include/const.h	82;"	d
-FSBUF_SZIE	fs/main.c	/^const int FSBUF_SZIE = 0x100000;$/;"	v
+FSBUF_SIZE	fs/main.c	/^const int FSBUF_SIZE = 0x100000;$/;"	v
 GATE	include/protect.h	/^}GATE;$/;"	t	typeref:struct:s_gate
 GDT_SIZE	include/const.h	39;"	d
 GET_TICKS	include/msg.h	/^	GET_TICKS,$/;"	e	enum:msgtype
@@ -391,10 +388,11 @@ SCROLL_DOWN	include/console.h	9;"	d
 SCROLL_LOCK	include/keyboard.h	60;"	d
 SCROLL_UP	include/console.h	8;"	d
 SECONDARY_IRQ	include/const.h	79;"	d
-SECTOR_SIZE	fs/main.c	16;"	d	file:
+SECTOR_SIZE	fs/main.c	17;"	d	file:
 SECTOR_SIZE	fs/misc.c	6;"	d	file:
-SECTOR_SIZE	fs/open.c	18;"	d	file:
+SECTOR_SIZE	fs/opera.c	22;"	d	file:
 SECTOR_SIZE	kernel/hd.c	11;"	d	file:
+SECTOR_SIZE_SHIFT	fs/opera.c	24;"	d	file:
 SECTOR_SIZE_SHIFT	kernel/hd.c	12;"	d	file:
 SEEK_CUR	include/nostdio.h	11;"	d
 SEEK_END	include/nostdio.h	12;"	d
@@ -508,11 +506,10 @@ _szMemChkTitle	boot/loader.asm	/^_szMemChkTitle:			db	"BaseAddrL BaseAddrH Lengt
 _szRAMSize	boot/loader.asm	/^_szRAMSize:			db	"RAM size:", 0$/;"	d
 _szReturn	boot/loader.asm	/^_szReturn:			db	0Ah, 0$/;"	d
 _unused	include/fs.h	/^	t_8 _unused[16];$/;"	m	struct:inode
-alloc_imap_bit	fs/open.c	/^static int alloc_imap_bit(int dev)$/;"	f	file:
-alloc_smap_bit	fs/open.c	/^static int alloc_smap_bit(int dev, int nr_sects_to_alloc)$/;"	f	file:
+alloc_imap_bit	fs/opera.c	/^static int alloc_imap_bit(int dev)$/;"	f	file:
+alloc_smap_bit	fs/opera.c	/^static int alloc_smap_bit(int dev, int nr_sects_to_alloc)$/;"	f	file:
 alt_l	kernel/keyboard.c	/^PRIVATE int alt_l;$/;"	v
 alt_r	kernel/keyboard.c	/^PRIVATE int alt_r;$/;"	v
-another	fs/misc.c	/^struct inode * another(int dev, int num)$/;"	f
 assert	include/err.h	12;"	d
 assert	include/err.h	9;"	d
 assertion_failure	lib/err.c	/^void assertion_failure(char *exp, char *file, char * base_file, int line)$/;"	f
@@ -538,7 +535,7 @@ caps_lock	kernel/keyboard.c	/^PRIVATE int caps_lock;$/;"	v
 caps_lock	kernel/keyboard.c	/^static int caps_lock;$/;"	v	file:
 clock_handler	kernel/clock.c	/^PUBLIC void clock_handler(int irq)$/;"	f
 clock_int_msg	kernel/kernel.asm	/^clock_int_msg		db	"^", 0$/;"	d
-close	lib/close.c	/^int  close(int fd)$/;"	f
+close	lib/unistd.c	/^int  close(int fd)$/;"	f
 code_with_E0	kernel/keyboard.c	/^PRIVATE int code_with_E0=0;$/;"	v
 column	kernel/keyboard.c	/^PRIVATE int column;$/;"	v
 command	include/hd.h	/^	t_8	command;$/;"	m	struct:hd_cmd
@@ -550,7 +547,7 @@ copr_seg_overrun	kernel/kernel.asm	/^copr_seg_overrun:$/;"	l
 count	include/keyboard.h	/^	int count;$/;"	m	struct:s_kb
 count	include/tty.h	/^	int 	count;$/;"	m	struct:tty
 cr3	include/protect.h	/^	t_32	cr3;$/;"	m	struct:s_tss
-create_file	fs/open.c	/^static struct inode *create_file(char *path, int flags)$/;"	f	file:
+create_file	fs/opera.c	/^static struct inode *create_file(char *path, int flags)$/;"	f	file:
 cs	include/proc.h	/^	t_32	cs;		\/*  ┃						│			*\/$/;"	m	struct:s_stackframe
 cs	include/protect.h	/^	t_32	cs;$/;"	m	struct:s_tss
 csinit	kernel/kernel.asm	/^csinit:		; “这个跳转指令强制使用刚刚初始化的结构”——<<OS:D&I 2nd>> P90.$/;"	l
@@ -584,8 +581,9 @@ disp_int	lib/klib.c	/^PUBLIC void disp_int(int input)$/;"	f
 disp_pos	include/global.h	/^EXTERN	int		disp_pos;$/;"	v
 disp_str	lib/klib.asm	/^disp_str:$/;"	l
 divide_error	kernel/kernel.asm	/^divide_error:$/;"	l
-do_close	fs/open.c	/^int do_close()$/;"	f
-do_open	fs/open.c	/^int do_open()$/;"	f
+do_close	fs/opera.c	/^int do_close()$/;"	f
+do_open	fs/opera.c	/^int do_open()$/;"	f
+do_rw	fs/opera.c	/^int do_rw()$/;"	f
 double_fault	kernel/kernel.asm	/^double_fault:$/;"	l
 driver_nr	include/drive.h	/^	int driver_nr;$/;"	m	struct:dev_drv_map
 ds	include/proc.h	/^	t_32	ds;		\/* ┃						│			*\/$/;"	m	struct:s_stackframe
@@ -666,7 +664,6 @@ gdt	include/global.h	/^EXTERN	DESCRIPTOR	gdt[GDT_SIZE];$/;"	v
 gdt_ptr	include/global.h	/^EXTERN	t_8		gdt_ptr[6];	\/\/ 0~15:Limit  16~47:Base$/;"	v
 general_protection	kernel/kernel.asm	/^general_protection:$/;"	l
 get_byte_from_kbuf	kernel/keyboard.c	/^PRIVATE t_8 get_byte_from_kbuf()$/;"	f
-get_inode	fs/main.c	/^struct inode * get_inode(int dev, int num)$/;"	f
 get_inode	fs/misc.c	/^struct inode * get_inode(int dev, int num)$/;"	f
 get_part_table	kernel/hd.c	/^static void get_part_table(int drive, int sector_nr, struct part_entry *entry)$/;"	f	file:
 get_super_block	fs/main.c	/^struct super_block *get_super_block(int dev)$/;"	f
@@ -851,8 +848,8 @@ n_1st_sect	include/fs.h	/^	t_32 n_1st_sect;$/;"	m	struct:super_block
 name	include/fs.h	/^	char name[MAX_FILENAME_LEN];$/;"	m	struct:dir_entry
 name	include/proc.h	/^	char				name[16];		\/* name of the process *\/$/;"	m	struct:proc
 name	include/proc.h	/^	char		name[32];$/;"	m	struct:s_task
-new_dir_entry	fs/open.c	/^static void new_dir_entry(struct inode *dir_inode, int inode_nr, char *filename)$/;"	f	file:
-new_inode	fs/open.c	/^static struct inode* new_inode(int dev, int inode_nr, int start_sect)$/;"	f	file:
+new_dir_entry	fs/opera.c	/^static void new_dir_entry(struct inode *dir_inode, int inode_nr, char *filename)$/;"	f	file:
+new_inode	fs/opera.c	/^static struct inode* new_inode(int dev, int inode_nr, int start_sect)$/;"	f	file:
 next_sending	include/proc.h	/^	struct 	proc	*next_sending;$/;"	m	struct:proc	typeref:struct:proc::proc
 nmi	kernel/kernel.asm	/^nmi:$/;"	l
 nr_imap_sects	include/fs.h	/^	t_32 nr_imap_sects;$/;"	m	struct:super_block
@@ -867,6 +864,7 @@ num_lock	kernel/keyboard.c	/^static int num_lock;$/;"	v	file:
 offset_high	include/protect.h	/^	t_16	offset_high;	\/* Offset High *\/$/;"	m	struct:s_gate
 offset_low	include/protect.h	/^	t_16	offset_low;	\/* Offset Low *\/$/;"	m	struct:s_gate
 open	lib/open.c	/^int open(const char *pathname, int flags)$/;"	f
+open	lib/unistd.c	/^int open(const char *pathname, int flags)$/;"	f
 open_cnt	include/hd.h	/^	int			open_cnt;$/;"	m	struct:hd_info
 org	boot/loader.asm	/^org  0100h$/;"	l
 out_byte	lib/klib.asm	/^out_byte:$/;"	l
@@ -912,6 +910,8 @@ put_inode	fs/misc.c	/^void put_inode(struct inode * pinode)$/;"	f
 put_irq_handler	kernel/i8259.c	/^PUBLIC void put_irq_handler(int irq, t_pf_irq_handler handler)$/;"	f
 put_key2tty	kernel/tty.c	/^void put_key2tty(TTY *tty_p, t_32 key)$/;"	f
 q_sending	include/proc.h	/^	struct	proc	*q_sending;$/;"	m	struct:proc	typeref:struct:proc::proc
+read	lib/read.c	/^int read(int fd, void *buf, int count)$/;"	f
+read	lib/unistd.c	/^int read(int fd, void *buf, int count)$/;"	f
 read_super_block	fs/main.c	/^static void read_super_block(int dev)$/;"	f	file:
 regs	include/proc.h	/^	STACK_FRAME			regs;			\/* process' registers saved in stack frame *\/$/;"	m	struct:proc
 reset_msg	kernel/proc.c	/^void reset_msg(MESSAGE *p)$/;"	f
@@ -1020,4 +1020,5 @@ wRootDirSizeForLoop	boot/loader.asm	/^wRootDirSizeForLoop	dw	RootDirSectors	; Ro
 wSectorNo	boot/boot.asm	/^wSectorNo		dw	0		; 要读取的扇区号$/;"	d
 wSectorNo	boot/loader.asm	/^wSectorNo		dw	0		; 要读取的扇区号$/;"	d
 waitfor	kernel/hd.c	/^ int waitfor(int mask, int val, int timeout)$/;"	f
+write	lib/unistd.c	/^int write(int fd, const void *buf, int count)$/;"	f
 write_tty	kernel/tty.c	/^void write_tty(TTY * tty_p,char *buf,int len)$/;"	f

@@ -14,10 +14,10 @@
 #include "console.h"
 #include "err.h"
 
-PRIVATE void page_switch();
-PUBLIC void task_tty();
-PUBLIC void in_process(TTY* tty_p,t_32 key);
-PUBLIC void syn_cursor();
+static void page_switch();
+void task_tty();
+void in_process(TTY* tty_p,t_32 key);
+void syn_cursor();
 void tty_read(TTY *tty_p);
 void tty_write(TTY *tty_p);
 void init_tty(TTY *tty_p);

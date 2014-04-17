@@ -3,7 +3,7 @@
 #include "type.h"
 #include "msg.h"
 extern t_8 *fsbuf;
-extern const int FSBUF_SZIE ;
+extern const int FSBUF_SIZE ;
 extern void task_fs();
 extern MESSAGE fs_msg;
 #define RD_SECT(dev,sect_nr)  rw_sector(dev, (sect_nr) * SECTOR_SIZE, TASK_FS, fsbuf, SECTOR_SIZE, DEV_READ)
@@ -97,4 +97,8 @@ extern  struct inode *      root_inode;
  
 //function
 struct inode *get_inode(int dev, int num);
+int do_close();
+int do_rw();
+int do_open();
+
 #endif

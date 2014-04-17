@@ -2,6 +2,7 @@
 #include "string.h"
 #include "proc.h"
 #include "err.h"
+#include "debug.h"
 
 #define SECTOR_SIZE 512
 int search_file(char *path);
@@ -34,27 +35,33 @@ int strip_path(char *filename, const char *pathname, struct inode **ppinode)
 //return:inode num of the file if success, otherwise zero
 int search_file(char *path)
 {
+#ifdef DEBUG_rw
+	printf("search_file : path =%s|\n", path );
+#endif
 	int i,j;
 	char filename[MAX_PATH_LEN];
 	memset(filename , 0, MAX_FILENAME_LEN);
 	struct inode *dir_inode;
 	if(strip_path(filename, path, &dir_inode)!=0)
 		return 0;
+#ifdef DEBUG_rw
+	printf("search_file : filename =%s|\n", filename );
+#endif
 	if(filename[0]== 0)//path '/'
 		return dir_inode->i_num;
 
 	//search the dir for the file
 	int dir_sects0_index = dir_inode->i_start_sect;
 	int nr_dir_sects = (dir_inode->i_size +SECTOR_SIZE -1)/SECTOR_SIZE;
-	int nr_dir_dentries = dir_inode->i_size/DIR_ENTRY_SIZE;
+	int nr_dir_dentries = (dir_inode->i_size)/DIR_ENTRY_SIZE;
 
 	int m= 0;
 	struct dir_entry *pde;
-	for (i = 0; i < nr_dir_sects; ++i){
+	for (i = 0; i < nr_dir_sects; ++i){//里面有空的
 		RD_SECT(dir_inode->i_dev, dir_sects0_index +i);
 		pde = (struct dir_entry *)fsbuf;
-		for(j=0; j<nr_dir_dentries;j++ , pde++){
-			if(memcpy(filename , pde->name, MAX_FILENAME_LEN) == 0)
+		for(j=0; j<SECTOR_SIZE/DIR_ENTRY_SIZE;j++ , pde++){
+			if(memcmp(filename , pde->name, MAX_FILENAME_LEN) == 0)
 				return pde->inode_nr;
 			if(++m >nr_dir_dentries)
 				break;
@@ -69,7 +76,7 @@ int search_file(char *path)
 //return :the ptr to the inode
 struct inode * get_inode(int dev, int num)
 {
-	RD_SECT(dev , 0);
+//	RD_SECT(dev , 0);
 	if(num == 0)
 		return 0;
 	struct inode *p;
@@ -82,7 +89,7 @@ struct inode * get_inode(int dev, int num)
 				return p;
 			}
 		}
-		else{
+		else{//p->i_cnt==0
 			if(!q){//the first cnt=0 inode
 				q=p;
 			}
