@@ -97,6 +97,8 @@ extern  struct inode *      root_inode;
  
 //function
 struct inode *get_inode(int dev, int num);
+struct super_block *get_super_block(int dev);
+
 int do_close();
 int do_rw();
 int do_open();

@@ -149,7 +149,6 @@ static int alloc_imap_bit(int dev)
 	int inode_nr =0;
 	int i,j,k;//sect, byte, bit
 	int imap_blk0_index = 2;
-	struct super_block *get_super_block(int dev);
 	struct super_block *sb = get_super_block(dev);
 	for (i = 0; i < sb->nr_imap_sects; ++i){
 		RD_SECT(dev, imap_blk0_index +i);
@@ -174,7 +173,6 @@ static int alloc_imap_bit(int dev)
 static int alloc_smap_bit(int dev, int nr_sects_to_alloc)
 {
 	int i,j,k;//sector ,byte ,bite index
-	struct super_block *get_super_block(int dev);
 	struct super_block *sb = get_super_block(dev);
 
 	int smap_blk0_index = 2+ sb->nr_imap_sects;
@@ -381,4 +379,187 @@ int do_rw()
 #endif
 		return bytes_rw;
 	}
+}
+
+/* ***********************
+ * input:
+ * @pathname:the file to be unlinked
+ * operatation:
+ * imap, sectormap, the parent dir, inod array update
+ * output:
+ * return:
+ * 0 if seccessed, -1 if failed
+ * */
+int do_unlink()
+{
+	//get the input file name from a source
+	char pathname[MAX_PATH_LEN];
+	int name_len = fs_msg.NAME_LEN;
+	int proc_source = fs_msg.source;
+	void *dest = (void *)va2la(TASK_FS, pathname);
+	void *src = (void *)va2la(proc_source, fs_msg.PATHNAME );
+	phys_copy(dest, src, name_len);
+	pathname[name_len]=0;
+
+	if(strcmp(pathname, "/")== 0){
+		printf("you can no remove the root dir\n");
+		return -1;
+	}
+	
+	int inode_nr=search_file(pathname);
+	assert(inode_nr !=0);
+	if(inode_nr == 0){
+		printf("in do_unlink:search_file return invalid inode\n");
+		return -1;
+	}
+
+	char filename[MAX_PATH_LEN];
+	struct inode *dir_inode;
+	if(strip_path(filename, pathname, &dir_inode) != 0){
+		printf("in do_unlink:strip_path failed\n");
+		return -1;
+	}
+	struct inode *file_inode= get_inode(dir_inode->i_dev, inode_nr);
+
+	if(file_inode->i_mode !=I_REGULAR){
+		printf("can not remove file %s, for it is not an regular file\n", pathname);
+		return -1;
+	}
+
+	if(file_inode->i_cnt >1){//we opened this file, so the cnt is 1 or more
+		printf("you can not remove file %s, for it is opened by others\n", pathname);
+		return -1;
+	}
+	struct super_block *sb=get_super_block(file_inode->i_dev);
+
+
+	/*****************imap*******************/
+	int byte_index= inode_nr/8;
+	int bit_index = inode_nr%8;
+	assert(byte_index<SECTOR_SIZE);
+	RD_SECT(file_inode->i_dev, 2);//skip boot and sb block
+	assert(fsbuf[byte_index] & (1<<bit_index));
+	fsbuf[byte_index] &= (~(1<<bit_index));
+	WR_SECT(file_inode->i_dev, 2);//skip boot and sb block
+	//end
+	
+	/*****************smap*******************/
+	/*1)find the start bit of the file : offset of the smap : bit_start -- byte_start -- sector_start
+	 * 2)find how many bits need to clear:bits_to_clear -- bytes to clear -- sectors to clear
+	 * 3)read one sector from the disk from the sector of bit_start,
+	 *   update one byte once, until clear up or the sector used up
+	 * 4)if it is clear up, then go to end; otherwise , write the sector and read one sector funther more
+	 * */
+
+	int bit_start=file_inode->i_start_sect - sb->n_1st_sect+1;//in bit
+	int byte_start = bit_start/8;
+	int clear_start_sect = 2+sb->nr_imap_sects + byte_start/SECTOR_SIZE;
+
+	int first_byte_in_sector=byte_start%SECTOR_SIZE;
+	int first_bit_in_byte = bit_start%8;
+
+	int bits_to_clear=file_inode->i_nr_sects;
+	int bytes_to_clear=0;
+
+	if(first_bit_in_byte!=0){
+		bytes_to_clear = (bits_to_clear - (8- first_bit_in_byte))/8;//注意，头和尾部的smap位不在字节边界，所以要除去
+	}
+	else{
+		bytes_to_clear = bits_to_clear/8;
+	}
+	
+	
+	RD_SECT(file_inode->i_dev, clear_start_sect);
+	int i;
+	for(i=first_bit_in_byte;i<8&&bits_to_clear;i++){//clear the first byte
+		assert( fsbuf[first_byte_in_sector] & (1<<i));
+		fsbuf[first_byte_in_sector] &= ~(1<<i);
+		bits_to_clear--;
+	}
+	//clear to the second to the last
+	i=first_byte_in_sector + 1;//byte 
+	int j;
+	for(j=0; j<bytes_to_clear ;j++){
+		if(i==SECTOR_SIZE){
+			i=0;
+			WR_SECT(file_inode->i_dev, clear_start_sect);
+			clear_start_sect++;
+			RD_SECT(file_inode->i_dev, clear_start_sect);
+		}
+		assert(fsbuf[i]==0xff);
+		fsbuf[i]=0;
+		i++;
+		bits_to_clear-=8;
+	}
+	//clear the last byte
+	if(i==SECTOR_SIZE){
+		i=0;
+		WR_SECT(file_inode->i_dev, clear_start_sect);
+		clear_start_sect++;
+		RD_SECT(file_inode->i_dev, clear_start_sect);
+	}
+
+	for(j=0;j<bits_to_clear;j++){//clear the last byte
+		assert( fsbuf[i] & (1<<j));
+		fsbuf[i] &= ~(1<<j);
+	}
+
+	WR_SECT(file_inode->i_dev, clear_start_sect);
+
+	/*************************clear inode itself
+	 * we have already get the inode ptr, now we will clear the content of the *ptr
+	 * */
+	file_inode->i_mode=0;
+	file_inode->i_size =0;
+	file_inode->i_start_sect = 0;
+	file_inode->i_nr_sects = 0;
+	sync_inode(file_inode);
+	put_inode(file_inode);
+
+	/**********set the inode_nr to 0 in the directory, and change the size of dir if necessary
+	 * */
+	int dir_start_sect = dir_inode->i_start_sect;
+	int dir_size_sects = (dir_inode->i_size + SECTOR_SIZE -1)/SECTOR_SIZE;
+	int dir_entries_nr = dir_inode->i_size/DIR_ENTRY_SIZE;
+
+	struct dir_entry *pde;
+	int isfound=0;
+	int m=0;
+	int dir_size=0;
+	int lastp=0;//size in byte
+
+	for(i=0;i<dir_size_sects;i++){
+		RD_SECT(dir_inode->i_dev, dir_start_sect + i);
+		
+		pde=(struct dir_entry *)fsbuf;
+		int j;
+		for(j=0;j<SECTOR_SIZE/DIR_ENTRY_SIZE;j++){
+			if(++m>dir_entries_nr)//the end of dir
+				break;
+#ifdef UNLINK_DEBUG
+				printf("searching for inode_nr:%d\n", pde->inode_nr );
+#endif
+			if(pde->inode_nr == inode_nr){
+				memset(pde, 0, DIR_ENTRY_SIZE);
+				WR_SECT(dir_inode->i_dev, dir_start_sect +i);
+				isfound=1;//
+				break;
+			}
+			else{
+				dir_size+=DIR_ENTRY_SIZE;
+				if(pde->inode_nr !=0){
+					lastp=dir_size;
+				}
+			}
+			pde++;
+		}
+		if(m>dir_entries_nr || isfound==1)
+			break;
+	}
+	assert(isfound);
+	if(m==dir_entries_nr){//delete the last entry
+		dir_inode->i_size = lastp;
+	}
+	
+	return 0;
 }

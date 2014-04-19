@@ -110,42 +110,34 @@ PUBLIC int tinix_main()
  *======================================================================*/
 void TestA()
 {
-	int fd;
-	int n;
-	const char filename[] = "test";
-	const char bufw[] = "abcd";
-	const int rd_bytes = 3;
-	char bufr[rd_bytes];
-	assert(rd_bytes <= strlen(bufw));
-
-	//create
-	fd = open(filename,O_CREAT | O_RDWR);
-	assert(fd!=-1);
-	printf("file created. fd:%d\n",fd );
-
-	//write
-	n=write(fd,bufw, strlen(bufw));
-	assert(n== strlen(bufw));
-	printf("file written. fd:%d\n",fd );
-
-	//close
-	close(fd);
-	printf("file closed fd:%d\n",fd );
-
-	//open
-	//fd=open(filename, O_RDWR);
-	fd=open("/test", O_RDWR);
-	assert( fd!= -1);
-	printf("File opened. fd: %d\n", fd);
+	char *filenames[]={
+		"/foo", "/bar", "/test"
+	};
 	
-	//read
-	n=read(fd, bufr, rd_bytes);
-	assert(n == rd_bytes);
-	bufr[n]= 0;
-	printf("%d bytes read: %s\n",n , bufr);
+	int i;
+	int nr=sizeof(filenames)/sizeof(filenames[0]);
 
-	//closed
-	close(fd);
+	for(i=0;i<nr;i++){
+		int fd=open(filenames[i], O_CREAT | O_RDWR);
+		assert(fd!=-1);
+		printf("Created file : %s\n",filenames[i]);
+		assert(close(fd)==0);
+	}
+
+	char *rmfilenames[]={
+		"/bar", "/test", "/foo" , "dev_tty0"
+	};
+
+	nr=sizeof(rmfilenames)/sizeof(rmfilenames[0]);
+
+	for(i=0;i<nr;i++){
+		if(unlink(rmfilenames[i]) == 0){
+			printf("file removed: %s\n", rmfilenames[i]);
+		}
+		else{
+			printf("Faild removing file \"%s\"", rmfilenames[i]);
+		}
+	}
 	spin("Test A");
 	while(0){
 #ifdef DEBUG

@@ -3,6 +3,7 @@
 #include "string.h"
 #include "err.h"
 
+int unlink(const char *pathname);
 
 int open(const char *pathname, int flags)
 {
@@ -58,4 +59,16 @@ int write(int fd, const void *buf, int count)
 
 	send_recv(BOTH, TASK_FS, &msg);
 	return msg.CNT;
+}
+
+int unlink(const char *pathname)
+{
+	MESSAGE msg;
+	msg.type = UNLINK;
+	msg.PATHNAME = (void *)pathname;
+	msg.NAME_LEN = strlen(pathname);
+
+	send_recv(BOTH, TASK_FS, &msg);
+	return msg.RETVAL;
+
 }

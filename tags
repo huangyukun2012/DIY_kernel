@@ -85,7 +85,7 @@ DEV_WRITE	include/msg.h	/^	DEV_WRITE,$/;"	e	enum:msgtype
 DIOCTL_GET_GEO	include/msg.h	72;"	d
 DIR_ENTRY_SIZE	include/fs.h	73;"	d
 DOWN	include/keyboard.h	86;"	d
-DRV_OF_DEV	kernel/hd.c	16;"	d	file:
+DRV_OF_DEV	driver/hd.c	16;"	d	file:
 DispAL	boot/loader.asm	/^DispAL:$/;"	l
 DispInt	boot/loader.asm	/^DispInt:$/;"	l
 DispMemInfo	boot/loader.asm	/^DispMemInfo:$/;"	l
@@ -388,12 +388,12 @@ SCROLL_DOWN	include/console.h	9;"	d
 SCROLL_LOCK	include/keyboard.h	60;"	d
 SCROLL_UP	include/console.h	8;"	d
 SECONDARY_IRQ	include/const.h	79;"	d
+SECTOR_SIZE	driver/hd.c	11;"	d	file:
 SECTOR_SIZE	fs/main.c	17;"	d	file:
-SECTOR_SIZE	fs/misc.c	6;"	d	file:
-SECTOR_SIZE	fs/opera.c	22;"	d	file:
-SECTOR_SIZE	kernel/hd.c	11;"	d	file:
-SECTOR_SIZE_SHIFT	fs/opera.c	24;"	d	file:
-SECTOR_SIZE_SHIFT	kernel/hd.c	12;"	d	file:
+SECTOR_SIZE	fs/misc.c	7;"	d	file:
+SECTOR_SIZE	fs/opera.c	21;"	d	file:
+SECTOR_SIZE_SHIFT	driver/hd.c	12;"	d	file:
+SECTOR_SIZE_SHIFT	fs/opera.c	23;"	d	file:
 SEEK_CUR	include/nostdio.h	11;"	d
 SEEK_END	include/nostdio.h	12;"	d
 SEEK_SET	include/nostdio.h	10;"	d
@@ -558,12 +558,12 @@ current_start_addr	include/console.h	/^	unsigned int current_start_addr;$/;"	m	s
 current_tty	include/tty.h	/^TTY * current_tty;$/;"	v
 cursor_location	include/console.h	/^	unsigned int cursor_location;$/;"	m	struct:s_console
 dcount	include/protect.h	/^	t_8	dcount;		\/* 该字段只在调用门描述符中有效。$/;"	m	struct:s_gate
-dd_map	drive/driver.c	/^struct dev_drv_map dd_map[]={                                                                                                                    $/;"	v	typeref:struct:dev_drv_map
+dd_map	driver/driver.c	/^struct dev_drv_map dd_map[]={                                                                                                                    $/;"	v	typeref:struct:dev_drv_map
 deadlock	kernel/proc.c	/^static deadlock(int src,int dest)$/;"	f	file:
 dec	boot/boot.asm	/^	dec	dx					; ┛就跳到下一个 Sector$/;"	d
 dec	boot/boot.asm	/^dec	cx$/;"	l
 dec	boot/loader.asm	/^	dec	dx					; ┛$/;"	d
-delay	lib/klib.c	/^PUBLIC void delay(int time)$/;"	f
+delay	lib/klib.c	/^void delay(int time)$/;"	f
 descriptor	include/protect.h	/^typedef struct descriptor		\/* 共 8 个字节 *\/$/;"	s
 dev_drv_map	include/drive.h	/^struct dev_drv_map{$/;"	s
 device	include/hd.h	/^	t_8	device;$/;"	m	struct:hd_cmd
@@ -577,7 +577,7 @@ disable_8	lib/klib.asm	/^disable_8:$/;"	l
 disable_int	lib/klib.asm	/^disable_int:$/;"	l
 disable_irq	lib/klib.asm	/^disable_irq:$/;"	l
 disp_color_str	lib/klib.asm	/^disp_color_str:$/;"	l
-disp_int	lib/klib.c	/^PUBLIC void disp_int(int input)$/;"	f
+disp_int	lib/klib.c	/^void disp_int(int input)$/;"	f
 disp_pos	include/global.h	/^EXTERN	int		disp_pos;$/;"	v
 disp_str	lib/klib.asm	/^disp_str:$/;"	l
 divide_error	kernel/kernel.asm	/^divide_error:$/;"	l
@@ -665,7 +665,7 @@ gdt_ptr	include/global.h	/^EXTERN	t_8		gdt_ptr[6];	\/\/ 0~15:Limit  16~47:Base$/
 general_protection	kernel/kernel.asm	/^general_protection:$/;"	l
 get_byte_from_kbuf	kernel/keyboard.c	/^PRIVATE t_8 get_byte_from_kbuf()$/;"	f
 get_inode	fs/misc.c	/^struct inode * get_inode(int dev, int num)$/;"	f
-get_part_table	kernel/hd.c	/^static void get_part_table(int drive, int sector_nr, struct part_entry *entry)$/;"	f	file:
+get_part_table	driver/hd.c	/^static void get_part_table(int drive, int sector_nr, struct part_entry *entry)$/;"	f	file:
 get_super_block	fs/main.c	/^struct super_block *get_super_block(int dev)$/;"	f
 get_ticks	kernel/main.c	/^int get_ticks()$/;"	f
 global	kernel/kernel.asm	/^global	bounds_check$/;"	l
@@ -722,18 +722,18 @@ global	lib/string.asm	/^global	strlen$/;"	l
 gs	include/proc.h	/^	t_32	gs;		\/* ┓						│			*\/$/;"	m	struct:s_stackframe
 gs	include/protect.h	/^	t_32	gs;$/;"	m	struct:s_tss
 has_int_msg	include/proc.h	/^	int				has_int_msg;$/;"	m	struct:proc
-hd_close	kernel/hd.c	/^static hd_close(int device_nr)$/;"	f	file:
+hd_close	driver/hd.c	/^static hd_close(int device_nr)$/;"	f	file:
 hd_cmd	include/hd.h	/^struct hd_cmd {$/;"	s
-hd_cmd_out	kernel/hd.c	/^ void hd_cmd_out(struct hd_cmd *cmd)$/;"	f
-hd_handler	kernel/hd.c	/^void hd_handler(int irq)$/;"	f
-hd_identify	kernel/hd.c	/^void hd_identify(int drive_no)$/;"	f
+hd_cmd_out	driver/hd.c	/^ void hd_cmd_out(struct hd_cmd *cmd)$/;"	f
+hd_handler	driver/hd.c	/^void hd_handler(int irq)$/;"	f
+hd_identify	driver/hd.c	/^void hd_identify(int drive_no)$/;"	f
 hd_info	include/hd.h	/^struct hd_info$/;"	s
-hd_ioctl	kernel/hd.c	/^static void hd_ioctl(MESSAGE *msgp)$/;"	f	file:
-hd_open	kernel/hd.c	/^void hd_open(int device)$/;"	f
-hd_rw	kernel/hd.c	/^static void hd_rw( MESSAGE *msgp)$/;"	f	file:
-hd_status	kernel/hd.c	/^ t_8 hd_status;$/;"	v
-hdbuf	kernel/hd.c	/^ t_8 hdbuf[2*SECTOR_SIZE];$/;"	v
-hds_info	kernel/hd.c	/^ static struct hd_info hds_info[1];$/;"	v	typeref:struct:hd_info	file:
+hd_ioctl	driver/hd.c	/^static void hd_ioctl(MESSAGE *msgp)$/;"	f	file:
+hd_open	driver/hd.c	/^void hd_open(int device)$/;"	f
+hd_rw	driver/hd.c	/^static void hd_rw( MESSAGE *msgp)$/;"	f	file:
+hd_status	driver/hd.c	/^ t_8 hd_status;$/;"	v
+hdbuf	driver/hd.c	/^ t_8 hdbuf[2*SECTOR_SIZE];$/;"	v
+hds_info	driver/hd.c	/^ static struct hd_info hds_info[1];$/;"	v	typeref:struct:hd_info	file:
 head	include/tty.h	/^	t_32	*head;$/;"	m	struct:tty
 hwint00	kernel/kernel.asm	/^hwint00:		; Interrupt routine for irq 0 (the clock).$/;"	l
 hwint01	kernel/kernel.asm	/^hwint01:		; Interrupt routine for irq 1 (keyboard)$/;"	l
@@ -751,7 +751,7 @@ hwint12	kernel/kernel.asm	/^hwint12:		; Interrupt routine for irq 12$/;"	l
 hwint13	kernel/kernel.asm	/^hwint13:		; Interrupt routine for irq 13 (FPU exception)$/;"	l
 hwint14	kernel/kernel.asm	/^hwint14:		; Interrupt routine for irq 14 (AT winchester)$/;"	l
 hwint15	kernel/kernel.asm	/^hwint15:		; Interrupt routine for irq 15$/;"	l
-i2a	kernel/nostdio.c	/^PRIVATE char* i2a(int val, int base, char ** ps)$/;"	f
+i2a	lib/stdio.c	/^PRIVATE char* i2a(int val, int base, char ** ps)$/;"	f
 i_cnt	include/fs.h	/^	int i_cnt;$/;"	m	struct:inode
 i_dev	include/fs.h	/^	int i_dev;$/;"	m	struct:inode
 i_mode	include/fs.h	/^	t_32 i_mode;$/;"	m	struct:inode
@@ -771,7 +771,7 @@ init_clock	kernel/clock.c	/^PUBLIC void init_clock()$/;"	f
 init_console	kernel/console.c	/^void init_console(CONSOLE *console_p)$/;"	f
 init_descriptor	kernel/protect.c	/^PRIVATE void init_descriptor(DESCRIPTOR * p_desc, t_32 base, t_32 limit, t_16 attribute)$/;"	f
 init_fs	fs/main.c	/^void init_fs()$/;"	f
-init_hd	kernel/hd.c	/^void init_hd()$/;"	f
+init_hd	driver/hd.c	/^void init_hd()$/;"	f
 init_idt_desc	kernel/protect.c	/^PUBLIC void init_idt_desc(unsigned char vector, t_8 desc_type, t_pf_int_handler handler, unsigned char privilege)$/;"	f
 init_keyboard	kernel/keyboard.c	/^PUBLIC void init_keyboard()$/;"	f
 init_prot	kernel/protect.c	/^PUBLIC void init_prot()$/;"	f
@@ -783,13 +783,13 @@ inode_nr	include/fs.h	/^	int inode_nr;$/;"	m	struct:dir_entry
 inode_size	include/fs.h	/^	t_32 inode_size;$/;"	m	struct:super_block
 inode_start_off	include/fs.h	/^	t_32 inode_start_off;$/;"	m	struct:super_block
 inode_table	fs/main.c	/^struct inode        inode_table[NR_INODE];                                                                                               $/;"	v	typeref:struct:inode
-interrupt_wait	kernel/hd.c	/^ void interrupt_wait()$/;"	f
+interrupt_wait	driver/hd.c	/^ void interrupt_wait()$/;"	f
 inval_opcode	kernel/kernel.asm	/^inval_opcode:$/;"	l
 inval_tss	kernel/kernel.asm	/^inval_tss:$/;"	l
 iobase	include/protect.h	/^	t_16	iobase;	\/* I\/O位图基址大于或等于TSS段界限，就表示没有I\/O许可位图 *\/$/;"	m	struct:s_tss
 irq_table	kernel/global.c	/^PUBLIC	t_pf_irq_handler	irq_table[NR_IRQ];$/;"	v
 is_special	include/fs.h	87;"	d
-itoa	lib/klib.c	/^PUBLIC char * itoa(char * str, int num)\/* 数字前面的 0 不被显示出来, 比如 0000B800 被显示成 B800 *\/$/;"	f
+itoa	lib/klib.c	/^char * itoa(char * str, int num)\/* 数字前面的 0 不被显示出来, 比如 0000B800 被显示成 B800 *\/$/;"	f
 k_reenter	include/global.h	/^EXTERN	t_32		k_reenter;$/;"	v
 kb_ack	kernel/keyboard.c	/^static void kb_ack()$/;"	f	file:
 kb_in	kernel/keyboard.c	/^KB_INPUT	kb_in;$/;"	v
@@ -829,6 +829,7 @@ m3p1	include/msg.h	/^	void *m3p1;$/;"	m	struct:mess3
 m3p2	include/msg.h	/^	void *m3p2;$/;"	m	struct:mess3
 magic	include/fs.h	/^	t_32	magic;$/;"	m	struct:super_block
 max	include/math.h	4;"	d
+memcmp	lib/memstring.c	/^int memcmp(const void * s1, const void *s2, int n)$/;"	f
 memcpy	lib/string.asm	/^memcpy:$/;"	l
 memset	lib/string.asm	/^memset:$/;"	l
 mess	include/msg.h	/^typedef struct mess{$/;"	s
@@ -863,7 +864,6 @@ num_lock	kernel/keyboard.c	/^PRIVATE int num_lock;$/;"	v
 num_lock	kernel/keyboard.c	/^static int num_lock;$/;"	v	file:
 offset_high	include/protect.h	/^	t_16	offset_high;	\/* Offset High *\/$/;"	m	struct:s_gate
 offset_low	include/protect.h	/^	t_16	offset_low;	\/* Offset Low *\/$/;"	m	struct:s_gate
-open	lib/open.c	/^int open(const char *pathname, int flags)$/;"	f
 open	lib/unistd.c	/^int open(const char *pathname, int flags)$/;"	f
 open_cnt	include/hd.h	/^	int			open_cnt;$/;"	m	struct:hd_info
 org	boot/loader.asm	/^org  0100h$/;"	l
@@ -882,21 +882,20 @@ page_switch	kernel/tty.c	/^PRIVATE void page_switch()$/;"	f
 panic	lib/err.c	/^void panic(const char *fmt, ...)$/;"	f
 part_entry	include/hd.h	/^struct part_entry {$/;"	s
 part_info	include/hd.h	/^struct part_info {$/;"	s
-partition	kernel/hd.c	/^static void partition(int device, int style)$/;"	f	file:
+partition	driver/hd.c	/^static void partition(int device, int style)$/;"	f	file:
 pcaller	fs/main.c	/^struct proc * pcaller=0;$/;"	v	typeref:struct:proc
-phys_copy	include/string.h	14;"	d
-phys_set	include/string.h	15;"	d
+phys_copy	include/string.h	19;"	d
+phys_set	include/string.h	20;"	d
 pid	include/proc.h	/^	t_32				pid;			\/* process id passed in from MM *\/$/;"	m	struct:proc
 pop	boot/boot.asm	/^	pop	dx$/;"	d
 pop	boot/loader.asm	/^	pop	dx$/;"	d
 pop	kernel/kernel.asm	/^	pop	ds$/;"	d
 port_read	lib/klib.asm	/^port_read:$/;"	l
 port_write	lib/klib.asm	/^port_write:$/;"	l
-ppvsprintf	kernel/nostdio.c	/^PUBLIC int ppvsprintf(char *buf, const char *fmt, va_list args)$/;"	f
 primary	include/hd.h	/^	struct part_info	primary[NR_PRIM_PER_DRIVE];$/;"	m	struct:hd_info	typeref:struct:hd_info::part_info
-print_hdsinfo	kernel/hd.c	/^static void print_hdsinfo(struct hd_info *hdi)$/;"	f	file:
-print_identify_info	kernel/hd.c	/^void print_identify_info(t_16 *hd_info)$/;"	f
-printf	kernel/nostdio.c	/^int printf(const char *fmt,...)$/;"	f
+print_hdsinfo	driver/hd.c	/^static void print_hdsinfo(struct hd_info *hdi)$/;"	f	file:
+print_identify_info	driver/hd.c	/^void print_identify_info(t_16 *hd_info)$/;"	f
+printf	lib/stdio.c	/^int printf(const char *fmt,...)$/;"	f
 printl	include/nostdio.h	4;"	d
 printx	kernel/syscall.asm	/^printx:$/;"	l
 priority	include/proc.h	/^	int				priority;$/;"	m	struct:proc
@@ -910,7 +909,6 @@ put_inode	fs/misc.c	/^void put_inode(struct inode * pinode)$/;"	f
 put_irq_handler	kernel/i8259.c	/^PUBLIC void put_irq_handler(int irq, t_pf_irq_handler handler)$/;"	f
 put_key2tty	kernel/tty.c	/^void put_key2tty(TTY *tty_p, t_32 key)$/;"	f
 q_sending	include/proc.h	/^	struct	proc	*q_sending;$/;"	m	struct:proc	typeref:struct:proc::proc
-read	lib/read.c	/^int read(int fd, void *buf, int count)$/;"	f
 read	lib/unistd.c	/^int read(int fd, void *buf, int count)$/;"	f
 read_super_block	fs/main.c	/^static void read_super_block(int dev)$/;"	f	file:
 regs	include/proc.h	/^	STACK_FRAME			regs;			\/* process' registers saved in stack frame *\/$/;"	m	struct:proc
@@ -950,7 +948,7 @@ single_step_exception	kernel/kernel.asm	/^single_step_exception:$/;"	l
 size	include/hd.h	/^	t_32	size;	\/* how many sectors in this partition (NOT byte size, but SECTOR number) *\/$/;"	m	struct:part_info
 source	include/msg.h	/^	int source;$/;"	m	struct:mess
 spin	lib/err.c	/^void spin(char *funcname)$/;"	f
-sprintf	kernel/nostdio.c	/^int sprintf(char *buf, const char *fmt, ...)$/;"	f
+sprintf	lib/stdio.c	/^int sprintf(char *buf, const char *fmt, ...)$/;"	f
 spurious_irq	kernel/i8259.c	/^PUBLIC void spurious_irq(int irq)$/;"	f
 ss	include/proc.h	/^	t_32	ss;		\/*  ┛						┷High			*\/$/;"	m	struct:s_stackframe
 ss	include/protect.h	/^	t_32	ss;$/;"	m	struct:s_tss
@@ -963,6 +961,8 @@ start_cyl	include/hd.h	/^	t_8 start_cyl;		\/**$/;"	m	struct:part_entry
 start_head	include/hd.h	/^	t_8 start_head;		\/**$/;"	m	struct:part_entry
 start_sect	include/hd.h	/^	t_32 start_sect;	\/**$/;"	m	struct:part_entry
 start_sector	include/hd.h	/^	t_8 start_sector;	\/**$/;"	m	struct:part_entry
+strcat	lib/memstring.c	/^char * strcat(char * s1, const char *s2)$/;"	f
+strcmp	lib/memstring.c	/^int strcmp(const char * s1, const char *s2)$/;"	f
 strcpy	lib/string.asm	/^strcpy:$/;"	l
 strip_path	fs/misc.c	/^int strip_path(char *filename, const char *pathname, struct inode **ppinode)$/;"	f
 strlen	lib/string.asm	/^strlen:   $/;"	l
@@ -991,7 +991,7 @@ t_port	include/type.h	/^typedef	unsigned int		t_port;$/;"	t
 t_sys_call	include/type.h	/^typedef	void*	t_sys_call;$/;"	t
 tail	include/tty.h	/^	t_32	*tail;$/;"	m	struct:tty
 task_fs	fs/main.c	/^void task_fs()$/;"	f
-task_hd	kernel/hd.c	/^void task_hd()$/;"	f
+task_hd	driver/hd.c	/^void task_hd()$/;"	f
 task_stack	kernel/global.c	/^PUBLIC	char	task_stack[STACK_SIZE_TOTAL];$/;"	v
 task_sys	kernel/systask.c	/^void task_sys()$/;"	f
 task_table	kernel/global.c	/^PUBLIC	TASK	task_table[NR_TASKS] = {{task_tty, STACK_SIZE_TTY, "tty"},$/;"	v
@@ -1014,11 +1014,11 @@ va2la	kernel/proc.c	/^void * va2la(int pid, void * va)$/;"	f
 va_list	include/type.h	/^typedef char* 	va_list;$/;"	t
 vir2phys	include/protect.h	153;"	d
 vmem_limit	include/console.h	/^	unsigned int vmem_limit;$/;"	m	struct:s_console
-vsprintf	kernel/nostdio.c	/^PUBLIC int vsprintf(char *buf, const char *fmt, va_list args)$/;"	f
+vsprintf	lib/stdio.c	/^PUBLIC int vsprintf(char *buf, const char *fmt, va_list args)$/;"	f
 wRootDirSizeForLoop	boot/boot.asm	/^wRootDirSizeForLoop	dw	RootDirSectors	; Root Directory 占用的扇区数, 在循环中会递减至零.$/;"	d
 wRootDirSizeForLoop	boot/loader.asm	/^wRootDirSizeForLoop	dw	RootDirSectors	; Root Directory 占用的扇区数$/;"	d
 wSectorNo	boot/boot.asm	/^wSectorNo		dw	0		; 要读取的扇区号$/;"	d
 wSectorNo	boot/loader.asm	/^wSectorNo		dw	0		; 要读取的扇区号$/;"	d
-waitfor	kernel/hd.c	/^ int waitfor(int mask, int val, int timeout)$/;"	f
+waitfor	driver/hd.c	/^ int waitfor(int mask, int val, int timeout)$/;"	f
 write	lib/unistd.c	/^int write(int fd, const void *buf, int count)$/;"	f
 write_tty	kernel/tty.c	/^void write_tty(TTY * tty_p,char *buf,int len)$/;"	f

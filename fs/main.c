@@ -50,6 +50,12 @@ void task_fs()
 			case CLOSE:
 				fs_msg.RETVAL = do_close();
 				break;
+			case UNLINK:
+				fs_msg.RETVAL = do_unlink();
+				break;
+			default:
+				printf("fs_msg.type is unknow:%d", fs_msg.type);
+				break;
 		}
 
 		fs_msg.type = SYSCALL_RET;
