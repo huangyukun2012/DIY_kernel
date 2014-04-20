@@ -69,7 +69,7 @@ PUBLIC int tinix_main()
 		p_proc->regs.esp	= (t_32)p_task_stack;
 		p_proc->regs.eflags	= eflags ;	// IF=1, IOPL=1, bit 2 is always 1.
 
-		p_proc->nr_tty=0;
+	//_proc->nr_tty=0;
 		p_task_stack -= p_task->stacksize;
 	
 		p_proc->p_flags=0;
@@ -88,10 +88,10 @@ PUBLIC int tinix_main()
 
 	}
 
-	proc_table[NR_TASKS+0].nr_tty=0;//A
+	/*proc_table[NR_TASKS+0].nr_tty=0;//A
 	proc_table[NR_TASKS+1].nr_tty=1;//B
 	proc_table[NR_TASKS+2].nr_tty=1;//C
-	
+	*/
 	k_reenter	= 0;
 	ticks		= 0;
 
@@ -125,7 +125,7 @@ void TestA()
 	}
 
 	char *rmfilenames[]={
-		"/bar", "/test", "/foo" , "dev_tty0"
+		"/bar", "/test", "/foo"  
 	};
 
 	nr=sizeof(rmfilenames)/sizeof(rmfilenames[0]);
@@ -157,10 +157,31 @@ void TestA()
 void TestB()
 {
 	int i = 0;
+	char tty_name[] = "/dev_tty1";
+	int fd_stdin = open(tty_name, O_RDWR);
+	assert(fd_stdin == 0);
+	int fd_stdout = open(tty_name, O_RDWR);
+	assert(fd_stdout == 1);
+	char rdbuf[128];
+
+
 	while(1){
-		printf("B");
-		milli_delay(10);
+		write(fd_stdout, "$ ", 2);
+		int r = read(fd_stdin, rdbuf,70);
+		rdbuf[r] = 0;
+		if(strcmp(rdbuf, "hello") == 0){
+			write(fd_stdout, "hello world!\n", 13);
+
+		}
+		else{
+			if(rdbuf[0]){
+				write(fd_stdout, "{", 1);
+				write(fd_stdout, rdbuf, r);
+				write(fd_stdout, "}\n", 2);
+			}
+		}
 	}
+	assert(0);
 }
 
 
@@ -170,6 +191,7 @@ void TestB()
 void TestC()
 {
 	int i = 0;
+	spin("Test C. . . \n");
 	while(1){
 		printf("C");
 		milli_delay(10);

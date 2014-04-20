@@ -23,6 +23,7 @@ int do_open();
 #define SECTOR_SIZE_SHIFT 9
 
 	int DEBUG_rw_sector = 0;
+
 int do_open()
 {//return the fd of the file in fs_msg
 #ifdef DEBUG
@@ -101,10 +102,14 @@ int do_open()
 		if(imode == I_CHAR_SPECIAL){//specal char device
 			MESSAGE driver_msg;
 			driver_msg.type = DEV_OPEN;
-			int dev = pin->i_dev;//err: it is?
+			int dev = pin->i_start_sect;//err: it is?
 				
+			
 			driver_msg.DEVICE = MINOR(dev);
-			assert(MAJOR(dev) == 4);
+			if(MAJOR(dev)!=DEV_CHAR_TTY ){
+				printf("do_open:major-DEV is not DEV_CHAR_TTY ");
+			}
+			assert(MAJOR(dev) == DEV_CHAR_TTY);
 			assert(dd_map[MAJOR(dev)].driver_nr != INVALID_DRIVER);
 			
 			send_recv(BOTH,dd_map[MAJOR(dev)].driver_nr, &driver_msg);
@@ -300,7 +305,7 @@ int do_rw()
 		int t = fs_msg.type == READ? DEV_READ:DEV_WRITE;
 		fs_msg.type = t;
 
-		int dev = pin->i_dev;
+		int dev = pin->i_start_sect;
 		assert(MAJOR(dev)==4);
 
 		fs_msg.DEVICE= MINOR(dev);

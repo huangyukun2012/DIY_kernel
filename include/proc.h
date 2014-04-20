@@ -47,8 +47,8 @@ typedef struct proc{
 	int				priority;
 	t_32				pid;			/* process id passed in from MM */
 	char				name[16];		/* name of the process */
-	int 			nr_tty;
 
+	/*int 			nr_tty;*/
 	int 			p_flags;
 	MESSAGE			*p_msg;
 	int				p_recvfrom;
@@ -112,4 +112,5 @@ void dump_msg(const char *,MESSAGE *);
 #define SENDING   0x02  /* set when proc trying to send */
 #define RECEIVING 0x04  /* set when proc trying to recv */
 
+void inform_int(int task_nr);
 #endif

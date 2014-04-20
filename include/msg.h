@@ -42,6 +42,7 @@ enum msgtype{
 	/* file operation*/
 	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   
 	    /* TTY, SYS, FS, MM, etc */
+	SUSPEND_PROC, RESUME_PROC, 
 	SYSCALL_RET,   
 	DEV_OPEN=1001,
 	DEV_CLOSE,

@@ -22,7 +22,7 @@ BLACK	include/const.h	29;"	d
 BLUE	include/const.h	33;"	d
 BOTH	include/msg.h	38;"	d
 BRIGHT	include/const.h	35;"	d
-BUF	include/msg.h	63;"	d
+BUF	include/msg.h	64;"	d
 BaseOfStack	boot/boot.asm	/^BaseOfStack		equ	0100h	; 调试状态下堆栈基地址(栈底, 从这个位置向低地址生长)$/;"	d
 BaseOfStack	boot/boot.asm	/^BaseOfStack		equ	07c00h	; Boot状态下堆栈基地址(栈底, 从这个位置向低地址生长)$/;"	d
 BaseOfStack	boot/loader.asm	/^BaseOfStack	equ	0100h$/;"	d
@@ -33,7 +33,7 @@ CC	Makefile	/^CC		= gcc$/;"	m
 CFLAGS	Makefile	/^CFLAGS		= -m32 -I include\/ -c -fno-builtin$/;"	m
 CLOCK_IRQ	include/const.h	75;"	d
 CLOSE	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
-CNT	include/msg.h	58;"	d
+CNT	include/msg.h	59;"	d
 COLOR	kernel/console.c	7;"	d	file:
 CONSOLE	include/console.h	/^}CONSOLE;$/;"	t	typeref:struct:s_console
 CONSOLE_H	include/console.h	2;"	d
@@ -71,7 +71,7 @@ DEBUG_rw_sector	fs/opera.c	/^	int DEBUG_rw_sector = 0;$/;"	v
 DEFAULT_CHAR_COLOR	include/console.h	11;"	d
 DELETE	include/keyboard.h	80;"	d
 DESCRIPTOR	include/protect.h	/^}DESCRIPTOR;$/;"	t	typeref:struct:descriptor
-DEVICE	include/msg.h	61;"	d
+DEVICE	include/msg.h	62;"	d
 DEV_CDROM	include/drive.h	7;"	d
 DEV_CHAR_TTY	include/drive.h	9;"	d
 DEV_CLOSE	include/msg.h	/^	DEV_CLOSE,$/;"	e	enum:msgtype
@@ -82,7 +82,7 @@ DEV_OPEN	include/msg.h	/^	DEV_OPEN=1001,$/;"	e	enum:msgtype
 DEV_READ	include/msg.h	/^	DEV_READ,$/;"	e	enum:msgtype
 DEV_SCSI	include/drive.h	10;"	d
 DEV_WRITE	include/msg.h	/^	DEV_WRITE,$/;"	e	enum:msgtype
-DIOCTL_GET_GEO	include/msg.h	72;"	d
+DIOCTL_GET_GEO	include/msg.h	73;"	d
 DIR_ENTRY_SIZE	include/fs.h	73;"	d
 DOWN	include/keyboard.h	86;"	d
 DRV_OF_DEV	driver/hd.c	16;"	d	file:
@@ -116,8 +116,8 @@ F7	include/keyboard.h	69;"	d
 F8	include/keyboard.h	70;"	d
 F9	include/keyboard.h	71;"	d
 FALSE	include/const.h	21;"	d
-FD	include/msg.h	54;"	d
-FLAGS	include/msg.h	56;"	d
+FD	include/msg.h	55;"	d
+FLAGS	include/msg.h	57;"	d
 FLAG_ALT_L	include/keyboard.h	31;"	d
 FLAG_ALT_R	include/keyboard.h	32;"	d
 FLAG_BREAK	include/keyboard.h	25;"	d
@@ -267,7 +267,7 @@ Message2	boot/boot.asm	/^Message2		db	"No LOADER"; 9字节, 不够则用空格补齐. 序号
 Message2	boot/loader.asm	/^Message2		db	"No KERNEL"$/;"	d
 MessageLength	boot/boot.asm	/^MessageLength		equ	9$/;"	d
 MessageLength	boot/loader.asm	/^MessageLength		equ	9$/;"	d
-NAME_LEN	include/msg.h	57;"	d
+NAME_LEN	include/msg.h	58;"	d
 NO_DEV	include/drive.h	5;"	d
 NO_PART	include/hd.h	273;"	d
 NO_TASK	include/proc.h	90;"	d
@@ -286,11 +286,11 @@ NR_SUB_PER_PART	include/hd.h	236;"	d
 NR_SUPER_BLOCK	include/fs.h	18;"	d
 NR_SYS_CALL	include/const.h	101;"	d
 NR_TASKS	include/proc.h	78;"	d
-NR_TTY	include/tty.h	6;"	d
+NR_TTY	include/tty.h	7;"	d
 NR_USER_PROCS	include/proc.h	79;"	d
 NUM_LOCK	include/keyboard.h	59;"	d
 OBJS	Makefile	/^OBJS		= kernel\/kernel.o kernel\/syscall.o kernel\/start.o kernel\/main.o\\$/;"	m
-OFFSET	include/msg.h	64;"	d
+OFFSET	include/msg.h	65;"	d
 OPEN	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
 ORANGE_PART	include/hd.h	275;"	d
 O_CREAT	include/nostdio.h	7;"	d
@@ -326,11 +326,11 @@ PAGEDOWN	include/keyboard.h	84;"	d
 PAGEUP	include/keyboard.h	83;"	d
 PARTITION_ENTRY	include/hd.h	/^} PARTITION_ENTRY;$/;"	v	typeref:struct:part_entry
 PARTITION_TABLE_OFFSET	include/hd.h	262;"	d
-PATHNAME	include/msg.h	55;"	d
+PATHNAME	include/msg.h	56;"	d
 PAUSEBREAK	include/keyboard.h	78;"	d
 PORT_8042_CONTROL	include/keyboard.h	15;"	d
 PORT_8042_DATA	include/keyboard.h	16;"	d
-POSITION	include/msg.h	62;"	d
+POSITION	include/msg.h	63;"	d
 POWER	include/keyboard.h	91;"	d
 PRINTER_IRQ	include/const.h	83;"	d
 PRINTSCREEN	include/keyboard.h	77;"	d
@@ -339,7 +339,7 @@ PRIVILEGE_KRNL	include/const.h	43;"	d
 PRIVILEGE_TASK	include/const.h	44;"	d
 PRIVILEGE_USER	include/const.h	45;"	d
 PROCESS	include/proc.h	/^}PROCESS;$/;"	t	typeref:struct:proc
-PROC_NR	include/msg.h	60;"	d
+PROC_NR	include/msg.h	61;"	d
 PUBLIC	include/const.h	16;"	d
 P_EXTENDED	include/hd.h	272;"	d
 P_PRIMARY	include/hd.h	271;"	d
@@ -363,8 +363,9 @@ REG_LBA_LOW	include/hd.h	122;"	d
 REG_LBA_MID	include/hd.h	123;"	d
 REG_NSECTOR	include/hd.h	121;"	d
 REG_STATUS	include/hd.h	142;"	d
-REQUEST	include/msg.h	59;"	d
-RETVAL	include/msg.h	69;"	d
+REQUEST	include/msg.h	60;"	d
+RESUME_PROC	include/msg.h	/^	SUSPEND_PROC, RESUME_PROC, $/;"	e	enum:msgtype
+RETVAL	include/msg.h	70;"	d
 RIGHT	include/keyboard.h	88;"	d
 ROOT_DEV	include/hd.h	280;"	d
 ROOT_INODE	include/fs.h	77;"	d
@@ -433,6 +434,7 @@ STATUS_ERR	include/hd.h	165;"	d
 STATUS_IDX	include/hd.h	164;"	d
 STR_DEFAULT_LEN	include/string.h	8;"	d
 SUPER_BLOCK_SIZE	include/fs.h	51;"	d
+SUSPEND_PROC	include/msg.h	/^	SUSPEND_PROC, RESUME_PROC, $/;"	e	enum:msgtype
 SYSCALL_RET	include/msg.h	/^	SYSCALL_RET,   $/;"	e	enum:msgtype
 SelectorFlatC	boot/loader.asm	/^SelectorFlatC		equ	LABEL_DESC_FLAT_C	- LABEL_GDT$/;"	d
 SelectorFlatRW	boot/loader.asm	/^SelectorFlatRW		equ	LABEL_DESC_FLAT_RW	- LABEL_GDT$/;"	d
@@ -456,6 +458,7 @@ TRUE	include/const.h	20;"	d
 TSS	include/protect.h	/^}TSS;$/;"	t	typeref:struct:s_tss
 TTY	include/tty.h	/^}TTY;$/;"	t	typeref:struct:tty
 TTY_BUFFER_SIZE	include/tty.h	4;"	d
+TTY_OUT_BUF_LEN	include/tty.h	5;"	d
 TestA	kernel/main.c	/^void TestA()$/;"	f
 TestB	kernel/main.c	/^void TestB()$/;"	f
 TestC	kernel/main.c	/^void TestC()$/;"	f
@@ -465,7 +468,7 @@ UP	include/keyboard.h	85;"	d
 V_MEM_BASE	include/const.h	97;"	d
 V_MEM_SIZE	include/const.h	98;"	d
 WAKE	include/keyboard.h	93;"	d
-WHENCE	include/msg.h	65;"	d
+WHENCE	include/msg.h	66;"	d
 WHITE	include/const.h	30;"	d
 WRITE	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
 WR_SECT	include/fs.h	10;"	d
@@ -531,6 +534,7 @@ bounds_check	kernel/kernel.asm	/^bounds_check:$/;"	l
 breakpoint_exception	kernel/kernel.asm	/^breakpoint_exception:$/;"	l
 buf	include/keyboard.h	/^	char buf[KB_IN_BYTES];$/;"	m	struct:s_kb
 buffer	include/tty.h	/^	t_32	buffer[TTY_BUFFER_SIZE];$/;"	m	struct:tty
+caller	include/tty.h	/^	int 	caller;$/;"	m	struct:tty
 caps_lock	kernel/keyboard.c	/^PRIVATE int caps_lock;$/;"	v
 caps_lock	kernel/keyboard.c	/^static int caps_lock;$/;"	v	file:
 clock_handler	kernel/clock.c	/^PUBLIC void clock_handler(int irq)$/;"	f
@@ -555,7 +559,6 @@ cstart	kernel/start.c	/^PUBLIC void cstart()$/;"	f
 ctrl_l	kernel/keyboard.c	/^PRIVATE int ctrl_l;$/;"	v
 ctrl_r	kernel/keyboard.c	/^PRIVATE int ctrl_r;$/;"	v
 current_start_addr	include/console.h	/^	unsigned int current_start_addr;$/;"	m	struct:s_console
-current_tty	include/tty.h	/^TTY * current_tty;$/;"	v
 cursor_location	include/console.h	/^	unsigned int cursor_location;$/;"	m	struct:s_console
 dcount	include/protect.h	/^	t_8	dcount;		\/* 该字段只在调用门描述符中有效。$/;"	m	struct:s_gate
 dd_map	driver/driver.c	/^struct dev_drv_map dd_map[]={                                                                                                                    $/;"	v	typeref:struct:dev_drv_map
@@ -584,6 +587,7 @@ divide_error	kernel/kernel.asm	/^divide_error:$/;"	l
 do_close	fs/opera.c	/^int do_close()$/;"	f
 do_open	fs/opera.c	/^int do_open()$/;"	f
 do_rw	fs/opera.c	/^int do_rw()$/;"	f
+do_unlink	fs/opera.c	/^int do_unlink()$/;"	f
 double_fault	kernel/kernel.asm	/^double_fault:$/;"	l
 driver_nr	include/drive.h	/^	int driver_nr;$/;"	m	struct:dev_drv_map
 ds	include/proc.h	/^	t_32	ds;		\/* ┃						│			*\/$/;"	m	struct:s_stackframe
@@ -795,6 +799,7 @@ kb_ack	kernel/keyboard.c	/^static void kb_ack()$/;"	f	file:
 kb_in	kernel/keyboard.c	/^KB_INPUT	kb_in;$/;"	v
 kb_wait	kernel/keyboard.c	/^static void kb_wait()$/;"	f	file:
 kernel_esp	include/proc.h	/^	t_32	kernel_esp;	\/* <- 'popad' will ignore it			│			*\/$/;"	m	struct:s_stackframe
+key_pressed	kernel/keyboard.c	/^int key_pressed = 0;$/;"	v
 keyboard_handler	kernel/keyboard.c	/^PUBLIC void keyboard_handler(int irq)$/;"	f
 keyboard_read	kernel/keyboard.c	/^void keyboard_read(TTY * tty_p)$/;"	f
 keymap	include/keymap.h	/^t_32 keymap[NR_SCAN_CODES * MAP_COLS] = {$/;"	v
@@ -901,6 +906,7 @@ printx	kernel/syscall.asm	/^printx:$/;"	l
 priority	include/proc.h	/^	int				priority;$/;"	m	struct:proc
 proc	include/proc.h	/^typedef struct proc{$/;"	s
 proc2pid	include/proc.h	66;"	d
+proc2tty	include/tty.h	/^	int		proc2tty;$/;"	m	struct:tty
 proc_table	kernel/global.c	/^PUBLIC	PROCESS	proc_table[NR_PROCS];$/;"	v
 push	boot/boot.asm	/^	push	dx$/;"	d
 push	boot/loader.asm	/^	push	dx$/;"	d
@@ -912,6 +918,8 @@ q_sending	include/proc.h	/^	struct	proc	*q_sending;$/;"	m	struct:proc	typeref:st
 read	lib/unistd.c	/^int read(int fd, void *buf, int count)$/;"	f
 read_super_block	fs/main.c	/^static void read_super_block(int dev)$/;"	f	file:
 regs	include/proc.h	/^	STACK_FRAME			regs;			\/* process' registers saved in stack frame *\/$/;"	m	struct:proc
+reqed_cnt	include/tty.h	/^	int 	reqed_cnt;$/;"	m	struct:tty
+reqer_buf	include/tty.h	/^	void *		reqer_buf;$/;"	m	struct:tty
 reset_msg	kernel/proc.c	/^void reset_msg(MESSAGE *p)$/;"	f
 restart	kernel/kernel.asm	/^restart:$/;"	l
 restart_reenter	kernel/kernel.asm	/^restart_reenter:$/;"	l
@@ -936,6 +944,7 @@ seg2phys	kernel/protect.c	/^PUBLIC t_32 seg2phys(t_16 seg)$/;"	f
 segment_not_present	kernel/kernel.asm	/^segment_not_present:$/;"	l
 selector	include/protect.h	/^	t_16	selector;	\/* Selector *\/$/;"	m	struct:s_gate
 send_recv	kernel/proc.c	/^int send_recv(int function, int src_dest, MESSAGE *msg)$/;"	f
+sended_cnt	include/tty.h	/^	int		sended_cnt;$/;"	m	struct:tty
 sendrec	kernel/syscall.asm	/^sendrec:$/;"	l
 set_console_start_addr	kernel/console.c	/^void set_console_start_addr(t_32 addr)$/;"	f
 set_cursor	kernel/console.c	/^void set_cursor(t_32 addr)$/;"	f
@@ -1003,12 +1012,15 @@ tinix_main	kernel/main.c	/^PUBLIC int tinix_main()$/;"	f
 trap	include/protect.h	/^	t_16	trap;$/;"	m	struct:s_tss
 tss	include/global.h	/^EXTERN	TSS		tss;$/;"	v
 tty	include/tty.h	/^typedef	struct tty{$/;"	s
+tty_do_read	kernel/tty.c	/^void tty_do_read(TTY * tty_p, MESSAGE *msg)$/;"	f
+tty_do_write	kernel/tty.c	/^void tty_do_write(TTY *tty_p, MESSAGE * msg)$/;"	f
 tty_read	kernel/tty.c	/^void tty_read(TTY *tty_p)$/;"	f
 tty_table	kernel/global.c	/^TTY	tty_table[NR_TTY];$/;"	v
 tty_write	kernel/tty.c	/^void tty_write(TTY *tty_p)$/;"	f
 type	include/msg.h	/^	int type;$/;"	m	struct:mess
 u	include/msg.h	/^	}u;$/;"	m	struct:mess	typeref:union:mess::__anon1
 unblock	kernel/proc.c	/^void unblock(struct proc *p)$/;"	f
+unlink	lib/unistd.c	/^int unlink(const char *pathname)$/;"	f
 user_proc_table	kernel/global.c	/^PUBLIC	TASK	user_proc_table[NR_USER_PROCS] = {$/;"	v
 va2la	kernel/proc.c	/^void * va2la(int pid, void * va)$/;"	f
 va_list	include/type.h	/^typedef char* 	va_list;$/;"	t

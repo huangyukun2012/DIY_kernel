@@ -53,13 +53,23 @@ void task_fs()
 			case UNLINK:
 				fs_msg.RETVAL = do_unlink();
 				break;
+			case RESUME_PROC:
+				src = fs_msg.PROC_NR;
+				break;
 			default:
 				printf("fs_msg.type is unknow:%d", fs_msg.type);
+				assert (0);
 				break;
 		}
+		
+		if(fs_msg.type !=SUSPEND_PROC){
+			fs_msg.type = SYSCALL_RET;
+			send_recv(SEND, src, &fs_msg);
+			
+		}
+		else{//do nothing , for the tty device has send msg to the pro
 
-		fs_msg.type = SYSCALL_RET;
-		send_recv(SEND, src, &fs_msg);
+		}
 	}
 
 }
@@ -194,7 +204,7 @@ static void mkfs()
 		pi = (struct inode*)(fsbuf + (INODE_SIZE * (i + 1)));
 		pi->i_mode = I_CHAR_SPECIAL;
 		pi->i_size = 0;
-		pi->i_start_sect = MAKE_DEV(DEV_CHAR_TTY, i);
+		pi->i_start_sect = MAKE_DEV(DEV_CHAR_TTY, i);//之所以不放在dev中，是因为dev是内存数据结构
 		pi->i_nr_sects = 0;
 	}
 	WR_SECT(ROOT_DEV, 2 + sb.nr_imap_sects + sb.nr_smap_sects);

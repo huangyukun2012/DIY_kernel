@@ -100,7 +100,7 @@ kernel/protect.o: kernel/protect.c include/type.h include/const.h include/protec
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/clock.o: kernel/clock.c include/type.h include/const.h include/protect.h include/string.h include/proc.h \
-			include/global.h include/proto.h
+			include/global.h include/proto.h include/keyboard.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/proc.o: kernel/proc.c include/type.h include/const.h include/protect.h include/string.h include/proc.h include/proto.h \
@@ -112,7 +112,7 @@ kernel/keyboard.o: kernel/keyboard.c include/type.h include/const.h include/prot
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/tty.o: kernel/tty.c include/type.h include/const.h include/protect.h include/proto.h include/string.h \
-	include/console.h include/proc.h include/global.h include/keyboard.h
+	include/console.h include/proc.h include/global.h include/keyboard.h include/math.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/console.o: kernel/console.c include/type.h include/const.h \

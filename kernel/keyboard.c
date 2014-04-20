@@ -35,6 +35,9 @@ static void kb_wait();
 static void kb_ack();
 static void set_leds();
 PRIVATE t_8 get_byte_from_kbuf();
+
+
+int key_pressed = 0;
 /*======================================================================*
                             keyboard_handler
  *======================================================================*/
@@ -49,6 +52,7 @@ PUBLIC void keyboard_handler(int irq)
 		}
 		kb_in.count++;
 	}
+	key_pressed = 1;
 }
 
 

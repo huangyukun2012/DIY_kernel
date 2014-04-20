@@ -12,6 +12,7 @@
 #include "string.h"
 #include "proc.h"
 #include "global.h"
+#include "keyboard.h"
 
 
 
@@ -26,6 +27,9 @@ PUBLIC void clock_handler(int irq)
 	if (k_reenter != 0) {
 		//disp_str("!");
 		return;
+	}
+	if(key_pressed){
+		inform_int(TASK_TTY);
 	}
 	schedule();
 }

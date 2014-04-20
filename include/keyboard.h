@@ -134,4 +134,5 @@ typedef struct s_kb{
 }KB_INPUT;
 
 
+extern int key_pressed;
 #endif /* _TINIX_KEYBOARD_H_ */

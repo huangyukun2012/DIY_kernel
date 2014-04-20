@@ -15,6 +15,7 @@ void set_cursor(t_32 addr);
 void set_cursor_location(t_32 addr);
 void set_cursor_length();
 
+TTY *current_tty = (void *)0;
 void out_char(CONSOLE * p_con,char ch)
 {
 	disp_pos=0;
