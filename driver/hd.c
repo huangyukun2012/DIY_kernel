@@ -299,7 +299,7 @@ static void hd_rw( MESSAGE *msgp)
 {
 #ifdef DEBUG_RW
 	if(DEBUG_rw_sector==1){
-		printf("in hd_rw:\n");
+		printl("in hd_rw:\n");
 	}
 #endif
 	int drive_nr=DRV_OF_DEV(msgp->DEVICE);
@@ -326,15 +326,15 @@ static void hd_rw( MESSAGE *msgp)
 	hd_cmd_out(&cmd);
 #ifdef DEBUG_RW
 	if(DEBUG_rw_sector==1){
-		printf("hd_rw: cmd to hd was sended\n");
-		printf("msg.CNT= %d", msgp->CNT);
+		printl("hd_rw: cmd to hd was sended\n");
+		printl("msg.CNT= %d", msgp->CNT);
 	}
 #endif
 
 	while(byte_left){
 #ifdef DEBUG_RW
 	if(DEBUG_rw_sector==1){
-		printf(">byte_left:%d  ", byte_left);
+		printl(">byte_left:%d  ", byte_left);
 	}
 #endif
 		int bytes=min(SECTOR_SIZE, byte_left);
@@ -355,7 +355,7 @@ static void hd_rw( MESSAGE *msgp)
 	}
 #ifdef DEBUG_RW
 	if(DEBUG_rw_sector==1){
-		printf("out hd_rw:\n");
+		printl("out hd_rw:\n");
 	}
 #endif
 }

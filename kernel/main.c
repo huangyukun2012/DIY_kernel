@@ -109,13 +109,20 @@ PUBLIC int tinix_main()
                                TestA
  *======================================================================*/
 void TestA()
-{
+{//very important: the stdin and stdout must be open , or the printf will not work
+	char tty_name[] = "/dev_tty1";
+	int fd_stdin = open(tty_name, O_RDWR);
+	assert(fd_stdin == 0);
+	int fd_stdout = open(tty_name, O_RDWR);
+	assert(fd_stdout == 1);
+	
 	char *filenames[]={
 		"/foo", "/bar", "/test"
 	};
 	
 	int i;
 	int nr=sizeof(filenames)/sizeof(filenames[0]);
+
 
 	for(i=0;i<nr;i++){
 		int fd=open(filenames[i], O_CREAT | O_RDWR);
@@ -164,24 +171,21 @@ void TestB()
 	assert(fd_stdout == 1);
 	char rdbuf[128];
 
-
 	while(1){
-		write(fd_stdout, "$ ", 2);
+		printf("$:");
 		int r = read(fd_stdin, rdbuf,70);
 		rdbuf[r] = 0;
 		if(strcmp(rdbuf, "hello") == 0){
-			write(fd_stdout, "hello world!\n", 13);
+			printf("hello world\n");
 
 		}
 		else{
 			if(rdbuf[0]){
-				write(fd_stdout, "{", 1);
-				write(fd_stdout, rdbuf, r);
-				write(fd_stdout, "}\n", 2);
+				printf("{%s}\n", rdbuf);
 			}
 		}
 	}
-	assert(0);
+	assert(0);//never arrive here
 }
 
 

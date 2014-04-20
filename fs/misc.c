@@ -36,7 +36,7 @@ int strip_path(char *filename, const char *pathname, struct inode **ppinode)
 int search_file(char *path)
 {
 #ifdef DEBUG_rw
-	printf("search_file : path =%s|\n", path );
+	printl("search_file : path =%s|\n", path );
 #endif
 	int i,j;
 	char filename[MAX_PATH_LEN];
@@ -45,7 +45,7 @@ int search_file(char *path)
 	if(strip_path(filename, path, &dir_inode)!=0)
 		return 0;
 #ifdef DEBUG_rw
-	printf("search_file : filename =%s|\n", filename );
+	printl("search_file : filename =%s|\n", filename );
 #endif
 	if(filename[0]== 0)//path '/'
 		return dir_inode->i_num;

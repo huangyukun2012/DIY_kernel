@@ -163,7 +163,7 @@ static int msg_send(struct proc *current, int dest, MESSAGE *m)
 	struct proc *sender=current;
 	struct proc *p_dest=proc_table+dest;
 #if DEBUG
-	printf("%ds%d ",current-proc_table,dest);
+	printl("%ds%d ",current-proc_table,dest);
 #endif
 	assert(proc2pid(sender)!=dest);
 	if(deadlock(proc2pid(sender),dest)){
@@ -310,7 +310,7 @@ static int msg_receive(struct proc * current_pro,int src, MESSAGE *m)
 		assert(m);
 		assert(p_from->p_msg);
 #if DEBUG
-		printf("ub:%d-f%dr%dt%d  ",who_want_to_receive-proc_table,who_want_to_receive->p_flags,p_from-proc_table,p_from->p_msg->type );
+		printl("ub:%d-f%dr%dt%d  ",who_want_to_receive-proc_table,who_want_to_receive->p_flags,p_from-proc_table,p_from->p_msg->type );
 #endif	
 		//copy mesg
 		phys_copy( va2la(proc2pid(who_want_to_receive),m),
@@ -332,7 +332,7 @@ static int msg_receive(struct proc * current_pro,int src, MESSAGE *m)
 			who_want_to_receive->p_recvfrom=proc2pid(p_from);
 		}
 #if DEBUG 
-		printf("b:%d-f%dr%d  ",who_want_to_receive-proc_table,who_want_to_receive->p_flags,src );
+		printl("b:%d-f%dr%d  ",who_want_to_receive-proc_table,who_want_to_receive->p_flags,src );
 #endif
 		block(who_want_to_receive);
 //when come here, it is unblocked

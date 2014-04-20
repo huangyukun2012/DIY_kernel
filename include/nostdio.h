@@ -1,7 +1,7 @@
 #ifndef _NOSTDIO_H
 #define _NOSTDIO_H
 extern int printf(const char *fmt,...);
-#define printl printf
+//#define printl printf
 extern int vsprintf(char *buf,const char *fmt,va_list args);
 
 #define O_CREAT     1

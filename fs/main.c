@@ -37,7 +37,7 @@ void task_fs()
 		int src=fs_msg.source;
 		pcaller = &proc_table[src];
 #ifdef DEBUG
-				printf("task_fs: fs_msg.type=%d\n",fs_msg.type);
+				printl("task_fs: fs_msg.type=%d\n",fs_msg.type);
 #endif
 		switch(fs_msg.type){
 			case OPEN:
@@ -57,7 +57,7 @@ void task_fs()
 				src = fs_msg.PROC_NR;
 				break;
 			default:
-				printf("fs_msg.type is unknow:%d", fs_msg.type);
+				printl("fs_msg.type is unknow:%d", fs_msg.type);
 				assert (0);
 				break;
 		}
@@ -233,12 +233,12 @@ void rw_sector( int device, t_64 pos, int proc_nr,  void *buf, int bytes, int io
 
 	#ifdef DEBUG
 	if(proc_nr !=3){
-	printf("device:%d ", device);
-	printf("pos:%x ", pos);
-	printf("proc_nr:%d ", proc_nr);
-	printf("buf:%x ", buf);
-	printf("bytes:%x ", bytes);
-	printf("io_type:%d\n", io_type);
+	printl("device:%d ", device);
+	printl("pos:%x ", pos);
+	printl("proc_nr:%d ", proc_nr);
+	printl("buf:%x ", buf);
+	printl("bytes:%x ", bytes);
+	printl("io_type:%d\n", io_type);
 	}
 	
 	#endif
@@ -258,7 +258,7 @@ void rw_sector( int device, t_64 pos, int proc_nr,  void *buf, int bytes, int io
 #ifdef DEBUG_RW
 	#ifdef DEBUG
 	if(DEBUG_rw_sector ==1){
-		printf("rw_sector: sending msg to %d\n", driver );
+		printl("rw_sector: sending msg to %d\n", driver );
 	}
 
 	#endif

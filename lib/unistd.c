@@ -8,7 +8,7 @@ int unlink(const char *pathname);
 int open(const char *pathname, int flags)
 {
 #ifdef DEBUG 
-	    printf("in open: ");
+	    printl("in open: ");
 #endif
 			
 	MESSAGE msg;

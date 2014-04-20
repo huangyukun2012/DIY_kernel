@@ -27,7 +27,7 @@ int do_open();
 int do_open()
 {//return the fd of the file in fs_msg
 #ifdef DEBUG
-	printf("do_open: ");
+	printl("do_open: ");
 #endif
 	int fd=-1;
 	char pathname[MAX_PATH_LEN];
@@ -62,7 +62,7 @@ int do_open()
 	int inode_nr = search_file(pathname);//find the inode num of a file:pathname
 #ifdef DEBUG
 	if(inode_nr == 0)
-		printf("do_open: get inode_nr %d\n",inode_nr );
+		printl("do_open: get inode_nr %d\n",inode_nr );
 #endif
 
 	
@@ -81,11 +81,11 @@ int do_open()
 		char filename[MAX_PATH_LEN];
 		struct inode * dir_inode;
 		if(strip_path(filename, pathname, &dir_inode) != 0){//return dir_inode and filename
-			printf("filepath invalid\n");
+			printl("filepath invalid\n");
 			return -1;
 		}
 		if(inode_nr == 0)
-			printf("do_open: -> > get_inode( , %d)\n",inode_nr );
+			printl("do_open: -> > get_inode( , %d)\n",inode_nr );
 		pin = get_inode(dir_inode->i_dev, inode_nr);//pin is the inode of our dest file
 
 	}
@@ -107,7 +107,7 @@ int do_open()
 			
 			driver_msg.DEVICE = MINOR(dev);
 			if(MAJOR(dev)!=DEV_CHAR_TTY ){
-				printf("do_open:major-DEV is not DEV_CHAR_TTY ");
+				printl("do_open:major-DEV is not DEV_CHAR_TTY ");
 			}
 			assert(MAJOR(dev) == DEV_CHAR_TTY);
 			assert(dd_map[MAJOR(dev)].driver_nr != INVALID_DRIVER);
@@ -122,7 +122,7 @@ int do_open()
 		}
 	}
 	else{
-		printf("can not find the inode:inode==0\n");
+		printl("can not find the inode:inode==0\n");
 		return -1;
 	}
 	return fd;
@@ -132,7 +132,7 @@ int do_open()
 static struct inode *create_file(char *path, int flags)
 {
 #ifdef DEBUG
-	printf("createfile:\n ");
+	printl("createfile:\n ");
 #endif
 	char filename[MAX_PATH_LEN];
 	struct inode *dir_inode;
@@ -149,7 +149,7 @@ static struct inode *create_file(char *path, int flags)
 static int alloc_imap_bit(int dev)
 {
 #ifdef DEBUG
-	printf("alloc_imap_bit:\n ");
+	printl("alloc_imap_bit:\n ");
 #endif
 	int inode_nr =0;
 	int i,j,k;//sect, byte, bit
@@ -284,14 +284,14 @@ int do_rw()
 	int len = fs_msg.CNT;
 	int src = fs_msg.source;
 	#ifdef DEBUG_RW
-		printf("do_rw:fd=%d, len=%d\n", fd,len);
+		printl("do_rw:fd=%d, len=%d\n", fd,len);
 	#endif
 	assert((pcaller->filp[fd] >= &f_desc_table[0]) &&
 				(pcaller->filp[fd] < &f_desc_table[NR_FILE_DESC]));
 	if(!(pcaller->filp[fd]->fd_mode & O_RDWR)){
 
 	#ifdef DEBUG_RW
-		printf("do_rw:access to file was denied\n");
+		printl("do_rw:access to file was denied\n");
 	#endif
 		return -1;
 	}
@@ -320,13 +320,13 @@ int do_rw()
 		
 
 		#ifdef DEBUG_RW
-			printf("out do_rw\n");
+			printl("out do_rw\n");
 		#endif
 		return fs_msg.CNT;
 	}
 	else{//regular file or directory
 		#ifdef DEBUG_RW
-			printf("is regular file\n");
+			printl("is regular file\n");
 		#endif
 		assert(pin->i_mode == I_REGULAR || pin->i_mode == I_DIRECTORY);
 		assert(fs_msg.type == READ || fs_msg.type == WRITE);
@@ -349,14 +349,14 @@ int do_rw()
 		int bytes_left = len;
 		int i;
 #ifdef DEBUG_RW
-	printf("do_rw:from %d to %d (sector)\n",rw_sect_start, rw_sect_end );
+	printl("do_rw:from %d to %d (sector)\n",rw_sect_start, rw_sect_end );
 	DEBUG_rw_sector = 1;
 #endif
 		for (i = rw_sect_start ; i <= rw_sect_end; i+=chunk){
 			int bytes = min(bytes_left, chunk * SECTOR_SIZE - off);
 			rw_sector( pin->i_dev,i* SECTOR_SIZE ,TASK_FS,fsbuf,chunk * SECTOR_SIZE ,DEV_READ);
 #ifdef DEBUG_RW
-	printf("read rector end in do_rw()\n");
+	printl("read rector end in do_rw()\n");
 #endif
 
 			if(fs_msg.type == READ){
@@ -380,7 +380,7 @@ int do_rw()
 			sync_inode(pin);
 		}
 #ifdef DEBUG_RW
-	printf("out do_rw\n");
+	printl("out do_rw\n");
 #endif
 		return bytes_rw;
 	}
@@ -407,32 +407,32 @@ int do_unlink()
 	pathname[name_len]=0;
 
 	if(strcmp(pathname, "/")== 0){
-		printf("you can no remove the root dir\n");
+		printl("you can no remove the root dir\n");
 		return -1;
 	}
 	
 	int inode_nr=search_file(pathname);
 	assert(inode_nr !=0);
 	if(inode_nr == 0){
-		printf("in do_unlink:search_file return invalid inode\n");
+		printl("in do_unlink:search_file return invalid inode\n");
 		return -1;
 	}
 
 	char filename[MAX_PATH_LEN];
 	struct inode *dir_inode;
 	if(strip_path(filename, pathname, &dir_inode) != 0){
-		printf("in do_unlink:strip_path failed\n");
+		printl("in do_unlink:strip_path failed\n");
 		return -1;
 	}
 	struct inode *file_inode= get_inode(dir_inode->i_dev, inode_nr);
 
 	if(file_inode->i_mode !=I_REGULAR){
-		printf("can not remove file %s, for it is not an regular file\n", pathname);
+		printl("can not remove file %s, for it is not an regular file\n", pathname);
 		return -1;
 	}
 
 	if(file_inode->i_cnt >1){//we opened this file, so the cnt is 1 or more
-		printf("you can not remove file %s, for it is opened by others\n", pathname);
+		printl("you can not remove file %s, for it is opened by others\n", pathname);
 		return -1;
 	}
 	struct super_block *sb=get_super_block(file_inode->i_dev);
@@ -542,7 +542,7 @@ int do_unlink()
 			if(++m>dir_entries_nr)//the end of dir
 				break;
 #ifdef UNLINK_DEBUG
-				printf("searching for inode_nr:%d\n", pde->inode_nr );
+				printl("searching for inode_nr:%d\n", pde->inode_nr );
 #endif
 			if(pde->inode_nr == inode_nr){
 				memset(pde, 0, DIR_ENTRY_SIZE);

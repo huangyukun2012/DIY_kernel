@@ -155,7 +155,7 @@ lib/err.o: lib/err.c include/const.h include/type.h include/tty.h \
 
 
 lib/stdio.o: lib/stdio.c include/type.h include/proc.h \
-	 include/protect.h include/proto.h include/string.h include/const.h
+	 include/protect.h include/proto.h include/string.h include/const.h include/err.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 lib/unistd.o: lib/unistd.c include/msg.h include/type.h include/proc.h \

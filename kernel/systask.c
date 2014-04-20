@@ -16,10 +16,10 @@ void task_sys()
 				send_recv(SEND,src,&msg);
 				break;
 			case HARD_INT:
-				printf("got hard\n");
+				printl("got hard\n");
 				break;
 			default:
-				printf("%d ",msg.type);
+				printl("%d ",msg.type);
 				panic("unknown msg type");
 				break;
 		}

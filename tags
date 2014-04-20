@@ -559,6 +559,7 @@ cstart	kernel/start.c	/^PUBLIC void cstart()$/;"	f
 ctrl_l	kernel/keyboard.c	/^PRIVATE int ctrl_l;$/;"	v
 ctrl_r	kernel/keyboard.c	/^PRIVATE int ctrl_r;$/;"	v
 current_start_addr	include/console.h	/^	unsigned int current_start_addr;$/;"	m	struct:s_console
+current_tty	kernel/console.c	/^TTY *current_tty = (void *)0;$/;"	v
 cursor_location	include/console.h	/^	unsigned int cursor_location;$/;"	m	struct:s_console
 dcount	include/protect.h	/^	t_8	dcount;		\/* 该字段只在调用门描述符中有效。$/;"	m	struct:s_gate
 dd_map	driver/driver.c	/^struct dev_drv_map dd_map[]={                                                                                                                    $/;"	v	typeref:struct:dev_drv_map
@@ -791,7 +792,7 @@ interrupt_wait	driver/hd.c	/^ void interrupt_wait()$/;"	f
 inval_opcode	kernel/kernel.asm	/^inval_opcode:$/;"	l
 inval_tss	kernel/kernel.asm	/^inval_tss:$/;"	l
 iobase	include/protect.h	/^	t_16	iobase;	\/* I\/O位图基址大于或等于TSS段界限，就表示没有I\/O许可位图 *\/$/;"	m	struct:s_tss
-irq_table	kernel/global.c	/^PUBLIC	t_pf_irq_handler	irq_table[NR_IRQ];$/;"	v
+irq_table	kernel/global.c	/^	t_pf_irq_handler	irq_table[NR_IRQ];$/;"	v
 is_special	include/fs.h	87;"	d
 itoa	lib/klib.c	/^char * itoa(char * str, int num)\/* 数字前面的 0 不被显示出来, 比如 0000B800 被显示成 B800 *\/$/;"	f
 k_reenter	include/global.h	/^EXTERN	t_32		k_reenter;$/;"	v
@@ -864,7 +865,6 @@ nr_inodes	include/fs.h	/^	t_32	nr_inodes;$/;"	m	struct:super_block
 nr_sects	include/fs.h	/^	t_32 nr_sects;$/;"	m	struct:super_block
 nr_sects	include/hd.h	/^	t_32 nr_sects;		\/**$/;"	m	struct:part_entry
 nr_smap_sects	include/fs.h	/^	t_32 nr_smap_sects;$/;"	m	struct:super_block
-nr_tty	include/proc.h	/^	int 			nr_tty;$/;"	m	struct:proc
 num_lock	kernel/keyboard.c	/^PRIVATE int num_lock;$/;"	v
 num_lock	kernel/keyboard.c	/^static int num_lock;$/;"	v	file:
 offset_high	include/protect.h	/^	t_16	offset_high;	\/* Offset High *\/$/;"	m	struct:s_gate
@@ -900,14 +900,14 @@ port_write	lib/klib.asm	/^port_write:$/;"	l
 primary	include/hd.h	/^	struct part_info	primary[NR_PRIM_PER_DRIVE];$/;"	m	struct:hd_info	typeref:struct:hd_info::part_info
 print_hdsinfo	driver/hd.c	/^static void print_hdsinfo(struct hd_info *hdi)$/;"	f	file:
 print_identify_info	driver/hd.c	/^void print_identify_info(t_16 *hd_info)$/;"	f
-printf	lib/stdio.c	/^int printf(const char *fmt,...)$/;"	f
-printl	include/nostdio.h	4;"	d
+printf	lib/stdio.c	/^int printf(const char *fmt, ...)$/;"	f
+printl	lib/stdio.c	/^int printl(const char *fmt,...)$/;"	f
 printx	kernel/syscall.asm	/^printx:$/;"	l
 priority	include/proc.h	/^	int				priority;$/;"	m	struct:proc
 proc	include/proc.h	/^typedef struct proc{$/;"	s
 proc2pid	include/proc.h	66;"	d
 proc2tty	include/tty.h	/^	int		proc2tty;$/;"	m	struct:tty
-proc_table	kernel/global.c	/^PUBLIC	PROCESS	proc_table[NR_PROCS];$/;"	v
+proc_table	kernel/global.c	/^	PROCESS	proc_table[NR_PROCS];$/;"	v
 push	boot/boot.asm	/^	push	dx$/;"	d
 push	boot/loader.asm	/^	push	dx$/;"	d
 push	kernel/kernel.asm	/^	push	ds	; ┃$/;"	d
@@ -919,7 +919,7 @@ read	lib/unistd.c	/^int read(int fd, void *buf, int count)$/;"	f
 read_super_block	fs/main.c	/^static void read_super_block(int dev)$/;"	f	file:
 regs	include/proc.h	/^	STACK_FRAME			regs;			\/* process' registers saved in stack frame *\/$/;"	m	struct:proc
 reqed_cnt	include/tty.h	/^	int 	reqed_cnt;$/;"	m	struct:tty
-reqer_buf	include/tty.h	/^	void *		reqer_buf;$/;"	m	struct:tty
+reqer_buf	include/tty.h	/^	char*		reqer_buf;$/;"	m	struct:tty
 reset_msg	kernel/proc.c	/^void reset_msg(MESSAGE *p)$/;"	f
 restart	kernel/kernel.asm	/^restart:$/;"	l
 restart_reenter	kernel/kernel.asm	/^restart_reenter:$/;"	l
@@ -981,7 +981,7 @@ switch_console	kernel/console.c	/^void switch_console(CONSOLE *console_p)$/;"	f
 syn_cursor	kernel/tty.c	/^PUBLIC void syn_cursor()$/;"	f
 sync_inode	fs/misc.c	/^void sync_inode(struct inode *p)$/;"	f
 sys_call	kernel/kernel.asm	/^sys_call:$/;"	l
-sys_call_table	kernel/global.c	/^PUBLIC	t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_printx,sys_sendrec};$/;"	v
+sys_call_table	kernel/global.c	/^	t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_printx,sys_sendrec};$/;"	v
 sys_id	include/hd.h	/^	t_8 sys_id;		\/**$/;"	m	struct:part_entry
 sys_printx	kernel/tty.c	/^int sys_printx(int _unused1, int _unused2, char * s, struct proc *proc_p)$/;"	f
 sys_sendrec	kernel/proc.c	/^int sys_sendrec(int function, int src_dest, MESSAGE *m, struct proc *p)$/;"	f
@@ -1001,9 +1001,9 @@ t_sys_call	include/type.h	/^typedef	void*	t_sys_call;$/;"	t
 tail	include/tty.h	/^	t_32	*tail;$/;"	m	struct:tty
 task_fs	fs/main.c	/^void task_fs()$/;"	f
 task_hd	driver/hd.c	/^void task_hd()$/;"	f
-task_stack	kernel/global.c	/^PUBLIC	char	task_stack[STACK_SIZE_TOTAL];$/;"	v
+task_stack	kernel/global.c	/^	char	task_stack[STACK_SIZE_TOTAL];$/;"	v
 task_sys	kernel/systask.c	/^void task_sys()$/;"	f
-task_table	kernel/global.c	/^PUBLIC	TASK	task_table[NR_TASKS] = {{task_tty, STACK_SIZE_TTY, "tty"},$/;"	v
+task_table	kernel/global.c	/^	TASK	task_table[NR_TASKS] = {{task_tty, STACK_SIZE_TTY, "tty"},$/;"	v
 task_tty	kernel/tty.c	/^PUBLIC void task_tty()$/;"	f
 ticks	include/global.h	/^EXTERN	int		ticks;$/;"	v
 ticks	include/proc.h	/^	int				ticks;			\/* remained ticks *\/$/;"	m	struct:proc
@@ -1021,7 +1021,7 @@ type	include/msg.h	/^	int type;$/;"	m	struct:mess
 u	include/msg.h	/^	}u;$/;"	m	struct:mess	typeref:union:mess::__anon1
 unblock	kernel/proc.c	/^void unblock(struct proc *p)$/;"	f
 unlink	lib/unistd.c	/^int unlink(const char *pathname)$/;"	f
-user_proc_table	kernel/global.c	/^PUBLIC	TASK	user_proc_table[NR_USER_PROCS] = {$/;"	v
+user_proc_table	kernel/global.c	/^	TASK	user_proc_table[NR_USER_PROCS] = {$/;"	v
 va2la	kernel/proc.c	/^void * va2la(int pid, void * va)$/;"	f
 va_list	include/type.h	/^typedef char* 	va_list;$/;"	t
 vir2phys	include/protect.h	153;"	d
