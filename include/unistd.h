@@ -8,3 +8,7 @@ int  close(int fd);
 int open(const char *pathname, int flags);
 
 int unlink(const char *pathname);
+
+int fork();
+
+int getpid();

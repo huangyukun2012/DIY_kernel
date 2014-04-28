@@ -1,2 +1,7 @@
 9.16 
 bug fix: in the function mkfs, we changed the first sector of the root device
+9.21
+1)bug descriptor:
+	In the function msg_receive, if we add a "for loop", the hd int will happen, so the assert will fail.
+bug fix:
+	cli:This trick is very simple, buf efficient!

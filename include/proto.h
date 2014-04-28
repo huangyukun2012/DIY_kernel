@@ -35,6 +35,8 @@ PUBLIC void restart();
 PUBLIC void TestA();
 PUBLIC void TestB();
 PUBLIC void TestC();
+void Init();
+
 
 /* i8259.c */
 PUBLIC void put_irq_handler(int iIRQ, t_pf_irq_handler handler);
@@ -53,6 +55,8 @@ PUBLIC void task_tty();
 PUBLIC void in_process();
 PUBLIC void syn_cursor();
 
+/*mm /main.c*/
+void task_mm();
 
 /************************************************************************/
 /*                        以下是系统调用相关                            */
@@ -62,4 +66,7 @@ PUBLIC void syn_cursor();
 /* syscall.asm */
 PUBLIC	void	sys_call();		/* t_pf_int_handler */
 int printx(char *s);
+void init_clock();
+int get_ticks();
+void disp_int();
 #endif

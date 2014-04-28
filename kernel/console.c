@@ -16,6 +16,10 @@ void set_cursor_location(t_32 addr);
 void set_cursor_length();
 
 TTY *current_tty = (void *)0;
+/* Be carefull:
+ * You can not use printf or other function thant invoke out_char before the tty is inittied,
+ * for the cursor_location is an invalid location, which whill result in Page Fault!
+ * */
 void out_char(CONSOLE * p_con,char ch)
 {
 	disp_pos=0;

@@ -20,7 +20,7 @@ CC		= gcc
 LD		= ld
 ASMBFLAGS	= -I boot/include/
 ASMKFLAGS	= -I include/ -f elf
-CFLAGS		= -m32 -I include/ -c -fno-builtin
+CFLAGS		= -m32 -I include/ -c -fno-builtin -Wall
 LDFLAGS		= -m elf_i386 -s -Ttext $(ENTRYPOINT)
 DASMFLAGS	= -u -o $(ENTRYPOINT) -e $(ENTRYOFFSET)
 
@@ -32,6 +32,7 @@ OBJS		= kernel/kernel.o kernel/syscall.o kernel/start.o kernel/main.o\
 			kernel/proc.o kernel/keyboard.o kernel/tty.o kernel/console.o kernel/systask.o \
 			lib/klib.o lib/klibc.o lib/string.o lib/memstring.o lib/err.o lib/stdio.o lib/unistd.o\
 			fs/main.o fs/opera.o fs/misc.o \
+			mm/main.o mm/fork2exit.o\
 			driver/driver.o driver/hd.o
 DASMOUTPUT	= kernel.bin.asm
 
@@ -125,7 +126,7 @@ kernel/systask.o: kernel/systask.c include/msg.h include/proc.h \
 	$(CC) $(CFLAGS) -o $@ $<
 
 fs/main.o: fs/main.c include/msg.h include/type.h include/proc.h \
-	 include/protect.h include/err.h include/nostdio.h include/drive.h include/config.h include/debug.h
+	 include/protect.h include/err.h include/stdio.h include/drive.h include/config.h include/debug.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 fs/opera.o: fs/opera.c include/fs.h include/type.h include/err.h \
@@ -170,6 +171,12 @@ drive/driver.o: drive/driver.c include/drive.h include/proc.h include/protect.h 
 	$(CC) $(CFLAGS) -o $@ $<
 
 driver/hd.o: driver/hd.c include/type.h include/proc.h \
-	 include/protect.h include/msg.h include/hd.h include/fs.h include/err.h  include/string.h\
+	 include/protect.h include/msg.h include/hd.h include/fs.h include/err.h  include/string.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+mm/main.o: mm/main.c include/msg.h include/type.h include/proc.h \
+	 include/protect.h include/msg.h include/fs.h include/kernel.h
+	$(CC) $(CFLAGS) -o $@ $<
 	
+mm/fork2exit.o: mm/fork2exit.c
 	$(CC) $(CFLAGS) -o $@ $<

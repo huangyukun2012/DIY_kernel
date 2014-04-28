@@ -158,7 +158,17 @@ LABEL_GOON_LOADING_FILE:
 	add	ax, dx
 	add	ax, DeltaSectorNo
 	add	bx, [BPB_BytsPerSec]
+	jc	.1
+	jmp .2
+.1:
+	push	ax
+	mov		ax, es
+	add 	ax, 1000h
+	mov		es, ax
+	pop		ax
+.2:
 	jmp	LABEL_GOON_LOADING_FILE
+
 LABEL_FILE_LOADED:
 
 	call	KillMotor		; 关闭软驱马达
@@ -367,6 +377,15 @@ LABEL_PM_START:
 	call	InitKernel
 
 	;jmp	$
+	
+	;fill in BootParam[]
+	mov		dword [BOOT_PARAM_ADDR], BOOT_PARAM_MAGIC; magic number
+	mov		eax, [dwMemSize]
+	mov		[BOOT_PARAM_ADDR + 4], eax;dwMemSize
+	mov		eax, KERNEL_FILE_SEG
+	shl 	eax, 4
+	add 	eax, KERNEL_FILE_OFF
+	mov		[BOOT_PARAM_ADDR + 8], eax;kernel file address
 
 	;***************************************************************
 	jmp	SelectorFlatC:KernelEntryPointPhyAddr	; 正式进入内核 *

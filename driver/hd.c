@@ -2,12 +2,15 @@
 #include "proc.h"
 #include "hd.h"
 #include "err.h"
-#include "nostdio.h"
+#include "stdio.h"
 #include "type.h"
 #include "proto.h"
 #include "math.h"
 #include "string.h"
 #include "debug.h"
+
+#define DEBUG 0
+
 #define SECTOR_SIZE 512
 #define SECTOR_SIZE_SHIFT 9
  t_8 hd_status;
@@ -28,7 +31,7 @@ static void print_hdsinfo(struct hd_info *hdi);
 static void partition(int device, int style);
 static void get_part_table(int drive, int sector_nr, struct part_entry *entry);
 void hd_open(int device);
-static hd_close(int device_nr);
+static void hd_close(int device_nr);
 static void hd_ioctl(MESSAGE *msgp);
 static void hd_rw( MESSAGE *msgp);
 
@@ -36,7 +39,9 @@ static void hd_rw( MESSAGE *msgp);
 void task_hd()
 {
 	MESSAGE msg;
+	printl("task_hd begin:>>>");
 	init_hd();
+	printl("Init_hd ends!\n");
 	while(1){
 		send_recv(RECEIVE,ANY,&msg);
 
@@ -67,7 +72,9 @@ void task_hd()
 void init_hd()
 {
 	t_8 * Nr_Drivers_p = (t_8*)(0x475);
+#if DEBUG_HD 
 	printl("NrDdirves:%d\n",*Nr_Drivers_p);
+#endif
 	assert(*Nr_Drivers_p);
 
 	put_irq_handler(AT_WINI_IRQ,hd_handler);
@@ -103,6 +110,7 @@ void hd_identify(int drive_no)
 
 void print_identify_info(t_16 *hd_info)
 {
+
 	int i,k;
 	char s[64];
 
@@ -124,18 +132,26 @@ void print_identify_info(t_16 *hd_info)
 			s[i*2] = *p++;
 		}
 		s[2*i]=0;
+#if DEBUG
 		printl("%s: %s\n",iinfo[k].desc, s);
+#endif
 
 	}
 
 	int capabilities=hd_info[49];
+#if DEBUG
 	printl("LBA SUPPORTED: %s\n", (capabilities& 0x200)? "yes":"no");
+#endif
 
 	int cmd_set_supported=hd_info[83];
+#if DEBUG 
 	printl("LBA48 SUPPORTED: %s\n", (cmd_set_supported& 0x400)? "yes":"no");
+#endif
 
 	int sectors=((int )hd_info[61] << 16 ) + hd_info[60];
+#if DEBUG 
 	printl("hd sieze: %d MB\n",sectors *512 /1000000);
+#endif
 
 }
 
@@ -158,6 +174,7 @@ void print_identify_info(t_16 *hd_info)
  void interrupt_wait()
 {
 	MESSAGE msg;
+	memset(&msg, 0, sizeof(MESSAGE));
 	send_recv(RECEIVE, INTERRUPT, &msg);
 
 }
@@ -176,6 +193,7 @@ void print_identify_info(t_16 *hd_info)
 
 void hd_handler(int irq)
 {
+//	printl(" >hd_handler ");
 	hd_status = in_byte(REG_STATUS);
 	inform_int(TASK_HD);
 }
@@ -185,15 +203,29 @@ void hd_open(int device)
 	int drive = DRV_OF_DEV( device);
 	assert( drive == 0);
 	hd_identify(drive);
+#if DEBUG
+	printl("(hd_identify: end!) ");
+#endif
 	
 	if(hds_info[drive].open_cnt ++ == 0){
 		partition(drive * (NR_PART_PER_DRIVE +1), P_PRIMARY);
+#if DEBUG
+		printl("(partition : end!) ");
+#endif
 		print_hdsinfo(&hds_info[drive]);
 	}
+#if DEBUG
+	printl("hd_open: end!");
+#endif
 
 }
 static void get_part_table(int drive, int sector_nr, struct part_entry *entry)
 {//get partition table of a drive not for a entended partion
+#undef DEBUG 
+//#define DEBUG 1
+#if DEBUG 
+	printl("get_part_table:>>>\n");
+#endif
 	struct hd_cmd cmd;
 	cmd.features = 0;
 	cmd.sector_count = 1;
@@ -207,8 +239,13 @@ static void get_part_table(int drive, int sector_nr, struct part_entry *entry)
 	port_read( REG_DATA, hdbuf, SECTOR_SIZE);
 	memcpy( entry, hdbuf + PARTITION_TABLE_OFFSET, sizeof(struct part_entry) *NR_PART_PER_DRIVE);
 }
+
 static void partition(int device, int style)
 {//changed hds_info
+#undef DEBUG 
+#if DEBUG 
+	printl("partition:\n");
+#endif
 	int i;
 	int drive = DRV_OF_DEV(device);
 	struct hd_info *hdi = &hds_info[drive];
@@ -234,7 +271,6 @@ static void partition(int device, int style)
 		assert(nr_primary_parts != 0);
 	}
 	else if(style== P_EXTENDED){
-		printl("in ext mode\n");
 		int j= device%NR_PRIM_PER_DRIVE;
 		int ext_start_sect = hdi->primary[j].base;
 		int s=ext_start_sect;
@@ -247,7 +283,6 @@ static void partition(int device, int style)
 			hdi->logical[dev_nr].size = part_table[0].nr_sects;
 
 			s=ext_start_sect + part_table[1].start_sect;
-
 			if(part_table[1].sys_id == NO_PART)
 				break;
 			
@@ -286,7 +321,7 @@ static void print_hdsinfo(struct hd_info *hdi)
 
 }
 
-static hd_close(int device_nr)
+static void hd_close(int device_nr)
 {
 	int drive_nr=DRV_OF_DEV(device_nr);
 	assert(drive_nr==0);

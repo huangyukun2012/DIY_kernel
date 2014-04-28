@@ -15,21 +15,34 @@
 #include "keyboard.h"
 
 
-
+int cnt=0;
 /*======================================================================*
                            clock_handler
  *======================================================================*/
 PUBLIC void clock_handler(int irq)
 {
-	//disp_str("#");
-	ticks++;
+	disp_pos= 0;
+	disp_int(cnt);
+	cnt++;
+	if(++ticks > MAX_TICKS)
+		ticks=0;
+	
+	if(p_proc_ready->ticks>0)
+		p_proc_ready->ticks--;
 
-	if (k_reenter != 0) {
-		//disp_str("!");
-		return;
-	}
+	
 	if(key_pressed){
 		inform_int(TASK_TTY);
+	}
+
+	if (k_reenter != 0) {//中断重入, 将不发生进程调度
+		disp_pos = 500;
+		disp_str("!");
+		return;
+	}
+	
+	if(p_proc_ready->ticks && p_proc_ready->p_flags==RUNNING){
+		return ;
 	}
 	schedule();
 }

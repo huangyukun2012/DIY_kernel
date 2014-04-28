@@ -20,6 +20,11 @@ typedef struct descriptor		/* 共 8 个字节 */
 	t_8	base_high;		/* Base */
 }DESCRIPTOR;
 
+#define reassembly(high, high_shift, mid, mid_shift, low)   \
+					(((high) << (high_shift)) +             \
+	      			((mid)  << (mid_shift)) +              \
+		      		 (low))
+
 /* 门描述符 */
 typedef struct s_gate
 {
@@ -90,6 +95,7 @@ typedef struct s_tss {
 /* 描述符类型值说明 */
 #define	DA_32			0x4000	/* 32 位段				*/
 #define	DA_LIMIT_4K		0x8000	/* 段界限粒度为 4K 字节			*/
+#define LIMIT_4K_SHIFT	12
 #define	DA_DPL0			0x00	/* DPL = 0				*/
 #define	DA_DPL1			0x20	/* DPL = 1				*/
 #define	DA_DPL2			0x40	/* DPL = 2				*/
@@ -151,6 +157,7 @@ typedef struct s_tss {
 /* 宏 */
 /* 线性地址 → 物理地址 */
 #define vir2phys(seg_base, vir)	(t_32)(((t_32)seg_base) + (t_32)(vir))
+void init_descriptor(DESCRIPTOR * p_desc, t_32 base, t_32 limit, t_16 attribute); 
 
-
+void init_8259A();
 #endif /* _TINIX_PROTECT_H_ */

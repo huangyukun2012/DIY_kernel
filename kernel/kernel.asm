@@ -150,16 +150,19 @@ csinit:		; “这个跳转指令强制使用刚刚初始化的结构”——<<OS:D&I 2nd>> P90.
 ; ---------------------------------
 %macro	hwint_master	1
 	call	save
+	
 	in	al, INT_M_CTLMASK	; ┓
 	or	al, (1 << %1)		; ┣ 屏蔽当前中断
 	out	INT_M_CTLMASK, al	; ┛
 	mov	al, EOI			; ┓置EOI位
 	out	INT_M_CTL, al		; ┛
+
 	sti	; CPU在响应中断的过程中会自动关中断，这句之后就允许响应新的中断
 	push	%1			; ┓
 	call	[irq_table + 4 * %1]	; ┣ 中断处理程序
 	pop	ecx			; ┛
 	cli
+
 	in	al, INT_M_CTLMASK	; ┓
 	and	al, ~(1 << %1)		; ┣ 恢复接受当前中断
 	out	INT_M_CTLMASK, al	; ┛
@@ -370,7 +373,6 @@ save:
 sys_call:
 	call	save
 	sti
-
 	push	esi
 	push	dword [p_proc_ready]
 	
@@ -382,9 +384,8 @@ sys_call:
 	
 	pop 	esi
 	mov		[esi + EAXREG - P_STACKBASE], eax
-	
-	cli
 
+	cli
 	ret
 
 

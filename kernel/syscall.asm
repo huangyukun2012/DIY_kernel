@@ -28,10 +28,17 @@ printx:
 ;=========================================================================================
 ;sendrec(int function , int dest_src, MESSAGE *m)
 sendrec:
+	push ebx
+	push	ecx
+	push	edx
+
 	mov	eax,_NR_sendrec
-	mov	ebx,[esp+4];function
-	mov	ecx,[esp+8];sec_dest
-	mov	edx,[esp+12];p_msg
+	mov	ebx,[esp+4 + 12];function
+	mov	ecx,[esp+8 + 12];sec_dest
+	mov	edx,[esp+12 + 12];p_msg
 	int INT_VECTOR_SYS_CALL
+	pop	edx
+	pop	ecx
+	pop	ebx
 	ret
 

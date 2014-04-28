@@ -5,7 +5,7 @@
 #include "msg.h"
 #include "global.h"
 #include "hd.h"
-#include "nostdio.h"
+#include "stdio.h"
 #include "drive.h"
 #include "math.h"
 #include "debug.h"

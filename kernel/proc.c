@@ -14,8 +14,10 @@
 #include "global.h"
 #include "msg.h"
 #include "err.h"
-#include "nostdio.h"
+#include "stdio.h"
+#include "debug.h"
 
+int glb=0;
 
 int ldt_reg_linear(struct proc *p,int index);
 void * va2la(int pid, void * va);
@@ -30,15 +32,15 @@ PUBLIC void schedule()
 	struct proc *p;
 	int		greatest_ticks = 0;
 	
-	p_proc_ready->ticks--;
-	if(p_proc_ready->ticks>0 && p_proc_ready->p_flags==0){
+	if(p_proc_ready->ticks>0 && p_proc_ready->p_flags==RUNNING){
 		return;
 	}
 
 	while (1==1) {
 		for (p=proc_table; p<proc_table+NR_PROCS; p++) {//find the bigest tick
-			if (p->ticks <=0 || p->p_flags!=0) 
+			if (p->ticks <=0 || p->p_flags!=RUNNING) 
 				continue;
+			//else:ticks>0&&flags=0
 			if(p->ticks > greatest_ticks){
 				greatest_ticks=p->ticks ;
 				p_proc_ready=p;
@@ -51,7 +53,12 @@ PUBLIC void schedule()
 					p->ticks = p->priority;
 			}
 		}
-		else{
+		else{//greatest_ticks > 0
+#define DEBUG 0
+#if DEBUG
+			disp_str("@next->proc:");
+			printl("(proc:%d flags:%d)", p_proc_ready - proc_table, p_proc_ready->p_flags);
+#endif
 			return;
 		}
 	}
@@ -64,7 +71,10 @@ PUBLIC void schedule()
  * =====================================================================*/
 int sys_sendrec(int function, int src_dest, MESSAGE *m, struct proc *p)
 {
-	assert(k_reenter==0);//make sure we are not in ring0
+//	disable_int();
+	if(k_reenter<0)
+		printl("k_reenter:%d");
+	assert(k_reenter>=0);//make sure we are not in ring0
 	assert((src_dest>=0 && src_dest< NR_PROCS) ||
 			src_dest==ANY ||
 			src_dest == INTERRUPT);
@@ -91,6 +101,7 @@ int sys_sendrec(int function, int src_dest, MESSAGE *m, struct proc *p)
 		panic("{sys_sendrec} invalid function: %d (SEND:%d, RECEIVE:%d).",function,SEND, RECEIVE);
 	}
 
+//	enable_int();
 	return 0;
 }
 ///return the linear address of a ldt-segment for a proc
@@ -119,6 +130,7 @@ void reset_msg(MESSAGE *p)
 	memset(p,0,sizeof(MESSAGE));
 }
 
+/*remember that the clock interupt must be disabled , before you invoke schedule()*/
 //===============================================
 void block(struct proc*p)
 {
@@ -132,7 +144,7 @@ void unblock(struct proc *p)
 }
 
 //==================================================
-static deadlock(int src,int dest)
+static int deadlock(int src,int dest)
 {//A----B----C----D---A
 	struct proc *p=proc_table+dest;
 	while(1){
@@ -162,15 +174,23 @@ static int msg_send(struct proc *current, int dest, MESSAGE *m)
 {
 	struct proc *sender=current;
 	struct proc *p_dest=proc_table+dest;
+#if CRITICAL 
+	//critical
+	while(sender->is_msg_critical_allowed==0 || p_dest->is_msg_critical_allowed==0);
+	sender->is_msg_critical_allowed=0;
+	p_dest->is_msg_critical_allowed=0;
+#endif
+//#define DEBUG 1
 #if DEBUG
-	printl("%ds%d ",current-proc_table,dest);
+	printl(" %dsendto%d ",current-proc_table,dest);
 #endif
 	assert(proc2pid(sender)!=dest);
 	if(deadlock(proc2pid(sender),dest)){
 		panic(">>DEADLOCK<< %s->%s",sender->name,p_dest->name);
 	}
 	
-	if((p_dest->p_flags && RECEIVING) &&
+	disable_int();
+	if((p_dest->p_flags & RECEIVING) &&
 		(p_dest->p_recvfrom== proc2pid(sender) || p_dest->p_recvfrom==ANY)){//dest is waiting for to receive
 		assert(p_dest->p_msg);
 		assert(m);
@@ -216,17 +236,32 @@ static int msg_send(struct proc *current, int dest, MESSAGE *m)
 		assert(sender->p_recvfrom ==NO_TASK);
 		assert(sender->p_sendto ==dest);
 	}
+	
+#if CRITICAL 
+	sender->is_msg_critical_allowed=1;
+	p_dest->is_msg_critical_allowed=1;
+#endif
+	enable_int();
 	return 0;
 
 }
 
+/*return 0 if success, otherwise return -1*/
 static int msg_receive(struct proc * current_pro,int src, MESSAGE *m)
-{
+{//the function can not be interupted
 	struct proc * who_want_to_receive=current_pro;
 	struct proc * p_from=0;
 	struct proc * prev=0;
 	int copy_enable=0;
 	assert(proc2pid(current_pro)!=src);
+#if CRITICAL
+	if(who_want_to_receive->is_msg_critical_allowed==0)
+		printl("(msg_receive_waiting_for_critical:)");
+	while(who_want_to_receive->is_msg_critical_allowed==0);
+//coming into cirtical section
+	who_want_to_receive->is_msg_critical_allowed=0;
+#endif
+	disable_int();
 	if((who_want_to_receive->has_int_msg)&& 
 			((src==ANY) || (src==INTERRUPT))){
 		MESSAGE msg;
@@ -264,8 +299,12 @@ static int msg_receive(struct proc * current_pro,int src, MESSAGE *m)
 
 		}
 	}
+	else if(src==INTERRUPT){
+		copy_enable=0;
+	}
 	else//take a certain one
 	{
+		assert(src!=INTERRUPT);
 		p_from=&proc_table[src];
 		if((p_from->p_flags & SENDING) && 
 				(p_from->p_sendto == proc2pid(who_want_to_receive))){
@@ -296,6 +335,8 @@ static int msg_receive(struct proc * current_pro,int src, MESSAGE *m)
 			assert(p_from->p_sendto == proc2pid(who_want_to_receive));
 		}
 	}
+
+
 	if(copy_enable){
 		if(p_from == who_want_to_receive->q_sending){
 			assert(prev==0);
@@ -309,6 +350,7 @@ static int msg_receive(struct proc * current_pro,int src, MESSAGE *m)
 		}
 		assert(m);
 		assert(p_from->p_msg);
+//#define DEBUG 1
 #if DEBUG
 		printl("ub:%d-f%dr%dt%d  ",who_want_to_receive-proc_table,who_want_to_receive->p_flags,p_from-proc_table,p_from->p_msg->type );
 #endif	
@@ -322,29 +364,35 @@ static int msg_receive(struct proc * current_pro,int src, MESSAGE *m)
 		unblock(p_from);
 		
 	}
-	else{//no one send to it
+	else{//no one send to it, rem: interrupt may happends during this "else"
 		who_want_to_receive->p_flags |=RECEIVING;
 		who_want_to_receive->p_msg=m;
-		if(src== ANY){
-			who_want_to_receive->p_recvfrom=ANY;
+		int i,t=0;
+		//for(i=100000;i>0;i--)
+			t=t+1;
+		if(src== ANY || src==INTERRUPT ){
+			who_want_to_receive->p_recvfrom=src;
 		}
 		else{
 			who_want_to_receive->p_recvfrom=proc2pid(p_from);
 		}
+//#define DEBUG 1
 #if DEBUG 
-		printl("b:%d-f%dr%d  ",who_want_to_receive-proc_table,who_want_to_receive->p_flags,src );
+		printl("b:%d-f%dwant to re%d  ",who_want_to_receive-proc_table,who_want_to_receive->p_flags,src);
 #endif
-		block(who_want_to_receive);
-//when come here, it is unblocked
-			assert(who_want_to_receive->p_flags ==RECEIVING);
-			assert(who_want_to_receive->p_msg != 0);
-			assert(who_want_to_receive->p_recvfrom != NO_TASK);
-			assert(who_want_to_receive->p_sendto ==NO_TASK);
-			assert(who_want_to_receive->has_int_msg ==0);
-		
+		block(who_want_to_receive);//这个进程被阻塞，仅仅是不再参与调度，但是在这个时间片结束之前，仍然暂用CPU
+		assert(who_want_to_receive->p_flags ==RECEIVING);
+		assert(who_want_to_receive->p_msg != 0);
+		assert(who_want_to_receive->p_recvfrom != NO_TASK);
+		assert(who_want_to_receive->p_sendto ==NO_TASK);
+		assert(who_want_to_receive->has_int_msg ==0);
 	}
-
+#if CRITICAL
+	who_want_to_receive->is_msg_critical_allowed=1;
+#endif
+	enable_int();
 	return 0;
+	//when the function returned, it will invoke restart
 }
 int send_recv(int function, int src_dest, MESSAGE *msg)
 {
@@ -375,7 +423,17 @@ int send_recv(int function, int src_dest, MESSAGE *msg)
 
 PUBLIC void inform_int(int task_nr)
 {
+#define DEBUG 0
+#if DEBUG
+	if(task_nr==TASK_TTY)
+	disp_str("inform_int:TASK_TTY\n");
+#endif
 	struct proc* p = proc_table + task_nr;
+#if CRITICAL 
+	printl("inform_int_for_critical");
+	while(p->is_msg_critical_allowed==0);
+	p->is_msg_critical_allowed=0;
+#endif
 
 	if ((p->p_flags & RECEIVING) && /* dest is waiting for the msg */
 	    ((p->p_recvfrom == INTERRUPT) || (p->p_recvfrom == ANY))) {
@@ -393,9 +451,12 @@ PUBLIC void inform_int(int task_nr)
 		assert(p->p_recvfrom == NO_TASK);
 		assert(p->p_sendto == NO_TASK);
 	}
-	else {
+	else {// watch out!
 		p->has_int_msg = 1;
 	}
+#if CRITICAL 
+	p->is_msg_critical_allowed=1;
+#endif
 }
 
 /*****************************************************************************

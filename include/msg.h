@@ -38,11 +38,18 @@ typedef struct mess{
 #define BOTH 3
 enum msgtype{
 	HARD_INT=1,
-	GET_TICKS,
+	GET_TICKS,GET_PID, GET_RTC_TIME, 
 	/* file operation*/
 	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   
-	    /* TTY, SYS, FS, MM, etc */
+
+	//FS&TTY
 	SUSPEND_PROC, RESUME_PROC, 
+	//MM
+	EXEC, WAIT,
+	//FS && MM
+	FORK , EXIT, 
+
+	/* TTY, SYS, FS, MM, etc */
 	SYSCALL_RET,   
 	DEV_OPEN=1001,
 	DEV_CLOSE,
@@ -65,10 +72,11 @@ enum msgtype{
  #define  OFFSET      u.m3.m3i2 
  #define  WHENCE      u.m3.m3i3 
 
-/* #define  PID     u.m3.m3i2 */
-/* #define  STATUS      u.m3.m3i1 */
+#define  PID     u.m3.m3i2 
+#define  STATUS      u.m3.m3i1 
 #define RETVAL      u.m3.m3i1
-/* #define  STATUS      u.m3.m3i1 */
+
 
 #define DIOCTL_GET_GEO 1
+int sendrec(int function , int dest_src, MESSAGE *m);
 #endif

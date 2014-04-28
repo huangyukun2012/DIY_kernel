@@ -135,4 +135,6 @@ typedef struct s_kb{
 
 
 extern int key_pressed;
+void init_keyboard();
+void keyboard_read(TTY * tty_p);
 #endif /* _TINIX_KEYBOARD_H_ */

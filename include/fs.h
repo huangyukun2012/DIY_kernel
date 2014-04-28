@@ -4,12 +4,13 @@
 #include "msg.h"
 extern t_8 *fsbuf;
 extern const int FSBUF_SIZE ;
-extern void task_fs();
 extern MESSAGE fs_msg;
 #define RD_SECT(dev,sect_nr)  rw_sector(dev, (sect_nr) * SECTOR_SIZE, TASK_FS, fsbuf, SECTOR_SIZE, DEV_READ)
 #define WR_SECT(dev,sect_nr)  rw_sector(dev, (sect_nr) * SECTOR_SIZE, TASK_FS, fsbuf, SECTOR_SIZE, DEV_WRITE)
 
 void rw_sector( int device, t_64 pos, int proc_nr,  void *buf, int bytes, int io_type);
+void task_fs();
+
 #define MAGIC_V1	0x111
 //some nr
 #define NR_FILES    64
@@ -23,6 +24,7 @@ void rw_sector( int device, t_64 pos, int proc_nr,  void *buf, int bytes, int io
 struct file_desc{
 	int fd_mode;
 	int fd_pos;
+	int fd_cnt;
 	struct inode* fd_inode;
 };
 
@@ -102,5 +104,11 @@ struct super_block *get_super_block(int dev);
 int do_close();
 int do_rw();
 int do_open();
+int do_unlink();
+int search_file(char *path);
+int strip_path(char *filename, const char *pathname, struct inode **ppinode);
+void sync_inode(struct inode *p);
+void put_inode(struct inode * pinode);
+
 
 #endif

@@ -1,7 +1,7 @@
 #include "msg.h"
 #include "proc.h"
 #include "err.h"
-#include "nostdio.h"
+#include "stdio.h"
 #include "hd.h"
 #include "drive.h"
 #include "config.h"
@@ -9,6 +9,8 @@
 #include "console.h"
 #include "global.h"
 #include "debug.h"
+#include "unistd.h"
+#include "string.h"
 
 t_8 *fsbuf = (t_8 *)0x600000;
 const int FSBUF_SIZE = 0x100000;
@@ -21,6 +23,8 @@ static void mkfs();
 struct super_block *get_super_block(int dev);
 static void read_super_block(int dev);
 struct inode * get_inode(int dev, int num);
+static int fs_fork();
+//static int fs_exit();
 
 struct file_desc    f_desc_table[NR_FILE_DESC];
 struct inode        inode_table[NR_INODE];                                                                                               
@@ -30,8 +34,9 @@ struct inode *      myroot_inode;
 
 void task_fs()
 {
-	printl("Task Fs begins:\n");
+	printl("Task Fs begins:>>>");
 	init_fs();
+	printl("Init_fs ends!\n");
 	while(1){
 		send_recv(RECEIVE, ANY, &fs_msg);
 		int src=fs_msg.source;
@@ -56,6 +61,13 @@ void task_fs()
 			case RESUME_PROC:
 				src = fs_msg.PROC_NR;
 				break;
+			case FORK:
+				fs_msg.RETVAL = fs_fork();
+				break;
+			case EXIT:
+				//fs_msg.RETVAL = fs_exit();
+				break;
+
 			default:
 				printl("fs_msg.type is unknow:%d", fs_msg.type);
 				assert (0);
@@ -303,5 +315,21 @@ struct super_block *get_super_block(int dev)
 			return sb;
 	}
 	panic("super block of device %d not found\n", dev);
+	return 0;
+}
+
+static int fs_fork()
+{
+	int i;
+	struct proc *child_proc_p = &proc_table[fs_msg.PID];
+	for (i = 0; i < NR_FILES ; ++i){
+		if(child_proc_p->filp[i]){
+			child_proc_p->filp[i]->fd_cnt++;
+			child_proc_p->filp[i]->fd_inode->i_cnt++;
+		}
+	}
+#if DEBUG
+	printl(" >>fs_fork end!");
+#endif
 	return 0;
 }

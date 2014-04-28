@@ -14,8 +14,9 @@
 #include "console.h"
 #include "err.h"
 #include "math.h"
+#include "stdio.h"
 
-static void page_switch();
+//static void page_switch();
 void task_tty();
 void in_process(TTY* tty_p,t_32 key);
 void syn_cursor();
@@ -33,6 +34,7 @@ void tty_do_write(TTY * tty_p, MESSAGE *msg);
  *======================================================================*/
 PUBLIC void task_tty()
 {
+	disp_str("task_tty begins:>>>\n");
 	MESSAGE msg;
 	init_keyboard();
 	set_cursor_length();
@@ -210,10 +212,11 @@ PUBLIC void syn_cursor()
 	set_cursor_length();	
 	set_cursor_location(disp_pos/2);
 }
-PRIVATE void page_switch()
+
+/*PRIVATE void page_switch()
 {
 	set_console_start_addr(80*15);
-}
+}*/
 void write_tty(TTY * tty_p,char *buf,int len)
 {
 	char *p=buf;

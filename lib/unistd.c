@@ -2,15 +2,13 @@
 #include "proc.h"
 #include "string.h"
 #include "err.h"
+#include "stdio.h"
 
 int unlink(const char *pathname);
+int fork();
 
 int open(const char *pathname, int flags)
 {
-#ifdef DEBUG 
-	    printl("in open: ");
-#endif
-			
 	MESSAGE msg;
 	msg.type = OPEN;
 	msg.PATHNAME = (void * )pathname;
@@ -71,4 +69,27 @@ int unlink(const char *pathname)
 	send_recv(BOTH, TASK_FS, &msg);
 	return msg.RETVAL;
 
+}
+
+int fork()
+{
+	printl("in fork>>>");
+	MESSAGE msg;
+	msg.type = FORK;
+
+	send_recv(BOTH, TASK_MM, &msg);
+	assert(msg.type == SYSCALL_RET);
+	assert(msg.RETVAL == 0);
+	
+	return msg.PID;
+}
+
+int getpid()
+{
+	MESSAGE msg;
+	msg.type = GET_PID;
+
+	send_recv(BOTH, TASK_SYS, &msg);
+	assert(msg.type == SYSCALL_RET);
+	return msg.PID;
 }

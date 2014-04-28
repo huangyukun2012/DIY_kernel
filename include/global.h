@@ -30,7 +30,8 @@ extern	t_pf_irq_handler	irq_table[];
 
 extern	t_sys_call		sys_call_table[];
 
-EXTERN	int		ticks;
+extern 	int		ticks;
+extern	struct proc *p_proc_ready;
 
 EXTERN	int		disp_pos;
 EXTERN	t_8		gdt_ptr[6];	// 0~15:Limit  16~47:Base
@@ -42,5 +43,4 @@ EXTERN	t_32		k_reenter;
 
 EXTERN	TSS		tss;
 
-EXTERN	struct proc *p_proc_ready;
 #endif

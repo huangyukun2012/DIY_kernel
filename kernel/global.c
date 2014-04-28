@@ -18,19 +18,24 @@
 #include "systask.h"
 #include "hd.h"
 #include "fs.h"
-	PROCESS	proc_table[NR_PROCS];
-	char	task_stack[STACK_SIZE_TOTAL];
+PROCESS	proc_table[NR_PROCS];
+char	task_stack[STACK_SIZE_TOTAL];
 
-	TASK	task_table[NR_TASKS] = {{task_tty, STACK_SIZE_TTY, "tty"},
-										{task_sys, STACK_SIZE_SYS, "sys"},
-										{task_hd,STACK_SIZE_HD,"hd"},
-										{task_fs,STACK_SIZE_HD,"fs"}};
+TASK	task_table[NR_TASKS] = {{task_tty, STACK_SIZE_TTY, "tty"},
+									{task_sys, STACK_SIZE_SYS, "sys"},
+									{task_hd,STACK_SIZE_HD,"hd"},
+									{task_fs,STACK_SIZE_FS,"fs"},
+									{task_mm,STACK_SIZE_MM,"mm"},
+};
 
-	TASK	user_proc_table[NR_USER_PROCS] = {
-					{TestA, STACK_SIZE_TESTA, "TestA"},
-					{TestB, STACK_SIZE_TESTB, "TestB"},
-					{TestC, STACK_SIZE_TESTC, "TestC"}};
-	t_pf_irq_handler	irq_table[NR_IRQ];
-	t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_printx,sys_sendrec};
+TASK	user_proc_table[NR_NATIVE_PROCS] = {
+				{Init, STACK_SIZE_INIT, "Init"},
+				{TestA, STACK_SIZE_TESTA, "TestA"},
+				{TestB, STACK_SIZE_TESTB, "TestB"},
+				{TestC, STACK_SIZE_TESTC, "TestC"}};
+t_pf_irq_handler	irq_table[NR_IRQ];
+t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_printx,sys_sendrec};
 TTY	tty_table[NR_TTY];
 CONSOLE		console_table[NR_CONSOLE];
+int 	ticks=0;
+struct proc * p_proc_ready = (void *)proc_table;

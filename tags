@@ -6,7 +6,7 @@
 !_TAG_PROGRAM_VERSION	5.8	//
 ALT_L	include/keyboard.h	54;"	d
 ALT_R	include/keyboard.h	55;"	d
-ANY	include/proc.h	89;"	d
+ANY	include/proc.h	94;"	d
 APPS	include/keyboard.h	47;"	d
 ARDStruct	boot/loader.asm	/^ARDStruct		equ	BaseOfLoaderPhyAddr + _ARDStruct$/;"	d
 ASM	Makefile	/^ASM		= nasm$/;"	m
@@ -16,62 +16,72 @@ ASSERT	include/err.h	6;"	d
 ATA_IDENTIFY	include/hd.h	263;"	d
 ATA_READ	include/hd.h	264;"	d
 ATA_WRITE	include/hd.h	265;"	d
-AT_WINI_IRQ	include/const.h	84;"	d
+AT_WINI_IRQ	include/const.h	85;"	d
 BACKSPACE	include/keyboard.h	43;"	d
+BI_KERNEL_FILE	include/config.h	11;"	d
+BI_MAG	include/config.h	9;"	d
+BI_MEM_SIZE	include/config.h	10;"	d
 BLACK	include/const.h	29;"	d
 BLUE	include/const.h	33;"	d
+BOOT_PARAM_ADDR	include/config.h	7;"	d
+BOOT_PARAM_MAGIC	include/config.h	8;"	d
 BOTH	include/msg.h	38;"	d
 BRIGHT	include/const.h	35;"	d
-BUF	include/msg.h	64;"	d
+BUF	include/msg.h	71;"	d
 BaseOfStack	boot/boot.asm	/^BaseOfStack		equ	0100h	; 调试状态下堆栈基地址(栈底, 从这个位置向低地址生长)$/;"	d
 BaseOfStack	boot/boot.asm	/^BaseOfStack		equ	07c00h	; Boot状态下堆栈基地址(栈底, 从这个位置向低地址生长)$/;"	d
 BaseOfStack	boot/loader.asm	/^BaseOfStack	equ	0100h$/;"	d
 BootMessage	boot/boot.asm	/^BootMessage:		db	"Booting  "; 9字节, 不够则用空格补齐. 序号 0$/;"	d
 CAPS_LOCK	include/keyboard.h	58;"	d
-CASCADE_IRQ	include/const.h	77;"	d
+CASCADE_IRQ	include/const.h	78;"	d
 CC	Makefile	/^CC		= gcc$/;"	m
-CFLAGS	Makefile	/^CFLAGS		= -m32 -I include\/ -c -fno-builtin$/;"	m
-CLOCK_IRQ	include/const.h	75;"	d
+CFLAGS	Makefile	/^CFLAGS		= -m32 -I include\/ -c -fno-builtin -Wall$/;"	m
+CLOCK_IRQ	include/const.h	76;"	d
 CLOSE	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
-CNT	include/msg.h	59;"	d
+CNT	include/msg.h	66;"	d
 COLOR	kernel/console.c	7;"	d	file:
 CONSOLE	include/console.h	/^}CONSOLE;$/;"	t	typeref:struct:s_console
 CONSOLE_H	include/console.h	2;"	d
-CRTC_ADDR_REG	include/const.h	88;"	d
-CRTC_DATA_REG	include/const.h	89;"	d
+CRTC_ADDR_REG	include/const.h	89;"	d
+CRTC_DATA_REG	include/const.h	90;"	d
 CTRL_L	include/keyboard.h	52;"	d
 CTRL_R	include/keyboard.h	53;"	d
-CURSOR_END_REG	include/const.h	91;"	d
-CURSOR_H	include/const.h	95;"	d
-CURSOR_L	include/const.h	96;"	d
-CURSOR_START_REG	include/const.h	90;"	d
+CURSOR_END_REG	include/const.h	92;"	d
+CURSOR_H	include/const.h	96;"	d
+CURSOR_L	include/const.h	97;"	d
+CURSOR_START_REG	include/const.h	91;"	d
 DASM	Makefile	/^DASM		= ndisasm$/;"	m
 DASMFLAGS	Makefile	/^DASMFLAGS	= -u -o $(ENTRYPOINT) -e $(ENTRYOFFSET)$/;"	m
 DASMOUTPUT	Makefile	/^DASMOUTPUT	= kernel.bin.asm$/;"	m
-DA_32	include/protect.h	91;"	d
-DA_386CGate	include/protect.h	109;"	d
-DA_386IGate	include/protect.h	110;"	d
-DA_386TGate	include/protect.h	111;"	d
-DA_386TSS	include/protect.h	108;"	d
-DA_C	include/protect.h	101;"	d
-DA_CCO	include/protect.h	103;"	d
-DA_CCOR	include/protect.h	104;"	d
-DA_CR	include/protect.h	102;"	d
-DA_DPL0	include/protect.h	93;"	d
-DA_DPL1	include/protect.h	94;"	d
-DA_DPL2	include/protect.h	95;"	d
-DA_DPL3	include/protect.h	96;"	d
-DA_DR	include/protect.h	98;"	d
-DA_DRW	include/protect.h	99;"	d
-DA_DRWA	include/protect.h	100;"	d
-DA_LDT	include/protect.h	106;"	d
-DA_LIMIT_4K	include/protect.h	92;"	d
-DA_TaskGate	include/protect.h	107;"	d
+DA_32	include/protect.h	96;"	d
+DA_386CGate	include/protect.h	115;"	d
+DA_386IGate	include/protect.h	116;"	d
+DA_386TGate	include/protect.h	117;"	d
+DA_386TSS	include/protect.h	114;"	d
+DA_C	include/protect.h	107;"	d
+DA_CCO	include/protect.h	109;"	d
+DA_CCOR	include/protect.h	110;"	d
+DA_CR	include/protect.h	108;"	d
+DA_DPL0	include/protect.h	99;"	d
+DA_DPL1	include/protect.h	100;"	d
+DA_DPL2	include/protect.h	101;"	d
+DA_DPL3	include/protect.h	102;"	d
+DA_DR	include/protect.h	104;"	d
+DA_DRW	include/protect.h	105;"	d
+DA_DRWA	include/protect.h	106;"	d
+DA_LDT	include/protect.h	112;"	d
+DA_LIMIT_4K	include/protect.h	97;"	d
+DA_TaskGate	include/protect.h	113;"	d
+DEBUG	include/debug.h	3;"	d
+DEBUG	kernel/proc.c	175;"	d	file:
+DEBUG	kernel/proc.c	326;"	d	file:
+DEBUG	kernel/proc.c	349;"	d	file:
+DEBUG	kernel/proc.c	395;"	d	file:
 DEBUG_rw_sector	fs/opera.c	/^	int DEBUG_rw_sector = 0;$/;"	v
 DEFAULT_CHAR_COLOR	include/console.h	11;"	d
 DELETE	include/keyboard.h	80;"	d
 DESCRIPTOR	include/protect.h	/^}DESCRIPTOR;$/;"	t	typeref:struct:descriptor
-DEVICE	include/msg.h	62;"	d
+DEVICE	include/msg.h	69;"	d
 DEV_CDROM	include/drive.h	7;"	d
 DEV_CHAR_TTY	include/drive.h	9;"	d
 DEV_CLOSE	include/msg.h	/^	DEV_CLOSE,$/;"	e	enum:msgtype
@@ -82,8 +92,8 @@ DEV_OPEN	include/msg.h	/^	DEV_OPEN=1001,$/;"	e	enum:msgtype
 DEV_READ	include/msg.h	/^	DEV_READ,$/;"	e	enum:msgtype
 DEV_SCSI	include/drive.h	10;"	d
 DEV_WRITE	include/msg.h	/^	DEV_WRITE,$/;"	e	enum:msgtype
-DIOCTL_GET_GEO	include/msg.h	73;"	d
-DIR_ENTRY_SIZE	include/fs.h	73;"	d
+DIOCTL_GET_GEO	include/msg.h	80;"	d
+DIR_ENTRY_SIZE	include/fs.h	75;"	d
 DOWN	include/keyboard.h	86;"	d
 DRV_OF_DEV	driver/hd.c	16;"	d	file:
 DispAL	boot/loader.asm	/^DispAL:$/;"	l
@@ -98,7 +108,9 @@ ENTER	include/keyboard.h	42;"	d
 ENTRYOFFSET	Makefile	/^ENTRYOFFSET	=   0x400$/;"	m
 ENTRYPOINT	Makefile	/^ENTRYPOINT	= 0x30400$/;"	m
 ESC	include/keyboard.h	40;"	d
-ETHER_IRQ	include/const.h	78;"	d
+ETHER_IRQ	include/const.h	79;"	d
+EXEC	include/msg.h	/^	EXEC, WAIT,$/;"	e	enum:msgtype
+EXIT	include/msg.h	/^	FORK , EXIT, $/;"	e	enum:msgtype
 EXTERN	include/const.h	13;"	d
 EXTERN	include/global.h	13;"	d
 EXTERN	include/global.h	14;"	d
@@ -116,8 +128,8 @@ F7	include/keyboard.h	69;"	d
 F8	include/keyboard.h	70;"	d
 F9	include/keyboard.h	71;"	d
 FALSE	include/const.h	21;"	d
-FD	include/msg.h	55;"	d
-FLAGS	include/msg.h	57;"	d
+FD	include/msg.h	62;"	d
+FLAGS	include/msg.h	64;"	d
 FLAG_ALT_L	include/keyboard.h	31;"	d
 FLAG_ALT_R	include/keyboard.h	32;"	d
 FLAG_BREAK	include/keyboard.h	25;"	d
@@ -128,11 +140,15 @@ FLAG_PAD	include/keyboard.h	33;"	d
 FLAG_SHIFT_L	include/keyboard.h	27;"	d
 FLAG_SHIFT_R	include/keyboard.h	28;"	d
 FLASH	include/const.h	34;"	d
-FLOPPY_IRQ	include/const.h	82;"	d
+FLOPPY_IRQ	include/const.h	83;"	d
+FORK	include/msg.h	/^	FORK , EXIT, $/;"	e	enum:msgtype
+FREE_SLOT	include/proc.h	129;"	d
 FSBUF_SIZE	fs/main.c	/^const int FSBUF_SIZE = 0x100000;$/;"	v
 GATE	include/protect.h	/^}GATE;$/;"	t	typeref:struct:s_gate
 GDT_SIZE	include/const.h	39;"	d
-GET_TICKS	include/msg.h	/^	GET_TICKS,$/;"	e	enum:msgtype
+GET_PID	include/msg.h	/^	GET_TICKS,GET_PID, GET_RTC_TIME, $/;"	e	enum:msgtype
+GET_RTC_TIME	include/msg.h	/^	GET_TICKS,GET_PID, GET_RTC_TIME, $/;"	e	enum:msgtype
+GET_TICKS	include/msg.h	/^	GET_TICKS,GET_PID, GET_RTC_TIME, $/;"	e	enum:msgtype
 GLOBAL_VARIABLES_HERE	kernel/global.c	8;"	d	file:
 GRAY_CHAR	include/console.h	12;"	d
 GREEN	include/const.h	32;"	d
@@ -142,61 +158,64 @@ GdtLen	boot/loader.asm	/^GdtLen		equ	$ - LABEL_GDT$/;"	d
 GdtPtr	boot/loader.asm	/^GdtPtr		dw	GdtLen - 1				; 段界限$/;"	d
 GetFATEntry	boot/boot.asm	/^GetFATEntry:$/;"	l
 GetFATEntry	boot/loader.asm	/^GetFATEntry:$/;"	l
+HANGING	include/proc.h	128;"	d
 HARD_INT	include/msg.h	/^	HARD_INT=1,$/;"	e	enum:msgtype
 HD_TIMEOUT	include/hd.h	261;"	d
 HOME	include/keyboard.h	81;"	d
 HZ	include/const.h	62;"	d
 IDT_SIZE	include/const.h	40;"	d
-INDEX_DUMMY	include/protect.h	68;"	d
-INDEX_FLAT_C	include/protect.h	69;"	d
-INDEX_FLAT_RW	include/protect.h	70;"	d
-INDEX_LDT_C	include/protect.h	88;"	d
-INDEX_LDT_FIRST	include/protect.h	73;"	d
-INDEX_LDT_RW	include/protect.h	89;"	d
-INDEX_TSS	include/protect.h	72;"	d
-INDEX_VIDEO	include/protect.h	71;"	d
-INODE_SIZE	include/fs.h	66;"	d
+INDEX_DUMMY	include/protect.h	73;"	d
+INDEX_FLAT_C	include/protect.h	74;"	d
+INDEX_FLAT_RW	include/protect.h	75;"	d
+INDEX_LDT_C	include/protect.h	93;"	d
+INDEX_LDT_FIRST	include/protect.h	78;"	d
+INDEX_LDT_RW	include/protect.h	94;"	d
+INDEX_TSS	include/protect.h	77;"	d
+INDEX_VIDEO	include/protect.h	76;"	d
+INIT	include/proc.h	93;"	d
+INODE_SIZE	include/fs.h	68;"	d
 INSERT	include/keyboard.h	79;"	d
-INTERRUPT	include/proc.h	84;"	d
+INTERRUPT	include/proc.h	87;"	d
 INT_M_CTL	include/const.h	52;"	d
 INT_M_CTLMASK	include/const.h	53;"	d
 INT_S_CTL	include/const.h	54;"	d
 INT_S_CTLMASK	include/const.h	55;"	d
-INT_VECTOR_BOUNDS	include/protect.h	131;"	d
-INT_VECTOR_BREAKPOINT	include/protect.h	129;"	d
-INT_VECTOR_COPROC_ERR	include/protect.h	141;"	d
-INT_VECTOR_COPROC_NOT	include/protect.h	133;"	d
-INT_VECTOR_COPROC_SEG	include/protect.h	135;"	d
-INT_VECTOR_DEBUG	include/protect.h	127;"	d
-INT_VECTOR_DIVIDE	include/protect.h	126;"	d
-INT_VECTOR_DOUBLE_FAULT	include/protect.h	134;"	d
-INT_VECTOR_INVAL_OP	include/protect.h	132;"	d
-INT_VECTOR_INVAL_TSS	include/protect.h	136;"	d
-INT_VECTOR_IRQ0	include/protect.h	144;"	d
-INT_VECTOR_IRQ8	include/protect.h	145;"	d
-INT_VECTOR_NMI	include/protect.h	128;"	d
-INT_VECTOR_OVERFLOW	include/protect.h	130;"	d
-INT_VECTOR_PAGE_FAULT	include/protect.h	140;"	d
-INT_VECTOR_PROTECTION	include/protect.h	139;"	d
-INT_VECTOR_SEG_NOT	include/protect.h	137;"	d
-INT_VECTOR_STACK_FAULT	include/protect.h	138;"	d
-INT_VECTOR_SYS_CALL	include/protect.h	148;"	d
+INT_VECTOR_BOUNDS	include/protect.h	137;"	d
+INT_VECTOR_BREAKPOINT	include/protect.h	135;"	d
+INT_VECTOR_COPROC_ERR	include/protect.h	147;"	d
+INT_VECTOR_COPROC_NOT	include/protect.h	139;"	d
+INT_VECTOR_COPROC_SEG	include/protect.h	141;"	d
+INT_VECTOR_DEBUG	include/protect.h	133;"	d
+INT_VECTOR_DIVIDE	include/protect.h	132;"	d
+INT_VECTOR_DOUBLE_FAULT	include/protect.h	140;"	d
+INT_VECTOR_INVAL_OP	include/protect.h	138;"	d
+INT_VECTOR_INVAL_TSS	include/protect.h	142;"	d
+INT_VECTOR_IRQ0	include/protect.h	150;"	d
+INT_VECTOR_IRQ8	include/protect.h	151;"	d
+INT_VECTOR_NMI	include/protect.h	134;"	d
+INT_VECTOR_OVERFLOW	include/protect.h	136;"	d
+INT_VECTOR_PAGE_FAULT	include/protect.h	146;"	d
+INT_VECTOR_PROTECTION	include/protect.h	145;"	d
+INT_VECTOR_SEG_NOT	include/protect.h	143;"	d
+INT_VECTOR_STACK_FAULT	include/protect.h	144;"	d
+INT_VECTOR_SYS_CALL	include/protect.h	154;"	d
 INT_VECTOR_SYS_CALL	kernel/syscall.asm	/^INT_VECTOR_SYS_CALL	equ	0x90$/;"	d
-INVALID_DRIVER	include/proc.h	83;"	d
-INVALID_INODE	include/fs.h	76;"	d
-I_BLOCK_SPECIAL	include/fs.h	82;"	d
-I_CHAR_SPECIAL	include/fs.h	84;"	d
-I_DIRECTORY	include/fs.h	83;"	d
-I_NAMED_PIPE	include/fs.h	85;"	d
-I_REGULAR	include/fs.h	81;"	d
-I_TYPE_MASK	include/fs.h	80;"	d
+INVALID_DRIVER	include/proc.h	86;"	d
+INVALID_INODE	include/fs.h	78;"	d
+I_BLOCK_SPECIAL	include/fs.h	84;"	d
+I_CHAR_SPECIAL	include/fs.h	86;"	d
+I_DIRECTORY	include/fs.h	85;"	d
+I_NAMED_PIPE	include/fs.h	87;"	d
+I_REGULAR	include/fs.h	83;"	d
+I_TYPE_MASK	include/fs.h	82;"	d
+Init	kernel/main.c	/^void Init()$/;"	f
 InitKernel	boot/loader.asm	/^InitKernel:	; 遍历每一个 Program Header，根据 Program Header 中的信息来确定把什么放进内存，放到什么位置，以及放多少。$/;"	l
 KB_ACK	include/keyboard.h	14;"	d
-KB_CMD	include/const.h	69;"	d
-KB_DATA	include/const.h	66;"	d
+KB_CMD	include/const.h	70;"	d
+KB_DATA	include/const.h	67;"	d
 KB_INPUT	include/keyboard.h	/^}KB_INPUT;$/;"	t	typeref:struct:s_kb
 KB_IN_BYTES	include/keyboard.h	21;"	d
-KEYBOARD_IRQ	include/const.h	76;"	d
+KEYBOARD_IRQ	include/const.h	77;"	d
 KernelFileName	boot/loader.asm	/^KernelFileName		db	"KERNEL  BIN", 0	; KERNEL.BIN 之文件名$/;"	d
 KillMotor	boot/loader.asm	/^KillMotor:$/;"	l
 LABEL_CMP_FILENAME	boot/boot.asm	/^LABEL_CMP_FILENAME:$/;"	l
@@ -233,13 +252,14 @@ LABEL_START	boot/boot.asm	/^LABEL_START:	$/;"	l
 LABEL_START	boot/loader.asm	/^LABEL_START:			; <--- 从这里开始 *************$/;"	l
 LD	Makefile	/^LD		= ld$/;"	m
 LDFLAGS	Makefile	/^LDFLAGS		= -m elf_i386 -s -Ttext $(ENTRYPOINT)$/;"	m
-LDT_SIZE	include/protect.h	87;"	d
+LDT_SIZE	include/protect.h	92;"	d
 LED_CODE	include/keyboard.h	13;"	d
 LEFT	include/keyboard.h	87;"	d
+LIMIT_4K_SHIFT	include/protect.h	98;"	d
 LSEEK	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
 LoadMessage	boot/loader.asm	/^LoadMessage:		db	"Loading  "$/;"	d
 LoaderFileName	boot/boot.asm	/^LoaderFileName		db	"LOADER  BIN", 0	; LOADER.BIN 之文件名$/;"	d
-MAGIC_V1	include/fs.h	13;"	d
+MAGIC_V1	include/fs.h	14;"	d
 MAG_CH_ASSERT	include/err.h	17;"	d
 MAG_CH_PANIC	include/err.h	18;"	d
 MAJOR	include/drive.h	14;"	d
@@ -250,10 +270,11 @@ MAKE_DEVICE_REG	include/hd.h	267;"	d
 MAP_COLS	include/keyboard.h	22;"	d
 MASK_RAW	include/keyboard.h	35;"	d
 MAX_DRIVES	include/hd.h	234;"	d
-MAX_FILENAME_LEN	include/fs.h	67;"	d
-MAX_PATH_LEN	include/fs.h	22;"	d
+MAX_FILENAME_LEN	include/fs.h	69;"	d
+MAX_PATH_LEN	include/fs.h	23;"	d
 MAX_PRIM_INDEX	include/hd.h	240;"	d
 MAX_SUB_PARTITIONS	include/hd.h	241;"	d
+MAX_TICKS	include/const.h	63;"	d
 MESSAGE	include/msg.h	/^}MESSAGE;$/;"	t	typeref:struct:mess
 MINOR	include/drive.h	15;"	d
 MINOR_BOOT	include/config.h	5;"	d
@@ -267,34 +288,35 @@ Message2	boot/boot.asm	/^Message2		db	"No LOADER"; 9字节, 不够则用空格补齐. 序号
 Message2	boot/loader.asm	/^Message2		db	"No KERNEL"$/;"	d
 MessageLength	boot/boot.asm	/^MessageLength		equ	9$/;"	d
 MessageLength	boot/loader.asm	/^MessageLength		equ	9$/;"	d
-NAME_LEN	include/msg.h	58;"	d
+NAME_LEN	include/msg.h	65;"	d
 NO_DEV	include/drive.h	5;"	d
 NO_PART	include/hd.h	273;"	d
-NO_TASK	include/proc.h	90;"	d
+NO_TASK	include/proc.h	95;"	d
 NR_CONSOLE	include/console.h	4;"	d
-NR_DEFAULT_FILE_SECTS	include/fs.h	75;"	d
-NR_FILES	include/fs.h	15;"	d
-NR_FILE_DESC	include/fs.h	16;"	d
-NR_INODE	include/fs.h	17;"	d
-NR_IRQ	include/const.h	74;"	d
+NR_DEFAULT_FILE_SECTS	include/fs.h	77;"	d
+NR_FILES	include/fs.h	16;"	d
+NR_FILE_DESC	include/fs.h	17;"	d
+NR_INODE	include/fs.h	18;"	d
+NR_IRQ	include/const.h	75;"	d
+NR_NATIVE_PROCS	include/proc.h	82;"	d
 NR_PART_PER_DRIVE	include/hd.h	235;"	d
 NR_PRIM_PER_DRIVE	include/hd.h	238;"	d
-NR_PROCS	include/proc.h	80;"	d
+NR_PROCS	include/proc.h	83;"	d
 NR_SCAN_CODES	include/keyboard.h	23;"	d
 NR_SUB_PER_DRIVE	include/hd.h	237;"	d
 NR_SUB_PER_PART	include/hd.h	236;"	d
-NR_SUPER_BLOCK	include/fs.h	18;"	d
-NR_SYS_CALL	include/const.h	101;"	d
-NR_TASKS	include/proc.h	78;"	d
+NR_SUPER_BLOCK	include/fs.h	19;"	d
+NR_SYS_CALL	include/const.h	102;"	d
+NR_TASKS	include/proc.h	80;"	d
 NR_TTY	include/tty.h	7;"	d
-NR_USER_PROCS	include/proc.h	79;"	d
+NR_USER_PROCS	include/proc.h	81;"	d
 NUM_LOCK	include/keyboard.h	59;"	d
 OBJS	Makefile	/^OBJS		= kernel\/kernel.o kernel\/syscall.o kernel\/start.o kernel\/main.o\\$/;"	m
-OFFSET	include/msg.h	65;"	d
+OFFSET	include/msg.h	72;"	d
 OPEN	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
 ORANGE_PART	include/hd.h	275;"	d
-O_CREAT	include/nostdio.h	7;"	d
-O_RDWR	include/nostdio.h	8;"	d
+O_CREAT	include/stdio.h	9;"	d
+O_RDWR	include/stdio.h	10;"	d
 PAD_0	include/keyboard.h	102;"	d
 PAD_1	include/keyboard.h	103;"	d
 PAD_2	include/keyboard.h	104;"	d
@@ -326,28 +348,32 @@ PAGEDOWN	include/keyboard.h	84;"	d
 PAGEUP	include/keyboard.h	83;"	d
 PARTITION_ENTRY	include/hd.h	/^} PARTITION_ENTRY;$/;"	v	typeref:struct:part_entry
 PARTITION_TABLE_OFFSET	include/hd.h	262;"	d
-PATHNAME	include/msg.h	56;"	d
+PATHNAME	include/msg.h	63;"	d
 PAUSEBREAK	include/keyboard.h	78;"	d
+PID	include/msg.h	75;"	d
 PORT_8042_CONTROL	include/keyboard.h	15;"	d
 PORT_8042_DATA	include/keyboard.h	16;"	d
-POSITION	include/msg.h	63;"	d
+POSITION	include/msg.h	70;"	d
 POWER	include/keyboard.h	91;"	d
-PRINTER_IRQ	include/const.h	83;"	d
+PRINTER_IRQ	include/const.h	84;"	d
 PRINTSCREEN	include/keyboard.h	77;"	d
 PRIVATE	include/const.h	17;"	d
 PRIVILEGE_KRNL	include/const.h	43;"	d
 PRIVILEGE_TASK	include/const.h	44;"	d
 PRIVILEGE_USER	include/const.h	45;"	d
 PROCESS	include/proc.h	/^}PROCESS;$/;"	t	typeref:struct:proc
-PROC_NR	include/msg.h	61;"	d
+PROC_IMAGE_SIZE_DEFAULT	include/proc.h	121;"	d
+PROC_NR	include/msg.h	68;"	d
+PROC_ORIGIN_STACK	include/proc.h	122;"	d
+PRORC_BASE	include/proc.h	120;"	d
 PUBLIC	include/const.h	16;"	d
 P_EXTENDED	include/hd.h	272;"	d
 P_PRIMARY	include/hd.h	271;"	d
 RATE_GENERATOR	include/const.h	60;"	d
-RD_SECT	include/fs.h	9;"	d
+RD_SECT	include/fs.h	8;"	d
 READ	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
 RECEIVE	include/msg.h	37;"	d
-RECEIVING	include/proc.h	113;"	d
+RECEIVING	include/proc.h	126;"	d
 RED	include/const.h	31;"	d
 RED_CHAR	include/console.h	13;"	d
 REG_ALT_STATUS	include/hd.h	211;"	d
@@ -363,67 +389,72 @@ REG_LBA_LOW	include/hd.h	122;"	d
 REG_LBA_MID	include/hd.h	123;"	d
 REG_NSECTOR	include/hd.h	121;"	d
 REG_STATUS	include/hd.h	142;"	d
-REQUEST	include/msg.h	60;"	d
+REQUEST	include/msg.h	67;"	d
 RESUME_PROC	include/msg.h	/^	SUSPEND_PROC, RESUME_PROC, $/;"	e	enum:msgtype
-RETVAL	include/msg.h	70;"	d
+RETVAL	include/msg.h	77;"	d
 RIGHT	include/keyboard.h	88;"	d
 ROOT_DEV	include/hd.h	280;"	d
-ROOT_INODE	include/fs.h	77;"	d
+ROOT_INODE	include/fs.h	79;"	d
 RPL_KRNL	include/const.h	47;"	d
 RPL_TASK	include/const.h	48;"	d
 RPL_USER	include/const.h	49;"	d
-RS232_IRQ	include/const.h	80;"	d
+RS232_IRQ	include/const.h	81;"	d
+RUNNING	include/proc.h	124;"	d
 ReadSector	boot/boot.asm	/^ReadSector:$/;"	l
 ReadSector	boot/loader.asm	/^ReadSector:$/;"	l
-SA_RPL0	include/protect.h	116;"	d
-SA_RPL1	include/protect.h	117;"	d
-SA_RPL2	include/protect.h	118;"	d
-SA_RPL3	include/protect.h	119;"	d
-SA_RPL_MASK	include/protect.h	115;"	d
-SA_TIG	include/protect.h	122;"	d
-SA_TIL	include/protect.h	123;"	d
-SA_TI_MASK	include/protect.h	121;"	d
+SA_RPL0	include/protect.h	122;"	d
+SA_RPL1	include/protect.h	123;"	d
+SA_RPL2	include/protect.h	124;"	d
+SA_RPL3	include/protect.h	125;"	d
+SA_RPL_MASK	include/protect.h	121;"	d
+SA_TIG	include/protect.h	128;"	d
+SA_TIL	include/protect.h	129;"	d
+SA_TI_MASK	include/protect.h	127;"	d
 SCREEN_SIZE	include/console.h	6;"	d
 SCREEN_WIDETH	include/console.h	5;"	d
 SCROLL_DOWN	include/console.h	9;"	d
 SCROLL_LOCK	include/keyboard.h	60;"	d
 SCROLL_UP	include/console.h	8;"	d
-SECONDARY_IRQ	include/const.h	79;"	d
+SECONDARY_IRQ	include/const.h	80;"	d
 SECTOR_SIZE	driver/hd.c	11;"	d	file:
-SECTOR_SIZE	fs/main.c	17;"	d	file:
+SECTOR_SIZE	fs/main.c	19;"	d	file:
 SECTOR_SIZE	fs/misc.c	7;"	d	file:
 SECTOR_SIZE	fs/opera.c	21;"	d	file:
 SECTOR_SIZE_SHIFT	driver/hd.c	12;"	d	file:
 SECTOR_SIZE_SHIFT	fs/opera.c	23;"	d	file:
-SEEK_CUR	include/nostdio.h	11;"	d
-SEEK_END	include/nostdio.h	12;"	d
-SEEK_SET	include/nostdio.h	10;"	d
-SELECTOR_DUMMY	include/protect.h	75;"	d
-SELECTOR_FLAT_C	include/protect.h	76;"	d
-SELECTOR_FLAT_RW	include/protect.h	77;"	d
-SELECTOR_KERNEL_CS	include/protect.h	82;"	d
-SELECTOR_KERNEL_DS	include/protect.h	83;"	d
-SELECTOR_KERNEL_GS	include/protect.h	84;"	d
-SELECTOR_LDT_FIRST	include/protect.h	80;"	d
-SELECTOR_TSS	include/protect.h	79;"	d
-SELECTOR_VIDEO	include/protect.h	78;"	d
+SEEK_CUR	include/stdio.h	13;"	d
+SEEK_END	include/stdio.h	14;"	d
+SEEK_SET	include/stdio.h	12;"	d
+SELECTOR_DUMMY	include/protect.h	80;"	d
+SELECTOR_FLAT_C	include/protect.h	81;"	d
+SELECTOR_FLAT_RW	include/protect.h	82;"	d
+SELECTOR_KERNEL_CS	include/protect.h	87;"	d
+SELECTOR_KERNEL_DS	include/protect.h	88;"	d
+SELECTOR_KERNEL_GS	include/protect.h	89;"	d
+SELECTOR_LDT_FIRST	include/protect.h	85;"	d
+SELECTOR_TSS	include/protect.h	84;"	d
+SELECTOR_VIDEO	include/protect.h	83;"	d
 SEND	include/msg.h	36;"	d
-SENDING	include/proc.h	112;"	d
+SENDING	include/proc.h	125;"	d
 SHIFT_L	include/keyboard.h	50;"	d
 SHIFT_R	include/keyboard.h	51;"	d
 SLEEP	include/keyboard.h	92;"	d
 STACK_FRAME	include/proc.h	/^}STACK_FRAME;$/;"	t	typeref:struct:s_stackframe
-STACK_SIZE_FS	include/proc.h	96;"	d
-STACK_SIZE_HD	include/proc.h	95;"	d
-STACK_SIZE_SYS	include/proc.h	94;"	d
-STACK_SIZE_TESTA	include/proc.h	97;"	d
-STACK_SIZE_TESTB	include/proc.h	98;"	d
-STACK_SIZE_TESTC	include/proc.h	99;"	d
-STACK_SIZE_TOTAL	include/proc.h	102;"	d
-STACK_SIZE_TTY	include/proc.h	93;"	d
-START_ADDR_H	include/const.h	93;"	d
-START_ADDR_L	include/const.h	94;"	d
+STACK_SIZE_DEFAULT	include/proc.h	98;"	d
+STACK_SIZE_FS	include/proc.h	102;"	d
+STACK_SIZE_HD	include/proc.h	101;"	d
+STACK_SIZE_INIT	include/proc.h	104;"	d
+STACK_SIZE_MM	include/proc.h	103;"	d
+STACK_SIZE_SYS	include/proc.h	100;"	d
+STACK_SIZE_TESTA	include/proc.h	105;"	d
+STACK_SIZE_TESTB	include/proc.h	106;"	d
+STACK_SIZE_TESTC	include/proc.h	107;"	d
+STACK_SIZE_TOTAL	include/proc.h	110;"	d
+STACK_SIZE_TTY	include/proc.h	99;"	d
+START_ADDR_H	include/const.h	94;"	d
+START_ADDR_L	include/const.h	95;"	d
 STAT	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
+STATUS	include/msg.h	76;"	d
 STATUS_BSY	include/hd.h	158;"	d
 STATUS_CORR	include/hd.h	163;"	d
 STATUS_DFSE	include/hd.h	160;"	d
@@ -433,7 +464,7 @@ STATUS_DSC	include/hd.h	161;"	d
 STATUS_ERR	include/hd.h	165;"	d
 STATUS_IDX	include/hd.h	164;"	d
 STR_DEFAULT_LEN	include/string.h	8;"	d
-SUPER_BLOCK_SIZE	include/fs.h	51;"	d
+SUPER_BLOCK_SIZE	include/fs.h	53;"	d
 SUSPEND_PROC	include/msg.h	/^	SUSPEND_PROC, RESUME_PROC, $/;"	e	enum:msgtype
 SYSCALL_RET	include/msg.h	/^	SYSCALL_RET,   $/;"	e	enum:msgtype
 SelectorFlatC	boot/loader.asm	/^SelectorFlatC		equ	LABEL_DESC_FLAT_C	- LABEL_GDT$/;"	d
@@ -445,10 +476,11 @@ StackSpace	kernel/kernel.asm	/^StackSpace		resb	2 * 1024$/;"	l
 StackTop	kernel/kernel.asm	/^StackTop:		; 栈顶$/;"	l
 TAB	include/keyboard.h	41;"	d
 TASK	include/proc.h	/^}TASK;$/;"	t	typeref:struct:s_task
-TASK_FS	include/proc.h	88;"	d
-TASK_HD	include/proc.h	87;"	d
-TASK_SYS	include/proc.h	86;"	d
-TASK_TTY	include/proc.h	85;"	d
+TASK_FS	include/proc.h	91;"	d
+TASK_HD	include/proc.h	90;"	d
+TASK_MM	include/proc.h	92;"	d
+TASK_SYS	include/proc.h	89;"	d
+TASK_TTY	include/proc.h	88;"	d
 TIMER0	include/const.h	58;"	d
 TIMER_FREQ	include/const.h	61;"	d
 TIMER_MODE	include/const.h	59;"	d
@@ -465,17 +497,18 @@ TestC	kernel/main.c	/^void TestC()$/;"	f
 TopOfStack	boot/loader.asm	/^TopOfStack	equ	BaseOfLoaderPhyAddr + $	; 栈顶$/;"	d
 UNLINK	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
 UP	include/keyboard.h	85;"	d
-V_MEM_BASE	include/const.h	97;"	d
-V_MEM_SIZE	include/const.h	98;"	d
+V_MEM_BASE	include/const.h	98;"	d
+V_MEM_SIZE	include/const.h	99;"	d
+WAIT	include/msg.h	/^	EXEC, WAIT,$/;"	e	enum:msgtype
+WAITING	include/proc.h	127;"	d
 WAKE	include/keyboard.h	93;"	d
-WHENCE	include/msg.h	66;"	d
+WHENCE	include/msg.h	73;"	d
 WHITE	include/const.h	30;"	d
 WRITE	include/msg.h	/^	   OPEN, CLOSE, READ, WRITE, LSEEK, STAT, UNLINK,   $/;"	e	enum:msgtype
-WR_SECT	include/fs.h	10;"	d
-XT_WINI_IRQ	include/const.h	81;"	d
+WR_SECT	include/fs.h	9;"	d
+XT_WINI_IRQ	include/const.h	82;"	d
 _ARDStruct	boot/loader.asm	/^_ARDStruct:			; Address Range Descriptor Structure$/;"	l
 _MemChkBuf	boot/loader.asm	/^_MemChkBuf:	times	256	db	0$/;"	l
-_NOSTDIO_H	include/nostdio.h	2;"	d
 _NR_printx	kernel/syscall.asm	/^_NR_printx		equ	0	; 要跟 global.c 中 sys_call_table 的定义相对应！$/;"	d
 _NR_sendrec	kernel/syscall.asm	/^_NR_sendrec			equ	1$/;"	d
 _PROC_H_	include/proc.h	2;"	d
@@ -494,7 +527,10 @@ __ERR_H__	include/err.h	2;"	d
 __FS_H__	include/fs.h	2;"	d
 __GLOBAL_H__	include/global.h	10;"	d
 __HD_H__	include/hd.h	2;"	d
+__KERNEL_H__	include/kernel.h	2;"	d
+__MM_H__	include/mm.h	2;"	d
 __MSG__H__	include/msg.h	2;"	d
+__STDIO_H__	include/stdio.h	2;"	d
 ____MATH_H__	include/math.h	2;"	d
 _dwBaseAddrHigh	boot/loader.asm	/^	_dwBaseAddrHigh:	dd	0$/;"	d
 _dwBaseAddrLow	boot/loader.asm	/^	_dwBaseAddrLow:		dd	0$/;"	d
@@ -510,6 +546,7 @@ _szRAMSize	boot/loader.asm	/^_szRAMSize:			db	"RAM size:", 0$/;"	d
 _szReturn	boot/loader.asm	/^_szReturn:			db	0Ah, 0$/;"	d
 _unused	include/fs.h	/^	t_8 _unused[16];$/;"	m	struct:inode
 alloc_imap_bit	fs/opera.c	/^static int alloc_imap_bit(int dev)$/;"	f	file:
+alloc_mem	mm/main.c	/^int alloc_mem(int pid, int memsize)$/;"	f
 alloc_smap_bit	fs/opera.c	/^static int alloc_smap_bit(int dev, int nr_sects_to_alloc)$/;"	f	file:
 alt_l	kernel/keyboard.c	/^PRIVATE int alt_l;$/;"	v
 alt_r	kernel/keyboard.c	/^PRIVATE int alt_r;$/;"	v
@@ -530,6 +567,7 @@ bits	kernel/kernel.asm	/^bits 32$/;"	l
 bits	kernel/syscall.asm	/^bits 32$/;"	l
 block	kernel/proc.c	/^void block(struct proc*p)$/;"	f
 boot_ind	include/hd.h	/^	t_8 boot_ind;		\/**$/;"	m	struct:part_entry
+boot_params	include/kernel.h	/^struct boot_params {$/;"	s
 bounds_check	kernel/kernel.asm	/^bounds_check:$/;"	l
 breakpoint_exception	kernel/kernel.asm	/^breakpoint_exception:$/;"	l
 buf	include/keyboard.h	/^	char buf[KB_IN_BYTES];$/;"	m	struct:s_kb
@@ -540,6 +578,7 @@ caps_lock	kernel/keyboard.c	/^static int caps_lock;$/;"	v	file:
 clock_handler	kernel/clock.c	/^PUBLIC void clock_handler(int irq)$/;"	f
 clock_int_msg	kernel/kernel.asm	/^clock_int_msg		db	"^", 0$/;"	d
 close	lib/unistd.c	/^int  close(int fd)$/;"	f
+cnt	kernel/clock.c	/^int cnt=0;$/;"	v
 code_with_E0	kernel/keyboard.c	/^PRIVATE int code_with_E0=0;$/;"	v
 column	kernel/keyboard.c	/^PRIVATE int column;$/;"	v
 command	include/hd.h	/^	t_8	command;$/;"	m	struct:hd_cmd
@@ -563,7 +602,7 @@ current_tty	kernel/console.c	/^TTY *current_tty = (void *)0;$/;"	v
 cursor_location	include/console.h	/^	unsigned int cursor_location;$/;"	m	struct:s_console
 dcount	include/protect.h	/^	t_8	dcount;		\/* 该字段只在调用门描述符中有效。$/;"	m	struct:s_gate
 dd_map	driver/driver.c	/^struct dev_drv_map dd_map[]={                                                                                                                    $/;"	v	typeref:struct:dev_drv_map
-deadlock	kernel/proc.c	/^static deadlock(int src,int dest)$/;"	f	file:
+deadlock	kernel/proc.c	/^static int deadlock(int src,int dest)$/;"	f	file:
 dec	boot/boot.asm	/^	dec	dx					; ┛就跳到下一个 Sector$/;"	d
 dec	boot/boot.asm	/^dec	cx$/;"	l
 dec	boot/loader.asm	/^	dec	dx					; ┛$/;"	d
@@ -586,6 +625,7 @@ disp_pos	include/global.h	/^EXTERN	int		disp_pos;$/;"	v
 disp_str	lib/klib.asm	/^disp_str:$/;"	l
 divide_error	kernel/kernel.asm	/^divide_error:$/;"	l
 do_close	fs/opera.c	/^int do_close()$/;"	f
+do_fork	mm/fork2exit.c	/^int do_fork()$/;"	f
 do_open	fs/opera.c	/^int do_open()$/;"	f
 do_rw	fs/opera.c	/^int do_rw()$/;"	f
 do_unlink	fs/opera.c	/^int do_unlink()$/;"	f
@@ -654,6 +694,7 @@ extern	kernel/kernel.asm	/^extern	tinix_main$/;"	l
 extern	kernel/kernel.asm	/^extern	tss$/;"	l
 extern	lib/klib.asm	/^extern	disp_pos$/;"	l
 f_desc_table	fs/main.c	/^struct file_desc    f_desc_table[NR_FILE_DESC];$/;"	v	typeref:struct:file_desc
+fd_cnt	include/fs.h	/^	int fd_cnt;$/;"	m	struct:file_desc
 fd_inode	include/fs.h	/^	struct inode* fd_inode;$/;"	m	struct:file_desc	typeref:struct:file_desc::inode
 fd_mode	include/fs.h	/^	int fd_mode;$/;"	m	struct:file_desc
 fd_pos	include/fs.h	/^	int fd_pos;$/;"	m	struct:file_desc
@@ -661,18 +702,24 @@ features	include/hd.h	/^	t_8	features;$/;"	m	struct:hd_cmd
 file_desc	include/fs.h	/^struct file_desc{$/;"	s
 filp	include/proc.h	/^	struct	file_desc * filp[NR_FILES];$/;"	m	struct:proc	typeref:struct:proc::file_desc
 flags	include/protect.h	/^	t_32	flags;$/;"	m	struct:s_tss
+fork	lib/unistd.c	/^int fork()$/;"	f
 fs	include/proc.h	/^	t_32	fs;		\/* ┃						│			*\/$/;"	m	struct:s_stackframe
 fs	include/protect.h	/^	t_32	fs;$/;"	m	struct:s_tss
+fs_fork	fs/main.c	/^static int fs_fork()$/;"	f	file:
 fs_msg	fs/main.c	/^MESSAGE fs_msg;$/;"	v
 fsbuf	fs/main.c	/^t_8 *fsbuf = (t_8 *)0x600000;$/;"	v
 gdt	include/global.h	/^EXTERN	DESCRIPTOR	gdt[GDT_SIZE];$/;"	v
 gdt_ptr	include/global.h	/^EXTERN	t_8		gdt_ptr[6];	\/\/ 0~15:Limit  16~47:Base$/;"	v
 general_protection	kernel/kernel.asm	/^general_protection:$/;"	l
+get_boot_params	lib/klib.c	/^void get_boot_params(struct boot_params *bootp)$/;"	f
 get_byte_from_kbuf	kernel/keyboard.c	/^PRIVATE t_8 get_byte_from_kbuf()$/;"	f
 get_inode	fs/misc.c	/^struct inode * get_inode(int dev, int num)$/;"	f
+get_kernel_map	lib/klib.c	/^int get_kernel_map(unsigned int *b, unsigned int *l)$/;"	f
 get_part_table	driver/hd.c	/^static void get_part_table(int drive, int sector_nr, struct part_entry *entry)$/;"	f	file:
 get_super_block	fs/main.c	/^struct super_block *get_super_block(int dev)$/;"	f
 get_ticks	kernel/main.c	/^int get_ticks()$/;"	f
+getpid	lib/unistd.c	/^int getpid()$/;"	f
+glb	kernel/proc.c	/^int glb=0;$/;"	v
 global	kernel/kernel.asm	/^global	bounds_check$/;"	l
 global	kernel/kernel.asm	/^global	breakpoint_exception$/;"	l
 global	kernel/kernel.asm	/^global	copr_error$/;"	l
@@ -727,7 +774,7 @@ global	lib/string.asm	/^global	strlen$/;"	l
 gs	include/proc.h	/^	t_32	gs;		\/* ┓						│			*\/$/;"	m	struct:s_stackframe
 gs	include/protect.h	/^	t_32	gs;$/;"	m	struct:s_tss
 has_int_msg	include/proc.h	/^	int				has_int_msg;$/;"	m	struct:proc
-hd_close	driver/hd.c	/^static hd_close(int device_nr)$/;"	f	file:
+hd_close	driver/hd.c	/^static void hd_close(int device_nr)$/;"	f	file:
 hd_cmd	include/hd.h	/^struct hd_cmd {$/;"	s
 hd_cmd_out	driver/hd.c	/^ void hd_cmd_out(struct hd_cmd *cmd)$/;"	f
 hd_handler	driver/hd.c	/^void hd_handler(int irq)$/;"	f
@@ -774,11 +821,12 @@ inform_int	kernel/proc.c	/^PUBLIC void inform_int(int task_nr)$/;"	f
 init_8259A	kernel/i8259.c	/^PUBLIC void init_8259A()$/;"	f
 init_clock	kernel/clock.c	/^PUBLIC void init_clock()$/;"	f
 init_console	kernel/console.c	/^void init_console(CONSOLE *console_p)$/;"	f
-init_descriptor	kernel/protect.c	/^PRIVATE void init_descriptor(DESCRIPTOR * p_desc, t_32 base, t_32 limit, t_16 attribute)$/;"	f
+init_descriptor	kernel/protect.c	/^void init_descriptor(DESCRIPTOR * p_desc, t_32 base, t_32 limit, t_16 attribute)$/;"	f
 init_fs	fs/main.c	/^void init_fs()$/;"	f
 init_hd	driver/hd.c	/^void init_hd()$/;"	f
 init_idt_desc	kernel/protect.c	/^PUBLIC void init_idt_desc(unsigned char vector, t_8 desc_type, t_pf_int_handler handler, unsigned char privilege)$/;"	f
 init_keyboard	kernel/keyboard.c	/^PUBLIC void init_keyboard()$/;"	f
+init_mm	mm/main.c	/^void init_mm()$/;"	f
 init_prot	kernel/protect.c	/^PUBLIC void init_prot()$/;"	f
 init_tty	kernel/tty.c	/^void init_tty(TTY *tty_p)$/;"	f
 initial_eip	include/proc.h	/^	t_pf_task	initial_eip;$/;"	m	struct:s_task
@@ -792,14 +840,15 @@ interrupt_wait	driver/hd.c	/^ void interrupt_wait()$/;"	f
 inval_opcode	kernel/kernel.asm	/^inval_opcode:$/;"	l
 inval_tss	kernel/kernel.asm	/^inval_tss:$/;"	l
 iobase	include/protect.h	/^	t_16	iobase;	\/* I\/O位图基址大于或等于TSS段界限，就表示没有I\/O许可位图 *\/$/;"	m	struct:s_tss
-irq_table	kernel/global.c	/^	t_pf_irq_handler	irq_table[NR_IRQ];$/;"	v
-is_special	include/fs.h	87;"	d
+irq_table	kernel/global.c	/^t_pf_irq_handler	irq_table[NR_IRQ];$/;"	v
+is_special	include/fs.h	89;"	d
 itoa	lib/klib.c	/^char * itoa(char * str, int num)\/* 数字前面的 0 不被显示出来, 比如 0000B800 被显示成 B800 *\/$/;"	f
 k_reenter	include/global.h	/^EXTERN	t_32		k_reenter;$/;"	v
 kb_ack	kernel/keyboard.c	/^static void kb_ack()$/;"	f	file:
 kb_in	kernel/keyboard.c	/^KB_INPUT	kb_in;$/;"	v
 kb_wait	kernel/keyboard.c	/^static void kb_wait()$/;"	f	file:
 kernel_esp	include/proc.h	/^	t_32	kernel_esp;	\/* <- 'popad' will ignore it			│			*\/$/;"	m	struct:s_stackframe
+kernel_file	include/kernel.h	/^		unsigned char * kernel_file;    \/* addr of kernel file *\/$/;"	m	struct:boot_params
 key_pressed	kernel/keyboard.c	/^int key_pressed = 0;$/;"	v
 keyboard_handler	kernel/keyboard.c	/^PUBLIC void keyboard_handler(int irq)$/;"	f
 keyboard_read	kernel/keyboard.c	/^void keyboard_read(TTY * tty_p)$/;"	f
@@ -835,8 +884,10 @@ m3p1	include/msg.h	/^	void *m3p1;$/;"	m	struct:mess3
 m3p2	include/msg.h	/^	void *m3p2;$/;"	m	struct:mess3
 magic	include/fs.h	/^	t_32	magic;$/;"	m	struct:super_block
 max	include/math.h	4;"	d
+mem_size	include/kernel.h	/^	    int     mem_size;   \/* memory size *\/$/;"	m	struct:boot_params
 memcmp	lib/memstring.c	/^int memcmp(const void * s1, const void *s2, int n)$/;"	f
 memcpy	lib/string.asm	/^memcpy:$/;"	l
+memory_size	mm/main.c	/^int memory_size;$/;"	v
 memset	lib/string.asm	/^memset:$/;"	l
 mess	include/msg.h	/^typedef struct mess{$/;"	s
 mess1	include/msg.h	/^struct mess1{$/;"	s
@@ -845,6 +896,7 @@ mess3	include/msg.h	/^struct mess3{$/;"	s
 milli_delay	kernel/clock.c	/^PUBLIC void milli_delay(int milli_sec)$/;"	f
 min	include/math.h	5;"	d
 mkfs	fs/main.c	/^static void mkfs()$/;"	f	file:
+mm_msg	mm/main.c	/^MESSAGE mm_msg;$/;"	v
 msg_receive	kernel/proc.c	/^static int msg_receive(struct proc * current_pro,int src, MESSAGE *m)$/;"	f	file:
 msg_send	kernel/proc.c	/^static int msg_send(struct proc *current, int dest, MESSAGE *m)$/;"	f	file:
 msgtype	include/msg.h	/^enum msgtype{$/;"	g
@@ -878,12 +930,12 @@ overflow	kernel/kernel.asm	/^overflow:$/;"	l
 p_flags	include/proc.h	/^	int 			p_flags;$/;"	m	struct:proc
 p_head	include/keyboard.h	/^	char * p_head;$/;"	m	struct:s_kb
 p_msg	include/proc.h	/^	MESSAGE			*p_msg;$/;"	m	struct:proc
-p_proc_ready	include/global.h	/^EXTERN	struct proc *p_proc_ready;$/;"	v	typeref:struct:proc
+p_parent	include/proc.h	/^	t_32				p_parent;$/;"	m	struct:proc
+p_proc_ready	kernel/global.c	/^struct proc * p_proc_ready = (void *)proc_table;$/;"	v	typeref:struct:proc
 p_recvfrom	include/proc.h	/^	int				p_recvfrom;$/;"	m	struct:proc
 p_sendto	include/proc.h	/^	int 			p_sendto;$/;"	m	struct:proc
 p_tail	include/keyboard.h	/^	char * p_tail;$/;"	m	struct:s_kb
 page_fault	kernel/kernel.asm	/^page_fault:$/;"	l
-page_switch	kernel/tty.c	/^PRIVATE void page_switch()$/;"	f
 panic	lib/err.c	/^void panic(const char *fmt, ...)$/;"	f
 part_entry	include/hd.h	/^struct part_entry {$/;"	s
 part_info	include/hd.h	/^struct part_info {$/;"	s
@@ -905,9 +957,9 @@ printl	lib/stdio.c	/^int printl(const char *fmt,...)$/;"	f
 printx	kernel/syscall.asm	/^printx:$/;"	l
 priority	include/proc.h	/^	int				priority;$/;"	m	struct:proc
 proc	include/proc.h	/^typedef struct proc{$/;"	s
-proc2pid	include/proc.h	66;"	d
+proc2pid	include/proc.h	67;"	d
 proc2tty	include/tty.h	/^	int		proc2tty;$/;"	m	struct:tty
-proc_table	kernel/global.c	/^	PROCESS	proc_table[NR_PROCS];$/;"	v
+proc_table	kernel/global.c	/^PROCESS	proc_table[NR_PROCS];$/;"	v
 push	boot/boot.asm	/^	push	dx$/;"	d
 push	boot/loader.asm	/^	push	dx$/;"	d
 push	kernel/kernel.asm	/^	push	ds	; ┃$/;"	d
@@ -917,6 +969,7 @@ put_key2tty	kernel/tty.c	/^void put_key2tty(TTY *tty_p, t_32 key)$/;"	f
 q_sending	include/proc.h	/^	struct	proc	*q_sending;$/;"	m	struct:proc	typeref:struct:proc::proc
 read	lib/unistd.c	/^int read(int fd, void *buf, int count)$/;"	f
 read_super_block	fs/main.c	/^static void read_super_block(int dev)$/;"	f	file:
+reassembly	include/protect.h	23;"	d
 regs	include/proc.h	/^	STACK_FRAME			regs;			\/* process' registers saved in stack frame *\/$/;"	m	struct:proc
 reqed_cnt	include/tty.h	/^	int 	reqed_cnt;$/;"	m	struct:tty
 reqer_buf	include/tty.h	/^	char*		reqer_buf;$/;"	m	struct:tty
@@ -953,6 +1006,7 @@ set_cursor_location	kernel/console.c	/^void set_cursor_location(t_32 addr)$/;"	f
 set_leds	kernel/keyboard.c	/^static void set_leds()$/;"	f	file:
 shift_l	kernel/keyboard.c	/^PRIVATE int shift_l;$/;"	v
 shift_r	kernel/keyboard.c	/^PRIVATE int shift_r;$/;"	v
+shutdown_proc	kernel/main.c	/^static void shutdown_proc(int n)$/;"	f	file:
 single_step_exception	kernel/kernel.asm	/^single_step_exception:$/;"	l
 size	include/hd.h	/^	t_32	size;	\/* how many sectors in this partition (NOT byte size, but SECTOR number) *\/$/;"	m	struct:part_info
 source	include/msg.h	/^	int source;$/;"	m	struct:mess
@@ -981,7 +1035,7 @@ switch_console	kernel/console.c	/^void switch_console(CONSOLE *console_p)$/;"	f
 syn_cursor	kernel/tty.c	/^PUBLIC void syn_cursor()$/;"	f
 sync_inode	fs/misc.c	/^void sync_inode(struct inode *p)$/;"	f
 sys_call	kernel/kernel.asm	/^sys_call:$/;"	l
-sys_call_table	kernel/global.c	/^	t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_printx,sys_sendrec};$/;"	v
+sys_call_table	kernel/global.c	/^t_sys_call		sys_call_table[NR_SYS_CALL] = {sys_printx,sys_sendrec};$/;"	v
 sys_id	include/hd.h	/^	t_8 sys_id;		\/**$/;"	m	struct:part_entry
 sys_printx	kernel/tty.c	/^int sys_printx(int _unused1, int _unused2, char * s, struct proc *proc_p)$/;"	f
 sys_sendrec	kernel/proc.c	/^int sys_sendrec(int function, int src_dest, MESSAGE *m, struct proc *p)$/;"	f
@@ -1001,12 +1055,13 @@ t_sys_call	include/type.h	/^typedef	void*	t_sys_call;$/;"	t
 tail	include/tty.h	/^	t_32	*tail;$/;"	m	struct:tty
 task_fs	fs/main.c	/^void task_fs()$/;"	f
 task_hd	driver/hd.c	/^void task_hd()$/;"	f
-task_stack	kernel/global.c	/^	char	task_stack[STACK_SIZE_TOTAL];$/;"	v
+task_mm	mm/main.c	/^void task_mm()$/;"	f
+task_stack	kernel/global.c	/^char	task_stack[STACK_SIZE_TOTAL];$/;"	v
 task_sys	kernel/systask.c	/^void task_sys()$/;"	f
-task_table	kernel/global.c	/^	TASK	task_table[NR_TASKS] = {{task_tty, STACK_SIZE_TTY, "tty"},$/;"	v
+task_table	kernel/global.c	/^TASK	task_table[NR_TASKS] = {{task_tty, STACK_SIZE_TTY, "tty"},$/;"	v
 task_tty	kernel/tty.c	/^PUBLIC void task_tty()$/;"	f
-ticks	include/global.h	/^EXTERN	int		ticks;$/;"	v
 ticks	include/proc.h	/^	int				ticks;			\/* remained ticks *\/$/;"	m	struct:proc
+ticks	kernel/global.c	/^int 	ticks=0;$/;"	v
 times	boot/boot.asm	/^times 	510-($-$$)	db	0	; 填充剩下的空间，使生成的二进制代码恰好为512字节$/;"	l
 tinix_main	kernel/main.c	/^PUBLIC int tinix_main()$/;"	f
 trap	include/protect.h	/^	t_16	trap;$/;"	m	struct:s_tss
@@ -1021,10 +1076,10 @@ type	include/msg.h	/^	int type;$/;"	m	struct:mess
 u	include/msg.h	/^	}u;$/;"	m	struct:mess	typeref:union:mess::__anon1
 unblock	kernel/proc.c	/^void unblock(struct proc *p)$/;"	f
 unlink	lib/unistd.c	/^int unlink(const char *pathname)$/;"	f
-user_proc_table	kernel/global.c	/^	TASK	user_proc_table[NR_USER_PROCS] = {$/;"	v
+user_proc_table	kernel/global.c	/^TASK	user_proc_table[NR_NATIVE_PROCS] = {$/;"	v
 va2la	kernel/proc.c	/^void * va2la(int pid, void * va)$/;"	f
 va_list	include/type.h	/^typedef char* 	va_list;$/;"	t
-vir2phys	include/protect.h	153;"	d
+vir2phys	include/protect.h	159;"	d
 vmem_limit	include/console.h	/^	unsigned int vmem_limit;$/;"	m	struct:s_console
 vsprintf	lib/stdio.c	/^PUBLIC int vsprintf(char *buf, const char *fmt, va_list args)$/;"	f
 wRootDirSizeForLoop	boot/boot.asm	/^wRootDirSizeForLoop	dw	RootDirSectors	; Root Directory 占用的扇区数, 在循环中会递减至零.$/;"	d

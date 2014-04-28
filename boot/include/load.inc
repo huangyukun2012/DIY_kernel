@@ -12,7 +12,7 @@ OffsetOfLoader		equ	  0100h	; LOADER.BIN ±»¼ÓÔØµ½µÄÎ»ÖÃ ---- Æ«ÒÆµØÖ·
 BaseOfLoaderPhyAddr	equ	BaseOfLoader * 10h	; LOADER.BIN ±»¼ÓÔØµ½µÄÎ»ÖÃ ---- ÎïÀíµØÖ· (= BaseOfLoader * 10h)
 
 
-BaseOfKernelFile	equ	 08000h	; KERNEL.BIN ±»¼ÓÔØµ½µÄÎ»ÖÃ ----  ¶ÎµØÖ·
+BaseOfKernelFile	equ	 07000h	; KERNEL.BIN ±»¼ÓÔØµ½µÄÎ»ÖÃ ----  ¶ÎµØÖ·
 OffsetOfKernelFile	equ	     0h	; KERNEL.BIN ±»¼ÓÔØµ½µÄÎ»ÖÃ ---- Æ«ÒÆµØÖ·
 
 BaseOfKernelFilePhyAddr	equ	BaseOfKernelFile * 10h
@@ -22,3 +22,8 @@ KernelEntryPointPhyAddr	equ	030400h	; ×¢Òâ£º1¡¢±ØĞëÓë MAKEFILE ÖĞ²ÎÊı -Ttext µÄÖ
 PageDirBase		equ	200000h	; Ò³Ä¿Â¼¿ªÊ¼µØÖ·:		2M
 PageTblBase		equ	201000h	; Ò³±í¿ªÊ¼µØÖ·:			2M + 4K
 
+BOOT_PARAM_ADDR	EQU 	0x900
+BOOT_PARAM_MAGIC  EQU	0xB007
+
+KERNEL_FILE_SEG  EQU	0x7000
+KERNEL_FILE_OFF		EQU   0
