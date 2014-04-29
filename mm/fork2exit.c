@@ -13,7 +13,9 @@
  * */
 int do_fork()
 {
-	printf("Do_fork beging:>>>");
+#if DEBUG
+	printl("Do_fork beging:>>>");
+#endif
 	//find a free slot in proc_table
 	struct proc *child_procp= proc_table;//child proc
 	int i;
@@ -29,10 +31,10 @@ int do_fork()
 		return -1;
 	assert(i<NR_PROCS);
 
-	//duplicate the process table:strange
+	//duplicate the process table
 	int parent_pid = mm_msg.source;//
-	struct proc *parent = &proc_table[parent_pid];//now p is parent
-	t_16 child_ldt_sel = parent->ldt_sel;//p is the free slot, and for the child
+	t_16 child_ldt_sel = child_procp->ldt_sel;//p is the free slot, and for the child
+	*child_procp=proc_table[parent_pid];
 	child_procp->ldt_sel = child_ldt_sel;
 	child_procp->p_parent = parent_pid;
 	sprintf(child_procp->name, "%s_%d", proc_table[parent_pid].name , child_pid);//son share the name with parent
@@ -70,7 +72,7 @@ int do_fork()
 	assert(caller_T_size == caller_D2S_size);
 
 	int child_base = alloc_mem(child_pid, caller_T_size);
-	printl("MM 0x%x <- 0x%x (0x%x bytes)\n", child_base, caller_T_base, caller_T_size);
+	printl("alloc MM 0x%x <- 0x%x (0x%x bytes)\n", child_base, caller_T_base, caller_T_size);
 	phys_copy((void *)child_base, (void *)caller_T_base, caller_T_size);
 
 	//child's LDT
@@ -83,7 +85,8 @@ int do_fork()
 	MESSAGE msg2fs;
 	msg2fs.type = FORK;
 	msg2fs.PID = child_pid;
-	send_recv(BOTH, TASK_FS, &msg2fs);
+	send_recv(BOTH, TASK_FS, &msg2fs);//the fs is waiting for the HD
+
 
 	//child pid will be returned to the patent proc
 	mm_msg.PID = child_pid;
@@ -94,7 +97,6 @@ int do_fork()
 	m.RETVAL = 0;
 	m.PID = 0;
 	send_recv(SEND, child_pid, &m);
-	printl(">>do_fork:end!");
 	return 0;
 
 

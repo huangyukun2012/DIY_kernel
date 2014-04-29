@@ -37,7 +37,7 @@ PUBLIC void clock_handler(int irq)
 
 	if (k_reenter != 0) {//中断重入, 将不发生进程调度
 		disp_pos = 500;
-		disp_str("!");
+		disp_int(cnt);
 		return;
 	}
 	

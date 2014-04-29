@@ -5,3 +5,7 @@ bug fix: in the function mkfs, we changed the first sector of the root device
 	In the function msg_receive, if we add a "for loop", the hd int will happen, so the assert will fail.
 bug fix:
 	cli:This trick is very simple, buf efficient!
+10.1
+1)bug descriptor:
+	In tty0, we can not get input correctly.
+2)bug state:not solved yet

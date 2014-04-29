@@ -73,7 +73,9 @@ int unlink(const char *pathname)
 
 int fork()
 {
+#if DEBUG
 	printl("in fork>>>");
+#endif
 	MESSAGE msg;
 	msg.type = FORK;
 

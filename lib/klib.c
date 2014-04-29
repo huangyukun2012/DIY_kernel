@@ -107,7 +107,7 @@ int get_kernel_map(unsigned int *b, unsigned int *l)
 	*b = ~0;
 	unsigned int t = 0;
 	int i;
-	for (i = 0; i < elfheader->e_shnum; ++i){
+	for (i = 0; i < elfheader->e_shnum; i++){
 		Elf32_Shdr *section_header=(Elf32_Shdr *)(bp.kernel_file + elfheader->e_shoff + i*elfheader->e_shentsize);
 		if(section_header->sh_flags & SHF_ALLOC){
 			int bottom = section_header->sh_addr;

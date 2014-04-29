@@ -32,7 +32,6 @@ PUBLIC int tinix_main()
 	TASK*		p_task		= task_table;
 	PROCESS*	p_proc		= proc_table;
 	char*		p_task_stack	= task_stack + STACK_SIZE_TOTAL ;
-	t_16		selector_ldt	= SELECTOR_LDT_FIRST;
 
 	int i, j;
 	t_8 privilege;
@@ -74,12 +73,16 @@ PUBLIC int tinix_main()
 			unsigned int k_base;
 			unsigned int k_limit;
 			int ret = get_kernel_map(&k_base, &k_limit);
+			disp_int(k_base);
+			disp_str(" ");
+			disp_int(k_limit);
+
 			assert(ret == 0);
-			init_descriptor(&p_proc->ldts[INDEX_LDT_C] , 0, (k_base + +k_limit) >> LIMIT_4K_SHIFT, DA_32 | DA_LIMIT_4K | DA_C | privilege << 5);
+			init_descriptor(&p_proc->ldts[INDEX_LDT_C] , 0, \
+					(k_base + +k_limit) >> LIMIT_4K_SHIFT, DA_32 | DA_LIMIT_4K | DA_C | privilege << 5);
 			init_descriptor(&p_proc->ldts[INDEX_LDT_RW] , 0,\
 					(k_base + +k_limit) >> LIMIT_4K_SHIFT, DA_32 | DA_LIMIT_4K | DA_DRW | privilege << 5);
 		}
-		p_proc->ldt_sel	= selector_ldt;
 		p_proc->regs.cs		= (INDEX_LDT_C ) << 3| SA_TIL | rpl;
 
 		p_proc->regs.ds		= INDEX_LDT_RW <<3 | SA_TIL | rpl;
@@ -92,7 +95,6 @@ PUBLIC int tinix_main()
 		p_proc->regs.esp	= (t_32)p_task_stack;
 		p_proc->regs.eflags	= eflags ;	// IF=1, IOPL=1, bit 2 is always 1.
 
-	//_proc->nr_tty=0;
 		p_task_stack -= p_task->stacksize;
 		p_proc->is_msg_critical_allowed = 1;
 	
@@ -113,7 +115,6 @@ PUBLIC int tinix_main()
 
 		p_proc++;
 		p_task++;
-		selector_ldt += 1 << 3;
 
 	}
 
@@ -121,11 +122,6 @@ PUBLIC int tinix_main()
 	ticks		= 0;
 
 	p_proc_ready	= proc_table;
-	shutdown_proc(5);
-	shutdown_proc(4);
-//	shutdown_proc(7);
-//	shutdown_proc(8);
-//	shutdown_proc(6);
 
 	init_clock();
 	init_keyboard();
@@ -258,22 +254,20 @@ int get_ticks()
 void Init()
 {
 	printl("Init running>>>");
-/*	char tty_name[] = "/dev_tty0";
+	char tty_name[] = "/dev_tty0";
 	int fd_stdin = open(tty_name, O_RDWR);
 	assert(fd_stdin == 0);
 	int fd_stdout = open(tty_name, O_RDWR);
 	assert(fd_stdout == 1);
-*/
-	printl("going to fork>>>\n");
+
 	int pid = fork();
-	printf("fork end with %d", pid);
 	if(pid!=0){//parent
-		printf("In parent process: my child process is %d\n", pid);
-		spin("parent~~~");
+		printl("In parent process: my child process is %d\n", pid);
+		spin("parent");
 	}
-	else{
-		printf("In child process: my pid is %d\n", getpid());
-		spin("child~~~");
+	else if(pid==0){
+		printl("In child process: my pid is %d\n", getpid());
+		spin("child");
 	}
 
 }

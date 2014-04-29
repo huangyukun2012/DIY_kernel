@@ -156,7 +156,9 @@ typedef struct s_tss {
 
 /* 宏 */
 /* 线性地址 → 物理地址 */
-#define vir2phys(seg_base, vir)	(t_32)(((t_32)seg_base) + (t_32)(vir))
+//#define vir2phys(seg_base, vir)	(t_32)(((t_32)seg_base) + (t_32)(vir))
+t_32 	seg2linear(t_16 seg);
+#define		virt2linear(seg, off)  (t_32)((t_32)(seg2linear(seg)) + (t_32)off)
 void init_descriptor(DESCRIPTOR * p_desc, t_32 base, t_32 limit, t_16 attribute); 
 
 void init_8259A();
