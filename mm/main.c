@@ -10,6 +10,12 @@ void init_mm();
 
 MESSAGE mm_msg;
 int memory_size;
+/**
+ *  * 7MB~8MB: buffer for MM
+ *   */
+char *  mmbuf       = (char *)0x700000;                                                                                                     
+const int   MMBUF_LEN  = 0x100000;
+
 void task_mm()
 {
 	printl("Task_mm begin:>>>");
@@ -23,11 +29,22 @@ void task_mm()
 			case FORK:
 				mm_msg.RETVAL = do_fork();
 				break;
+			case EXEC:
+				mm_msg.RETVAL = do_exec();
+				break;
+			case WAIT:
+				do_wait();//watch out for reply 
+				reply=0;
+				break;
+			case EXIT:
+				do_exit(mm_msg.STATUS);
+				reply=0;
+				break;
 			default:
 				dump_msg("MM:unknown msg", &mm_msg);
 				break;
 		}
-		if(reply){
+		if(reply){//msg has return value, then send a msg to src to unblock it 
 			mm_msg.type = SYSCALL_RET;
 			send_recv(SEND, src, &mm_msg);
 		}
@@ -55,4 +72,9 @@ int alloc_mem(int pid, int memsize)
 		panic("memory allocation failed:pid:%d", pid);
 
 	return base;
+}
+/* we do not need to free any thing, for the mem is corresponding to pid */
+int free_mem(int pid)
+{
+	return 0;
 }

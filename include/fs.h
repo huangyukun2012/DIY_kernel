@@ -7,6 +7,7 @@ extern const int FSBUF_SIZE ;
 extern MESSAGE fs_msg;
 #define RD_SECT(dev,sect_nr)  rw_sector(dev, (sect_nr) * SECTOR_SIZE, TASK_FS, fsbuf, SECTOR_SIZE, DEV_READ)
 #define WR_SECT(dev,sect_nr)  rw_sector(dev, (sect_nr) * SECTOR_SIZE, TASK_FS, fsbuf, SECTOR_SIZE, DEV_WRITE)
+#define is_special(m)   ((((m) & I_TYPE_MASK) == I_BLOCK_SPECIAL) || (((m) & I_TYPE_MASK) == I_CHAR_SPECIAL))
 
 void rw_sector( int device, t_64 pos, int proc_nr,  void *buf, int bytes, int io_type);
 void task_fs();
@@ -105,6 +106,7 @@ int do_close();
 int do_rw();
 int do_open();
 int do_unlink();
+int do_stat();
 int search_file(char *path);
 int strip_path(char *filename, const char *pathname, struct inode **ppinode);
 void sync_inode(struct inode *p);

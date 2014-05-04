@@ -30,9 +30,9 @@ TINIXKERNEL	= kernel.bin
 OBJS		= kernel/kernel.o kernel/syscall.o kernel/start.o kernel/main.o\
 			kernel/clock.o kernel/i8259.o kernel/global.o kernel/protect.o\
 			kernel/proc.o kernel/keyboard.o kernel/tty.o kernel/console.o kernel/systask.o \
-			lib/klib.o lib/klibc.o lib/string.o lib/memstring.o lib/err.o lib/stdio.o lib/unistd.o\
+			lib/klib.o lib/klibc.o lib/string.o lib/memstring.o lib/err.o lib/stdio.o lib/unistd.o lib/ipc.o\
 			fs/main.o fs/opera.o fs/misc.o \
-			mm/main.o mm/fork2exit.o\
+			mm/main.o mm/fork2exit.o mm/exec.o\
 			driver/driver.o driver/hd.o
 DASMOUTPUT	= kernel.bin.asm
 
@@ -166,6 +166,9 @@ lib/unistd.o: lib/unistd.c include/msg.h include/type.h include/proc.h \
 lib/memstring.o: lib/memstring.c
 	$(CC) $(CFLAGS) -o $@ $<
 
+lib/ipc.o: lib/ipc.c
+	$(CC) $(CFLAGS) -o $@ $<
+
 drive/driver.o: drive/driver.c include/drive.h include/proc.h include/protect.h \
 	 include/type.h include/msg.h include/fs.h include/proc.h
 	$(CC) $(CFLAGS) -o $@ $<
@@ -180,3 +183,7 @@ mm/main.o: mm/main.c include/msg.h include/type.h include/proc.h \
 	
 mm/fork2exit.o: mm/fork2exit.c
 	$(CC) $(CFLAGS) -o $@ $<
+
+mm/exec.o: mm/exec.c
+	$(CC) $(CFLAGS) -o $@ $<
+

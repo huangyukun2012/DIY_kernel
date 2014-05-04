@@ -410,31 +410,6 @@ static int msg_receive(struct proc * current_pro,int src, MESSAGE *m)
 	return 0;
 	//when the function returned, it will invoke restart
 }
-int send_recv(int function, int src_dest, MESSAGE *msg)
-{
-	int ret=0;
-	if(function == RECEIVE)
-		memset(msg,0,sizeof(MESSAGE));
-	switch(function){
-		case BOTH:
-			ret=sendrec(SEND,src_dest,msg);
-			if(ret == 0){
-				ret=sendrec(RECEIVE,src_dest,msg);
-			}
-			break;
-		case SEND:
-		case RECEIVE:
-			ret=sendrec(function, src_dest, msg);
-			break;
-		default:
-			assert((function == BOTH) ||
-					(function == SEND) || function == RECEIVE);
-			break;
-
-	}
-	
-	return ret;
-}
 
 
 PUBLIC void inform_int(int task_nr)

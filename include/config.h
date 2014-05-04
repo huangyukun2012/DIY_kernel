@@ -10,5 +10,8 @@
 #define BI_MEM_SIZE         1
 #define BI_KERNEL_FILE          2
 
+#define INSTALL_START_SECT	0x8000
+#define INSTALL_NR_SECTS	0x800
+#define	NR_SECTS_FOR_LOG	0x0 
 
 #endif

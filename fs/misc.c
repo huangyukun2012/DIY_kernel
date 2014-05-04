@@ -3,12 +3,16 @@
 #include "proc.h"
 #include "err.h"
 #include "debug.h"
+#include "unistd.h"
+#include "drive.h"
 
 #define SECTOR_SIZE 512
 int search_file(char *path);
 int strip_path(char *filename, const char *pathname, struct inode **ppinode);
 struct inode * get_inode(int dev, int num);
+int do_stat();
 extern struct inode *myroot_inode;
+
 int strip_path(char *filename, const char *pathname, struct inode **ppinode)
 {
 	const char *s=pathname;
@@ -139,3 +143,98 @@ void sync_inode(struct inode *p)
 	WR_SECT(p->i_dev, blk_nr);
 }
 
+/**************************************************************
+ *               do_stat
+ **************************************************************
+	@function:get the information of a pathname
+		The information we need for stat hided in the inode. So we just need to get the info of inode of pathname.
+	@input:
+	@return:0 if sucess
+**************************************************************/
+int hykdo_stat()
+{
+	char filename[MAX_FILENAME_LEN];
+	char pathname[MAX_PATH_LEN];
+	int pathname_len = fs_msg.NAME_LEN;
+	int src = fs_msg.source;
+//	pathname = fs_msg.PATHNAME; /*no!!! you can not do this directly! For they are not in the same address space*/
+	phys_copy( (void *)va2la(TASK_FS, pathname),\
+				(void *)va2la(src, fs_msg.PATHNAME),\
+				fs_msg.NAME_LEN);
+	pathname[pathname_len] = 0;
+
+	int inode_nr_path = search_file(pathname);
+	if(inode_nr_path == INVALID_INODE){
+		printl("[FS]:stat faild becase of invalid inode\n");
+		return -1;
+	}
+	struct inode *dir_inode;
+	if(strip_path(filename, pathname, &dir_inode)!=0){
+		assert(0);
+	}
+	struct inode *file_inode=get_inode(dir_inode->i_dev, inode_nr_path);
+
+	struct stat s;
+	s.dev = file_inode->i_dev;
+	s.size = file_inode->i_size;
+	s.mode = file_inode->i_mode;
+	s.ino = file_inode->i_num;
+	s.rdev = is_special(file_inode->i_mode) ? file_inode->i_start_sect: NO_DEV;
+
+	put_inode(file_inode);
+
+	phys_copy( (void *)va2la(src, fs_msg.BUF),\
+				(void *)va2la(TASK_FS, &stat),\
+				sizeof(struct stat));
+	printl("fs_msg.buf.size:%x", ((struct stat *)va2la(src, fs_msg.BUF))->size);	       
+	return 0;
+}
+
+int do_stat()
+{
+	char pathname[MAX_PATH_LEN]; /* parameter from the caller */
+	char filename[MAX_PATH_LEN]; /* directory has been stipped */
+
+	/* get parameters from the message */
+	int name_len = fs_msg.NAME_LEN;	/* length of filename */
+	int src = fs_msg.source;	/* caller proc nr. */
+	assert(name_len < MAX_PATH_LEN);
+	phys_copy((void*)va2la(TASK_FS, pathname),    /* to   */
+		  (void*)va2la(src, fs_msg.PATHNAME), /* from */
+		  name_len);
+	pathname[name_len] = 0;	/* terminate the string */
+
+	int inode_nr = search_file(pathname);
+	if (inode_nr == INVALID_INODE) {	/* file not found */
+		printl("{FS} FS::do_stat():: search_file() returns "
+		       "invalid inode: %s\n", pathname);
+		return -1;
+	}
+
+	struct inode * pin = 0;
+
+	struct inode * dir_inode;
+	if (strip_path(filename, pathname, &dir_inode) != 0) {
+		/* theoretically never fail here
+		 * (it would have failed earlier when
+		 *  search_file() was called)
+		 */
+		assert(0);
+	}
+	pin = get_inode(dir_inode->i_dev, inode_nr);
+
+	struct stat s;		/* the thing requested */
+	s.dev = pin->i_dev;
+	s.ino = pin->i_num;
+	s.mode= pin->i_mode;
+	s.rdev= is_special(pin->i_mode) ? pin->i_start_sect : NO_DEV;
+	s.size= pin->i_size;
+
+	put_inode(pin);
+
+	phys_copy((void*)va2la(src, fs_msg.BUF), /* to   */
+		  (void*)va2la(TASK_FS, &s),	 /* from */
+		  sizeof(struct stat));
+
+	return 0;
+}

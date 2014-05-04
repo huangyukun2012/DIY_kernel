@@ -52,7 +52,6 @@ PUBLIC void keyboard_handler(int irq)
 		}
 		kb_in.count++;
 	}
-	printl("+");
 	key_pressed = 1;
 }
 

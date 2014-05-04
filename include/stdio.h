@@ -1,5 +1,13 @@
 #ifndef __STDIO_H__
 #define __STDIO_H__
+#include "type.h"
+struct stat{
+	int dev;
+	int ino;
+	int mode;
+	int rdev;
+	int size;
+};
 int printl(const char *fmt, ...);
 extern int printf(const char *fmt,...);
 //#define printl printf

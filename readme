@@ -9,3 +9,8 @@ bug fix:
 1)bug descriptor:
 	In tty0, we can not get input correctly.
 2)bug state:not solved yet
+10.3
+1)bug description:
+	The proc "echo" can not echo the first param
+
+ bug state:not solved yet

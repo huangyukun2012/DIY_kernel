@@ -101,3 +101,91 @@ int do_fork()
 
 
 }
+
+
+void do_exit(int status)
+{
+	int i;
+	int pid= mm_msg.source;
+	int parent_pid = proc_table[pid].p_parent;
+	struct proc *p = &proc_table[pid];
+
+	/* fs exit :see fs_exit() */
+	MESSAGE msg2fs;
+	msg2fs.type = EXIT;
+	msg2fs.PID = pid;
+	send_recv(BOTH, TASK_FS, &msg2fs);
+	/* free memory */
+	free_mem(pid);
+	p->exit_status = status;
+
+	/* clean up proc_table */
+	if(proc_table[parent_pid].p_flags & WAITING ){
+		proc_table[parent_pid].p_flags &= ~WAITING;
+		cleanup(&proc_table[pid]);
+	}
+	else{//parent is not waiting
+			proc_table[pid].p_flags |= HANGING;		
+	}
+
+	/* handle the its child proc */
+	for(i=0;i<NR_PROCS;i++){
+		if(proc_table[i].p_parent == pid){
+			proc_table[i].p_parent = INIT;
+			if(proc_table[INIT].p_flags == WAITING && proc_table[i].p_flags == HANGING){
+				proc_table[i].p_flags &= ~HANGING;
+				cleanup(&proc_table[i]);
+			}
+		}
+	}
+}
+
+/* Do the last jod:send its parent a message to unblock it, and clean up its proc_table */
+void cleanup(struct proc *procp)
+{
+	MESSAGE msg2parent;
+	msg2parent.type = SYSCALL_RET;
+	msg2parent.PID = proc2pid(procp);
+	msg2parent.STATUS = procp->exit_status;
+	send_recv(SEND, procp->p_parent, &msg2parent);
+	procp->p_flags = FREE_SLOT; 
+}
+
+/*P invoke wait(), which will invoke do_wait(), then the MM will do the following routine:
+	<1>iterate the proc_table,
+		if proc A is the child of P, and A's state is HANGING
+			-repley to P:cleanup() will send p a msg to unblock it
+			-release A's proc_table entry
+			-return (MM go on the main loop)
+	<2>if no child of p is HANGING
+		set P's WAITING bit
+	<3>if P has no child at all
+		-reply to P with err
+	<4>return 
+*/
+void do_wait()
+{
+	int pid = mm_msg.source;
+	int i;
+	int children=0;
+	struct proc *procp = proc_table;//procp is child
+	for (i = 0; i < NR_PROCS; ++i){
+		if(procp->p_parent == pid){
+			children++;
+			if(procp->p_flags & HANGING){
+				cleanup(procp);
+				return;
+			}
+		}
+		procp++;
+	}
+	if(children){//将父进程设置成等待状态
+		proc_table[pid].p_flags |= WAITING;
+	}
+	else{
+		MESSAGE msg;
+		msg.type = SYSCALL_RET;
+		msg.PID = NO_TASK;
+		send_recv(SEND, pid , &msg);
+	}
+}

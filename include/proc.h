@@ -51,6 +51,7 @@ typedef struct proc{
 
 	/*int 			nr_tty;*/
 	int 			is_msg_critical_allowed;
+	int				exit_status;
 	int 			p_flags;
 	MESSAGE			*p_msg;
 	int				p_recvfrom;

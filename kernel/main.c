@@ -19,7 +19,31 @@
 #include "err.h"
 #include "kernel.h"
 #include "keyboard.h"
+#include "math.h"
 
+#define SECTOR_SIZE 512
+
+struct posix_tar_header{
+	char name[100];
+	char mode[8];
+	char uid[8];
+	char gid[8];
+	char size[12];
+	char mtime[12];
+	char chksum[8];
+	char typeflag;
+	char linkname[100];
+	char magic[6];
+	char version[2];
+	char uname[32];
+	char gname[32];
+	char devmajor[8];
+	char devminor[8];
+	char prefix[155];
+
+};
+
+void untar(const char* filename);
 static void shutdown_proc(int n);
 static void set_proc_prio(int proc, int myprio);
 /*======================================================================*
@@ -122,7 +146,9 @@ PUBLIC int tinix_main()
 	ticks		= 0;
 
 	p_proc_ready	= proc_table;
-
+	/* shutdown_proc(6); */
+	/* shutdown_proc(7); */
+	/* shutdown_proc(8); */
 	init_clock();
 	init_keyboard();
 
@@ -259,17 +285,75 @@ void Init()
 	assert(fd_stdin == 0);
 	int fd_stdout = open(tty_name, O_RDWR);
 	assert(fd_stdout == 1);
+	untar("/cmd.tar");
 
 	int pid = fork();
 	if(pid!=0){//parent
 		printl("In parent process: my child process is %d\n", pid);
-		spin("parent");
+		int s=-2;
+		int child = wait(&s);//patent coming into state of waiting, if its child is not exit
+		printl("child %d exit with status status:%d\n", child, s);
 	}
 	else if(pid==0){
-		printl("In child process: my pid is %d\n", getpid());
-		spin("child");
+		execl("/echo", "hello", "world", 0);
+		
+	}
+
+	while(1){//child will no come here for it invoked exit
+		int s;
+		int child = wait(&s);
+		printf("child %d exit with status status:%d\n", child, s);
 	}
 
 }
 
+/**************************************************************
+ * 						untar
+ **************************************************************
+	@function:extract the file in a tar file and store them
+	@input:The path of the filename
+	@return:void
+**************************************************************/
+void untar(const char* filename)
+{
+	printf("[extract------ '%s'\n", filename);
+	int fd = open(filename, O_RDWR);
+	assert(fd!=-1);
+	char buf[SECTOR_SIZE *16];
+	int chunk = sizeof(buf);
 
+	while(1){// a file per time
+		read(fd,buf, SECTOR_SIZE);
+		if(buf[0]==0){
+			break;	
+		}
+		
+		struct posix_tar_header *tarhead_p = (struct posix_tar_header *)buf;
+
+		char *p=tarhead_p->size;
+		int f_len = 0;
+
+		while(*p){
+			f_len = (f_len *8) + (*p++ - '0');/*octal*/
+		}
+
+		int bytes_left= f_len;
+		int fd_out = open(tarhead_p->name, O_CREAT | O_RDWR);
+
+		if(fd_out == -1){
+			printf("failed to extract file: %s\n", tarhead_p->name);
+			printf("aborted]\n");
+			return;
+		}
+		printf("    %s (%d bytes)\n", tarhead_p->name, f_len);
+		while(bytes_left){
+			int iobytes = min(chunk, bytes_left);
+			read(fd, buf, ((iobytes -1)/SECTOR_SIZE +1)* SECTOR_SIZE);
+			write(fd_out, buf, iobytes);
+			bytes_left -= iobytes;
+		}
+		close(fd_out);
+	}
+	close(fd);
+	printf("done!]\n");
+}

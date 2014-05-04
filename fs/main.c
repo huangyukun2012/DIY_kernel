@@ -24,7 +24,7 @@ struct super_block *get_super_block(int dev);
 static void read_super_block(int dev);
 struct inode * get_inode(int dev, int num);
 static int fs_fork();
-//static int fs_exit();
+static int fs_exit();
 
 struct file_desc    f_desc_table[NR_FILE_DESC];
 struct inode        inode_table[NR_INODE];                                                                                               
@@ -65,7 +65,10 @@ void task_fs()
 				fs_msg.RETVAL = fs_fork();
 				break;
 			case EXIT:
-				//fs_msg.RETVAL = fs_exit();
+				fs_msg.RETVAL = fs_exit();
+				break;
+			case STAT:
+				fs_msg.RETVAL = do_stat();
 				break;
 
 			default:
@@ -166,12 +169,12 @@ static void mkfs()
 
 	//inode map
 	memset(fsbuf,0, SECTOR_SIZE);
-	for (i = 0; i < (NR_CONSOLE+2); ++i){//3 ttys 1 unused, 1 root dir
+	for (i = 0; i < (NR_CONSOLE+3); ++i){//3 ttys 1 unused, 1 root dir, 1cmdtar
 		fsbuf[0] |= 1<<i;
 		
 	}
 
-	assert(fsbuf[0]==0x1f);
+	assert(fsbuf[0]==0x3f);
 	WR_SECT(ROOT_DEV, 2);
 
 	/************************/
@@ -197,6 +200,31 @@ static void mkfs()
 	{
 		WR_SECT(ROOT_DEV, 2 + sb.nr_imap_sects + i);
 	}
+	
+	/* cmd.tar */
+	/* make sure it'll not be overwritten by the disk log */
+	assert(INSTALL_START_SECT + INSTALL_NR_SECTS < 
+	       sb.nr_sects - NR_SECTS_FOR_LOG);
+	int bit_offset = INSTALL_START_SECT -
+		sb.n_1st_sect + 1; /* sect M <-> bit (M - sb.n_1stsect + 1) */
+	int bit_off_in_sect = bit_offset % (SECTOR_SIZE * 8);
+	int bit_left = INSTALL_NR_SECTS;
+	int cur_sect = bit_offset / (SECTOR_SIZE * 8);
+	RD_SECT(ROOT_DEV, 2 + sb.nr_imap_sects + cur_sect);
+	while (bit_left) {
+		int byte_off = bit_off_in_sect / 8;
+		/* this line is ineffecient in a loop, but I don't care */
+		fsbuf[byte_off] |= 1 << (bit_off_in_sect % 8);
+		bit_left--;
+		bit_off_in_sect++;
+		if (bit_off_in_sect == (SECTOR_SIZE * 8)) {
+			WR_SECT(ROOT_DEV, 2 + sb.nr_imap_sects + cur_sect);
+			cur_sect++;
+			RD_SECT(ROOT_DEV, 2 + sb.nr_imap_sects + cur_sect);
+			bit_off_in_sect = 0;
+		}
+	}
+	WR_SECT(ROOT_DEV, 2 + sb.nr_imap_sects + cur_sect);
 
 	/************************/
 	/*       inodes         */
@@ -205,9 +233,10 @@ static void mkfs()
 	memset(fsbuf, 0, SECTOR_SIZE);
 	struct inode * pi = (struct inode*)fsbuf;
 	pi->i_mode = I_DIRECTORY;
-	pi->i_size = DIR_ENTRY_SIZE * 4; /* 4 files:
+	pi->i_size = DIR_ENTRY_SIZE * 5; /* 5 files:
 					  * `.',
 					  * `dev_tty0', `dev_tty1', `dev_tty2',
+					  * cmd.tar
 					  */
 	pi->i_start_sect = sb.n_1st_sect;
 	pi->i_nr_sects = NR_DEFAULT_FILE_SECTS;
@@ -219,7 +248,17 @@ static void mkfs()
 		pi->i_start_sect = MAKE_DEV(DEV_CHAR_TTY, i);//之所以不放在dev中，是因为dev是内存数据结构
 		pi->i_nr_sects = 0;
 	}
+
+	/* inode of /cmd.tar */
+	pi = (struct inode*)(fsbuf + (INODE_SIZE * (NR_CONSOLE + 1)));
+	pi->i_mode = I_REGULAR;
+	pi->i_size = INSTALL_NR_SECTS * SECTOR_SIZE;
+	pi->i_start_sect = INSTALL_START_SECT;
+	pi->i_nr_sects = INSTALL_NR_SECTS;
 	WR_SECT(ROOT_DEV, 2 + sb.nr_imap_sects + sb.nr_smap_sects);
+	//WR_SECT(ROOT_DEV, 2 + sb.nr_smap_sects + sb.nr_smap_sects);
+
+
 
 	/************************/
 	/*          `/'         */
@@ -236,7 +275,8 @@ static void mkfs()
 		pde->inode_nr = i + 2; /* dev_tty0's inode_nr is 2 */
 		sprintf(pde->name, "dev_tty%d", i);
 	}
-	
+	(++pde)->inode_nr = NR_CONSOLE + 2;
+	strcpy(pde->name , "cmd.tar");
 	WR_SECT(ROOT_DEV, sb.n_1st_sect);
 }
 
@@ -332,4 +372,23 @@ static int fs_fork()
 	printl(" >>fs_fork end!");
 #endif
 	return 0;
+}
+/* perform the aspects of exit about file descriptor. */
+/* return 0 if sucess. */
+
+static int fs_exit()
+{
+	int i;
+	struct proc *p= &proc_table[fs_msg.PID];
+	for (i = 0; i < NR_FILES; ++i){
+		struct file_desc *filep=p->filp[i];
+		if(filep){
+			filep->fd_inode->i_cnt--;
+			if((-- filep->fd_cnt )== 0)
+				filep->fd_inode=0;
+			p->filp[i] = 0;
+		}
+	}
+	return 0;
+
 }
