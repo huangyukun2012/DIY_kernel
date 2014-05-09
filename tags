@@ -115,6 +115,7 @@ END	include/keyboard.h	82;"	d
 ENTER	include/keyboard.h	42;"	d
 ENTRYOFFSET	Makefile	/^ENTRYOFFSET	=   0x400$/;"	m
 ENTRYPOINT	Makefile	/^ENTRYPOINT	= 0x1000$/;"	m
+ENTRYPOINT	command/Makefile	/^ENTRYPOINT	= 0x1000$/;"	m
 ESC	include/keyboard.h	40;"	d
 ETHER_IRQ	include/const.h	79;"	d
 EXEC	include/msg.h	/^	EXEC, WAIT,$/;"	e	enum:msgtype
@@ -706,8 +707,8 @@ esp1	include/protect.h	/^	t_32	esp1;$/;"	m	struct:s_tss
 esp2	include/protect.h	/^	t_32	esp2;$/;"	m	struct:s_tss
 exception	kernel/kernel.asm	/^exception:$/;"	l
 exception_handler	kernel/protect.c	/^PUBLIC void exception_handler(int vec_no, int err_code, int eip, int cs, int eflags)$/;"	f
-execl	lib/unistd.c	/^int execl(const char* path, const char *arg)$/;"	f
-execv	lib/unistd.c	/^int execv(const char *path, char *argv[])$/;"	f
+execl	lib/unistd.c	/^int execl(const char *path, const char *arg, ...)$/;"	f
+execv	lib/unistd.c	/^int execv(const char *path, char * argv[])$/;"	f
 exit	lib/unistd.c	/^void exit(int status)$/;"	f
 exit_status	include/proc.h	/^	int				exit_status;$/;"	m	struct:proc
 extern	command/start.asm	/^extern	exit$/;"	l
@@ -844,6 +845,7 @@ hwint12	kernel/kernel.asm	/^hwint12:		; Interrupt routine for irq 12$/;"	l
 hwint13	kernel/kernel.asm	/^hwint13:		; Interrupt routine for irq 13 (FPU exception)$/;"	l
 hwint14	kernel/kernel.asm	/^hwint14:		; Interrupt routine for irq 14 (AT winchester)$/;"	l
 hwint15	kernel/kernel.asm	/^hwint15:		; Interrupt routine for irq 15$/;"	l
+hykdo_stat	fs/misc.c	/^int hykdo_stat()$/;"	f
 i2a	lib/stdio.c	/^PRIVATE char* i2a(int val, int base, char ** ps)$/;"	f
 i_cnt	include/fs.h	/^	int i_cnt;$/;"	m	struct:inode
 i_dev	include/fs.h	/^	int i_dev;$/;"	m	struct:inode
@@ -1061,6 +1063,7 @@ set_cursor_length	kernel/console.c	/^void set_cursor_length()$/;"	f
 set_cursor_location	kernel/console.c	/^void set_cursor_location(t_32 addr)$/;"	f
 set_leds	kernel/keyboard.c	/^static void set_leds()$/;"	f	file:
 set_proc_prio	kernel/main.c	/^static void set_proc_prio(int proc, int myprio)$/;"	f	file:
+shabby_shell	kernel/main.c	/^void shabby_shell(const char * tty_name)$/;"	f
 shift_l	kernel/keyboard.c	/^PRIVATE int shift_l;$/;"	v
 shift_r	kernel/keyboard.c	/^PRIVATE int shift_r;$/;"	v
 shutdown_proc	kernel/main.c	/^static void shutdown_proc(int n)$/;"	f	file:

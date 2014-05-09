@@ -124,12 +124,6 @@ void exit(int status)
 			arg:
 	@return:The result of exec
 **************************************************************/
-int hykexecl(const char* path, const char *arg)
-{
-	va_list parg = (va_list )(&arg);// 可变参数函数的一般写法
-	char **p =(char **)parg;
-	return execv(path, p);
-}
 int execl(const char *path, const char *arg, ...)
 {
 	va_list parg = (va_list)(&arg);
@@ -146,46 +140,6 @@ int execl(const char *path, const char *arg, ...)
 		2>the prarams of cmd
 	@return:msg return
 **************************************************************/
-
-int hykexecv(const char *path, char *argv[])
-{
-	char **p = argv;
-	char arg_stack[PROC_ORIGIN_STACK];
-	int stacklen=0;
-
-	while(*p++){
-		assert(stacklen + 2*sizeof(char *) < PROC_ORIGIN_STACK);//The first papam and then end tag
-		stacklen +=sizeof(char *);
-	}
-
-	*( (int *)(&arg_stack[stacklen]) )=0;
-	stacklen +=sizeof(char *);
-	
-	char **q = (char **)arg_stack;
-	for(p=argv; *p !=0;p++){
-		*q++ = &arg_stack[stacklen];
-		assert(stacklen + strlen(*p) + 1 < PROC_ORIGIN_STACK);
-		strcpy(&arg_stack[stacklen], *p);
-		printl("%s*",*p);
-		stacklen +=strlen(*p);
-		arg_stack[stacklen]=0;
-		stacklen ++;
-	}
-
-	MESSAGE msg;
-	msg.type = EXEC;
-	msg.PATHNAME = (void *)path;
-	msg.NAME_LEN = strlen(path);
-	msg.BUF = (void *)arg_stack;
-	msg.BUF_LEN = stacklen;
-
-	send_recv(BOTH, TASK_MM, &msg);
-	assert(msg.type == SYSCALL_RET);
-
-	return msg.RETVAL;
-
-}
-
 int execv(const char *path, char * argv[])
 {
 	char **p = argv;

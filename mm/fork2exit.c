@@ -27,14 +27,17 @@ int do_fork()
 	int child_pid = i;
 	assert(child_procp == &proc_table[child_pid]);
 	assert(child_pid >= NR_TASKS + NR_NATIVE_PROCS);
-	if(i == NR_PROCS)
+	if(i == NR_PROCS){
+		printl("Err: The proc_table is too full to fork\n");
 		return -1;
+	}
+
 	assert(i<NR_PROCS);
 
 	//duplicate the process table
 	int parent_pid = mm_msg.source;//
 	t_16 child_ldt_sel = child_procp->ldt_sel;//p is the free slot, and for the child
-	*child_procp=proc_table[parent_pid];
+	*child_procp=proc_table[parent_pid];// strcut 赋值
 	child_procp->ldt_sel = child_ldt_sel;
 	child_procp->p_parent = parent_pid;
 	sprintf(child_procp->name, "%s_%d", proc_table[parent_pid].name , child_pid);//son share the name with parent
@@ -72,7 +75,9 @@ int do_fork()
 	assert(caller_T_size == caller_D2S_size);
 
 	int child_base = alloc_mem(child_pid, caller_T_size);
-	printl("alloc MM 0x%x <- 0x%x (0x%x bytes)\n", child_base, caller_T_base, caller_T_size);
+#if DEBUG 
+	printl("fork:alloc MM 0x%x <- 0x%x (0x%x bytes)\n", child_base, caller_T_base, caller_T_size);
+#endif
 	phys_copy((void *)child_base, (void *)caller_T_base, caller_T_size);
 
 	//child's LDT
@@ -98,8 +103,6 @@ int do_fork()
 	m.PID = 0;
 	send_recv(SEND, child_pid, &m);
 	return 0;
-
-
 }
 
 

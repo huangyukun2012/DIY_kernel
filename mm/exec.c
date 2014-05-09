@@ -18,6 +18,7 @@
  * Perform the exec() system call.
  * 
  * @return  Zero if successful, otherwise -1.
+ * Note: the PCB did not all changed! etc. filep
  *****************************************************************************/
 int do_exec()
 {
@@ -42,6 +43,7 @@ int do_exec()
 
 	/* read the file */
 	int fd = open(pathname, O_RDWR);
+
 	if (fd == -1){
 		printl("%s can not open.\n", pathname);
 		return -1;
@@ -49,6 +51,7 @@ int do_exec()
 	assert(s.size < MMBUF_LEN);
 	read(fd, mmbuf, s.size);
 	close(fd);
+
 	/* overwrite the current proc image with the new one */
 	Elf32_Ehdr* elf_hdr = (Elf32_Ehdr*)(mmbuf);
 	int i;

@@ -23,7 +23,13 @@ int do_open();
 #define SECTOR_SIZE_SHIFT 9
 
 	int DEBUG_rw_sector = 0;
-
+/**************************************************************
+ *               int do_open()
+ **************************************************************
+	@function:
+	@input:flags, name, src, pathname ---fs_msg
+	@return:the fd of the file in fs_msg
+**************************************************************/
 int do_open()
 {//return the fd of the file in fs_msg
 #ifdef DEBUG
@@ -39,8 +45,9 @@ int do_open()
 	phys_copy((void *)va2la(TASK_FS, pathname), (void *)va2la(src,  fs_msg.PATHNAME), name_len);
 	pathname[name_len] = 0;
 	
+		/* find the first empty fd of a proc */
 	int i;
-	for (i = 0; i < NR_FILES; ++i){//find the first empty fd of a proc
+	for (i = 0; i < NR_FILES; ++i){
 		if(pcaller->filp[i] == 0){
 			fd = i;
 			break;
@@ -50,7 +57,8 @@ int do_open()
 	if( fd< 0 || fd>= NR_FILES)
 		panic("filep[] if full (pid:%d)", proc2pid(pcaller));
 
-	for (i = 0; i < NR_FILE_DESC; ++i){ //find the first empty desc in f_desc_table 
+		/* find the first empty desc in f_desc_table */ 
+	for (i = 0; i < NR_FILE_DESC; ++i){ 
 		if(f_desc_table[i].fd_inode == 0)
 			break;
 	}
@@ -59,7 +67,8 @@ int do_open()
 		panic("f_desc_table is full (pid:%d)",proc2pid(pcaller));
 	}
 	
-	int inode_nr = search_file(pathname);//find the inode num of a file:pathname
+	/* find the inode num of a file:pathname */
+	int inode_nr = search_file(pathname);
 #ifdef DEBUG
 	if(inode_nr == 0)
 		printl("do_open: get inode_nr %d\n",inode_nr );
@@ -85,16 +94,18 @@ int do_open()
 			return -1;
 		}
 		if(inode_nr == 0)
-			printl("do_open: -> > get_inode( , %d)\n",inode_nr );
+			printl("do_open: -> > get_inode( %d)\n",inode_nr );
 		pin = get_inode(dir_inode->i_dev, inode_nr);//pin is the inode of our dest file
 
 	}
 
+	/* build the ptr connnection of proc--f_desc_table--inode_table */
 	if(pin){//inode of the dest file
 		pcaller->filp[fd] = &f_desc_table[i];//connect proc with file_descriptor, watch out for i
 
 		f_desc_table[i].fd_inode = pin;//connect file_descriptor with inode
 		f_desc_table[i].fd_mode = flags;
+		f_desc_table[i].fd_cnt = 1;
 		f_desc_table[i].fd_pos = 0;
 
 		int imode = pin->i_mode & I_TYPE_MASK;
@@ -262,42 +273,68 @@ static void new_dir_entry(struct inode *dir_inode, int inode_nr, char *filename)
 
 	sync_inode(dir_inode);
 }
-
+/**************************************************************
+ *               int do_open()
+ **************************************************************
+	@function:
+	@input:
+	@return:
+**************************************************************/
 int do_close()
 {
 	int fd=fs_msg.FD;
+	/* decrease the cnt of fd_inode */
+	assert(pcaller->filp[fd]!=0);
+	if(pcaller->filp[fd]->fd_inode==0){
+		printl("do_close: file already closed\n");
+		return 0;
+	}
+	assert(pcaller->filp[fd]->fd_inode !=0);
 	put_inode(pcaller->filp[fd]->fd_inode);
-	pcaller->filp[fd]->fd_inode =0;
+	
+	/* disconnect "filp--f_desc_table--inode_table" */
+	if(pcaller->filp[fd]->fd_cnt--);
+	if(pcaller->filp[fd]->fd_cnt ==0)
+		pcaller->filp[fd]->fd_inode =0;
+
 	pcaller->filp[fd]=0;
 	return 0;
-
 }
 
 
-//return :how many byte have been read/written
-//note:sector map is not needed to update
-//input the fd of the file:must in mem
+/**************************************************************
+ *               int do_rw( )
+ **************************************************************
+	@function: note:sector map is not needed to update >file must be opened before it 
+	@input:input the fd of the file:must in mem
+	@return:how many byte have been read/written
+**************************************************************/
 int do_rw()
 {
-	int fd = fs_msg.FD;
+	int fd = fs_msg.FD; 
 	void *buf = fs_msg.BUF;
 	int len = fs_msg.CNT;
 	int src = fs_msg.source;
-	#ifdef DEBUG_RW
-		printl("do_rw:fd=%d, len=%d\n", fd,len);
-	#endif
+
+#ifdef DEBUG_RW
+	printl("do_rw:fd=%d, len=%d\n", fd,len);
+#endif
+
 	assert((pcaller->filp[fd] >= &f_desc_table[0]) &&
 				(pcaller->filp[fd] < &f_desc_table[NR_FILE_DESC]));
 	if(!(pcaller->filp[fd]->fd_mode & O_RDWR)){
-
-	#ifdef DEBUG_RW
 		printl("do_rw:access to file was denied\n");
-	#endif
 		return -1;
 	}
 
 	int pos = pcaller->filp[fd]->fd_pos;
-	struct inode * pin = pcaller->filp[fd]->fd_inode;
+	struct inode * pin = (pcaller->filp[fd])->fd_inode;
+	if(pin==0){
+		printl("do_rw() failed for the inode ptr NULL");
+		printl("src:%d pcaller:%d--filp[%d]--f_desc_table[%d]--inode_table[%d]:do_rw**** \n\n",src, pcaller-proc_table,
+			fd,pcaller->filp[fd]-f_desc_table,pin-&inode_table[0]);
+		while(1);
+		}
 	assert(pin >= &inode_table[0] && pin < &inode_table[NR_INODE]);
 	
 	int imode = pin->i_mode & I_TYPE_MASK;

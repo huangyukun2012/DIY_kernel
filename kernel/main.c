@@ -63,7 +63,7 @@ PUBLIC int tinix_main()
 	int eflags;
 	int prio;
 
-	for(i=0;i<NR_PROCS;i++){
+	for(i=0;i<NR_PROCS;i++, p_proc++, p_task++){
 		if(i>= NR_TASKS + NR_NATIVE_PROCS){
 			p_proc->p_flags= FREE_SLOT;//pflags and free slot
 			continue;
@@ -97,9 +97,9 @@ PUBLIC int tinix_main()
 			unsigned int k_base;
 			unsigned int k_limit;
 			int ret = get_kernel_map(&k_base, &k_limit);
-			disp_int(k_base);
-			disp_str(" ");
-			disp_int(k_limit);
+			/* disp_int(k_base); */
+			/* disp_str(" "); */
+			/* disp_int(k_limit); */
 
 			assert(ret == 0);
 			init_descriptor(&p_proc->ldts[INDEX_LDT_C] , 0, \
@@ -137,18 +137,16 @@ PUBLIC int tinix_main()
 			p_proc->filp[j] = 0;
 		}
 
-		p_proc++;
-		p_task++;
-
 	}
 
 	k_reenter	= 0;
 	ticks		= 0;
 
 	p_proc_ready	= proc_table;
-	/* shutdown_proc(6); */
-	/* shutdown_proc(7); */
-	/* shutdown_proc(8); */
+	shutdown_proc(6);
+	shutdown_proc(7);
+	shutdown_proc(8);
+	
 	init_clock();
 	init_keyboard();
 
@@ -286,25 +284,33 @@ void Init()
 	int fd_stdout = open(tty_name, O_RDWR);
 	assert(fd_stdout == 1);
 	untar("/cmd.tar");
+	
+	char *tty_list[]= {
+		"/dev_tty1","/dev_tty2"};
 
-	int pid = fork();
-	if(pid!=0){//parent
-		printl("In parent process: my child process is %d\n", pid);
-		int s=-2;
-		int child = wait(&s);//patent coming into state of waiting, if its child is not exit
-		printl("child %d exit with status status:%d\n", child, s);
-	}
-	else if(pid==0){
-		execl("/echo", "hello", "world", 0);
-		
-	}
+	int i;
+	int pid=1;
+	int count = sizeof(tty_list)/sizeof(tty_list[0]);
 
+	for (i = 0; i < count-1 ; ++i){
+	 	pid = fork();
+
+		if(pid!=0){//parent
+			printl("In parent process: my child process is %d\n", pid);
+		}
+		else if(pid==0){
+			printl("child is running, child pid is %d.\n", getpid());
+			close(fd_stdout);
+			close(fd_stdin);
+			shabby_shell(tty_list[i]);
+			assert(0);
+		}
+	}
 	while(1){//child will no come here for it invoked exit
 		int s;
 		int child = wait(&s);
-		printf("child %d exit with status status:%d\n", child, s);
+		printl("child %d exit with status status:%d\n", child, s);
 	}
-
 }
 
 /**************************************************************
@@ -356,4 +362,75 @@ void untar(const char* filename)
 	}
 	close(fd);
 	printf("done!]\n");
+}
+
+/**************************************************************
+ *               shabby_shell
+ **************************************************************
+	@function:
+	@input:tty_name
+	@return:null
+**************************************************************/
+void shabby_shell(const char * tty_name)
+{ 
+	int fd_stdin  = open(tty_name, O_RDWR);
+	assert(fd_stdin  == 0);
+	int fd_stdout = open(tty_name, O_RDWR);
+	assert(fd_stdout == 1);
+
+	char rdbuf[128];
+	while (1) {
+		write(1, "$:", 2);
+		int r = read(0, rdbuf, 70);
+		rdbuf[r] = 0;
+
+		int argc = 0;
+		char * argv[PROC_ORIGIN_STACK];
+		char * p = rdbuf;
+		char * s;
+		int word = 0;
+		char ch;
+		do {
+			ch = *p;
+			if (*p != ' ' && *p != 0 && !word) {
+				s = p;
+				word = 1;
+			}
+			if ((*p == ' ' || *p == 0) && word) {
+				word = 0;
+				argv[argc++] = s;
+				*p = 0;
+			}
+			p++;
+		} while(ch);
+		argv[argc] = 0;
+
+		int fd = open(argv[0], O_RDWR);
+#if DEBUG
+		printl("fd is %d path is %s&&\n\n", fd, argv[0]);
+#endif
+		if (fd == -1) {
+			if (rdbuf[0]) {
+				write(1, "{", 1);
+				write(1, rdbuf, r);
+				write(1, "}\n", 2);
+			}
+		}
+		else {
+			close(fd);
+			int pid = fork();//child will not fork, because it exit
+			if (pid != 0) { /* parent */
+				int s;
+				wait(&s);
+				printl("[child exit with status %d]\n", s );
+			}
+			else {	/* child */
+				printl("[child is running in child %d]\n", getpid());
+				execv(argv[0], argv);
+			}
+		}
+	}
+
+	close(fd_stdout);
+	close(fd_stdin);
 }

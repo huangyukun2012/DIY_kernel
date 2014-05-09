@@ -13,4 +13,10 @@ bug fix:
 1)bug description:
 	The proc "echo" can not echo the first param
 
- bug state:not solved yet
+ bug state:soleved
+
+10.4
+
+bug1:
+	Description:do_close failed becase the inode ptr is NULL
+	state: Not solved

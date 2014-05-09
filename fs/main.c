@@ -383,9 +383,11 @@ static int fs_exit()
 	for (i = 0; i < NR_FILES; ++i){
 		struct file_desc *filep=p->filp[i];
 		if(filep){
-			filep->fd_inode->i_cnt--;
-			if((-- filep->fd_cnt )== 0)
+			if(filep->fd_inode->i_cnt--);
+			if(filep->fd_cnt--);
+			if( filep->fd_cnt == 0){
 				filep->fd_inode=0;
+			}
 			p->filp[i] = 0;
 		}
 	}
